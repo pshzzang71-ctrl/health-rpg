@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">건강 RPG</string>
+    <string name="privacy_title">건강 데이터 사용 안내</string>
+    <!-- 게임 주소. 비워 두면 처음 실행할 때 주소를 물어봅니다. 예: https://health-rpg-v2.vercel.app/ -->
+    <string name="game_url" translatable="false">https://healthrpgver21.vercel.app/</string>
+</resources>

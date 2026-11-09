@@ -1,0 +1,51 @@
+// 건강 RPG 서비스 워커: 처음 한 번 열면 모든 파일을 저장해 두고, 이후에는 인터넷 없이 실행됩니다.
+const CACHE = 'health-rpg-v4';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
+const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+
+  // 글꼴: 한 번 받으면 저장해 두고 계속 사용
+  if (FONT_HOSTS.includes(url.hostname)) {
+    e.respondWith(caches.open(CACHE).then(c => c.match(req).then(hit => hit || fetch(req).then(res => {
+      c.put(req, res.clone());
+      return res;
+    }).catch(() => hit))));
+    return;
+  }
+
+  // 앱 화면: 저장된 화면을 바로 띄우고, 온라인이면 뒤에서 새 버전으로 갱신
+  if (req.mode === 'navigate') {
+    e.respondWith(caches.match('./index.html').then(cached => {
+      const net = fetch(req).then(res => {
+        if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); }
+        return res;
+      }).catch(() => cached);
+      return cached || net;
+    }));
+    return;
+  }
+
+  // 그 밖의 파일: 저장본 우선
+  e.respondWith(caches.match(req, { ignoreSearch: true }).then(hit => hit || fetch(req).then(res => {
+    if (res.ok && url.origin === self.location.origin) {
+      const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy));
+    }
+    return res;
+  })));
+});

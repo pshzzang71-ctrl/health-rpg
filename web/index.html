@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5cb8ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="매일 건강 목표를 달성하며 레벨업하는 오프라인 RPG">
+<title>건강 RPG</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--cream:#fffaf0;--line:#f0dcb8;--wood:#e0ae6e;--wood2:#c48443;--tx:#4b3526;--sub:#94796a;--gold:#ffb703;--orange:#ff8a1f;--green:#3fbf55;--red:#ff5b5b;--jua:'Jua',-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;font-size:15px;line-height:1.45}
+body{min-height:100vh;background:linear-gradient(180deg,#5cb8ff 0%,#a9ddff 42%,#e3f5ff 100%) fixed;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);overscroll-behavior-y:none}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27560%27%20height%3D%27320%27%3E%3Cg%20fill%3D%27white%27%20opacity%3D%27.9%27%3E%3Ccircle%20cx%3D%2770%27%20cy%3D%2762%27%20r%3D%2726%27/%3E%3Ccircle%20cx%3D%27102%27%20cy%3D%2748%27%20r%3D%2734%27/%3E%3Ccircle%20cx%3D%27138%27%20cy%3D%2762%27%20r%3D%2725%27/%3E%3Crect%20x%3D%2758%27%20y%3D%2760%27%20width%3D%2796%27%20height%3D%2726%27%20rx%3D%2713%27/%3E%3C/g%3E%3Cg%20fill%3D%27white%27%20opacity%3D%27.75%27%3E%3Ccircle%20cx%3D%27340%27%20cy%3D%27170%27%20r%3D%2720%27/%3E%3Ccircle%20cx%3D%27366%27%20cy%3D%27158%27%20r%3D%2727%27/%3E%3Ccircle%20cx%3D%27395%27%20cy%3D%27172%27%20r%3D%2719%27/%3E%3Crect%20x%3D%27330%27%20y%3D%27170%27%20width%3D%2780%27%20height%3D%2721%27%20rx%3D%2710%27/%3E%3C/g%3E%3Cg%20fill%3D%27white%27%20opacity%3D%27.6%27%3E%3Ccircle%20cx%3D%27470%27%20cy%3D%2740%27%20r%3D%2714%27/%3E%3Ccircle%20cx%3D%27488%27%20cy%3D%2732%27%20r%3D%2719%27/%3E%3Ccircle%20cx%3D%27507%27%20cy%3D%2742%27%20r%3D%2713%27/%3E%3Crect%20x%3D%27462%27%20y%3D%2740%27%20width%3D%2754%27%20height%3D%2715%27%20rx%3D%277%27/%3E%3C/g%3E%3C/svg%3E") repeat-x 0 26px/560px 320px;animation:drift 120s linear infinite}
+body::after{content:"";position:fixed;left:-10%;right:-10%;bottom:0;height:120px;z-index:-1;pointer-events:none;background:radial-gradient(55% 105px at 22% 100%,#8be07a 97%,transparent 100%),radial-gradient(55% 90px at 82% 100%,#6ad063 97%,transparent 100%)}
+@keyframes drift{to{background-position:560px 26px}}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:16px;color:var(--tx);background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px;outline:none;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--orange)}
+textarea{width:100%;height:84px;resize:vertical;font-size:13px;word-break:break-all}
+h2,h3,.btn,.lv,.dtitle,.burst,.biglv,.goldbig,#tabs,#fab,.qname,.hname b,.btime,.dcount,.urgestats b,.sbox b,.rank,.pts,.cp b,.mname,.dbadge,.tree,.btop{font-family:var(--jua);font-weight:400}
+h2{margin:6px 0;font-size:24px}h3{margin:0 0 10px;font-size:18px;color:#7a4b22}
+.hidden{display:none!important}
+.sub{color:var(--sub);font-size:13px}.gold{color:#e08a00;font-weight:700}.center{text-align:center}.mt{margin-top:8px}
+#app{max-width:560px;margin:0 auto;padding:10px 12px calc(170px + env(safe-area-inset-bottom))}
+.pv{background:#fff3c4;color:#8a5a00;font-size:12px;text-align:center;border-radius:12px;padding:6px;margin-bottom:8px;border:2px solid #ffd76a}
+
+/* 상단 캐릭터 판 */
+.hero{display:flex;gap:14px;align-items:center;background:linear-gradient(180deg,#fff6df,#ffe3a8);border:3px solid var(--wood2);border-radius:22px;padding:12px 14px;margin-bottom:12px;box-shadow:0 5px 0 #a86a2f,inset 0 2px 0 #fff}
+.ava{width:72px;height:72px;border-radius:50%;flex:none;position:relative;background:radial-gradient(circle at 50% 30%,#fff,#d4eeff 72%);box-shadow:0 0 0 4px #fff,0 0 0 7px var(--aura),0 4px 10px rgba(0,0,0,.15);display:grid;place-items:center}
+.ava svg{width:94%;height:94%;margin-top:2px}
+.ava.t4{animation:glow 1.6s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 0 4px #fff,0 0 0 7px #ffd34d,0 0 16px 6px rgba(255,190,80,.7)}to{box-shadow:0 0 0 4px #fff,0 0 0 7px #ff9bd2,0 0 26px 10px rgba(255,150,210,.7)}}
+.rbadge{position:absolute;right:-8px;bottom:-6px;font-size:15px;background:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;border:2px solid var(--wood);box-shadow:0 2px 0 var(--wood2)}
+.hinfo{flex:1;min-width:0}
+.hname{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.hname b{font-size:21px;color:#5a3417}.ctitle{font-size:13px;font-weight:800}
+.lvrow{display:flex;align-items:center;gap:8px;margin-top:6px}
+.lv{font-size:15px;color:#fff;background:linear-gradient(180deg,#ffb84d,#ff7a00);border:2px solid #d46200;border-radius:20px;padding:1px 10px;text-shadow:0 1px 0 #b34f00;box-shadow:0 2px 0 #b34f00;white-space:nowrap}
+.xpbar{flex:1;height:16px;background:#fff;border-radius:10px;overflow:hidden;border:2px solid #e0b46d}
+.xpbar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,rgba(255,255,255,.4) 0 6px,transparent 6px 12px),linear-gradient(180deg,#ffe46b,#ffb703);background-size:17px 17px,100% 100%;border-radius:8px;transition:width .5s;animation:stripes 1s linear infinite}
+@keyframes stripes{to{background-position:17px 0,0 0}}
+.xpt{font-size:11px;color:var(--sub);text-align:right;margin-top:2px;font-weight:700}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.chips span{font-size:12px;background:#fff;border:2px solid var(--line);border-radius:20px;padding:1px 9px;font-weight:700;color:#7a4b22}
+
+/* 공통 창 */
+.card{background:var(--cream);border:3px solid var(--line);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 4px 0 #e2c391}
+.card.tap{cursor:pointer}.card.tap:active{transform:translateY(2px);box-shadow:0 2px 0 #e2c391}
+.jobready{background:linear-gradient(180deg,#f3e8ff,#e2ccff);border-color:#b48cff;box-shadow:0 4px 0 #9d6bff;color:#5b2bb5;font-weight:700;animation:pulse 1.1s ease-in-out infinite alternate}
+@keyframes pulse{to{transform:scale(1.025)}}
+.ptsnote{background:linear-gradient(180deg,#eaffdf,#d3f7c3);border-color:#9fdc84;box-shadow:0 4px 0 #7cc560;color:#2f6b1a;font-weight:700;font-size:14px}
+.install{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#e8f6ff;border-color:#9fd3ff;box-shadow:0 4px 0 #74b8ef}
+.dayhead{display:flex;justify-content:space-between;align-items:center}
+.dtitle{font-size:20px;color:#5a3417}.stars{color:#ffb703;letter-spacing:1px;text-shadow:0 1px 0 #d08a00}
+.dcount{font-size:15px;color:var(--sub)}.dcount b{font-size:32px;color:var(--orange);font-weight:400}
+.pbar{height:15px;background:#fff;border:2px solid #cfe8bf;border-radius:10px;overflow:hidden;margin-top:10px}
+.pbar i{display:block;height:100%;background:linear-gradient(180deg,#9ff28a,#3fbf55);border-radius:8px;transition:width .4s}
+.clear{margin-top:10px;background:linear-gradient(180deg,#fff6c4,#ffe27a);border:2px solid #f0b400;color:#8a5a00;border-radius:14px;padding:8px 10px;font-weight:800;font-size:14px;text-align:center}
+.buffs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.buffs span{font-size:12px;background:#fff;border:2px solid #ffd6a5;color:#b35c00;border-radius:20px;padding:2px 9px;font-weight:700}
+
+/* 퀘스트 */
+.qlist{display:flex;flex-direction:column;gap:9px;margin-bottom:12px}
+.quest{display:flex;align-items:center;gap:12px;background:#fff;border:3px solid var(--line);border-radius:18px;padding:11px 12px;cursor:pointer;transition:transform .1s;box-shadow:0 4px 0 #ead2a6}
+.quest:active{transform:translateY(2px);box-shadow:0 2px 0 #ead2a6}
+.quest:has(input):active{transform:none;box-shadow:0 4px 0 #ead2a6}
+.quest.done{background:#f0ffe9;border-color:#a8e597;box-shadow:0 4px 0 #8fd27a}
+.quest.done .qname{color:#3b8f2b;text-decoration:line-through;text-decoration-thickness:2px}
+.qicon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:23px;background:#fff;background:color-mix(in srgb,var(--c) 20%,#fff);border:3px solid color-mix(in srgb,var(--c) 55%,#fff);flex:none}
+.qbody{flex:1;min-width:0}.qname{font-size:17px;color:#4b3526}.qmeta{font-size:12px;color:var(--sub);margin-top:1px}
+.dots{font-size:13px;margin-top:3px;letter-spacing:1px}
+.qcheck{width:40px;height:40px;border-radius:50%;border:3px dashed #e0c79c;display:grid;place-items:center;font-weight:900;font-size:20px;flex:none;color:#fff;background:#fffdf7}
+.quest.done .qcheck{background:radial-gradient(circle at 40% 35%,#9ff28a,#3fbf55);border:3px solid #2e9a42;animation:stamp .35s ease-out;box-shadow:0 2px 0 #2e9a42;text-shadow:0 1px 0 #2e7d32}
+@keyframes stamp{0%{transform:scale(1.8) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
+.counter{display:flex;align-items:center;gap:6px;flex:none}
+.counter button{width:38px;height:38px;border-radius:50%;border:2px solid #9fd3ff;background:linear-gradient(180deg,#fff,#dff1ff);font-size:22px;color:#2f7fd0;box-shadow:0 3px 0 #74b8ef;font-family:var(--jua)}
+.counter button:active{transform:translateY(2px);box-shadow:0 1px 0 #74b8ef}
+.counter span{min-width:40px;text-align:center;font-family:var(--jua);font-size:18px}
+.numrow{display:flex;gap:6px;margin-top:7px;align-items:center;flex-wrap:wrap}
+.numrow input{width:122px;padding:7px 10px}.numrow span{font-size:13px;color:var(--sub)}
+.shl{font-size:12px;color:#1f6fc5;text-decoration:none;border:2px solid #a9d4ff;border-radius:12px;padding:5px 9px;background:#eef7ff;white-space:nowrap;font-weight:700}
+
+/* 버튼 */
+.btn{background:linear-gradient(180deg,#fff,#f6e7cc);border:2px solid #d9b27c;border-radius:16px;padding:10px 15px;font-size:16px;color:#6b4320;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 0 #c99a5f;transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #c99a5f}
+.btn.primary{background:linear-gradient(180deg,#ffd35c,#ff9a1f);border-color:#e57a00;color:#fff;text-shadow:0 1px 0 #c25e00,0 0 2px #c25e00;box-shadow:0 4px 0 #c25e00}
+.btn.primary:active{box-shadow:0 1px 0 #c25e00}
+.btn.ghost{background:#fffaf0;box-shadow:0 3px 0 #e2c391}
+.btn.danger{background:linear-gradient(180deg,#ffb3b3,#ff6b6b);border-color:#e04848;color:#fff;text-shadow:0 1px 0 #b83232;box-shadow:0 4px 0 #b83232}
+.btn.sm{padding:6px 12px;font-size:14px;border-radius:13px;box-shadow:0 3px 0 #c99a5f}
+.btn.primary.sm{box-shadow:0 3px 0 #c25e00}
+.btn.wide{width:100%;margin-top:10px}
+.btn:disabled{filter:grayscale(.8);opacity:.5;cursor:default;transform:none}
+.btn.glow{animation:pulse 1s ease-in-out infinite alternate}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.row .btn{flex:1}
+.x{background:none;border:0;color:#c9a27a;font-size:16px;padding:6px 8px}
+.form{display:flex;gap:8px;flex-wrap:wrap}.form input{flex:1 1 140px}.form select{flex:1 1 110px}
+.sechead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.sechead h3{margin:0}
+.pts{font-size:13px;color:var(--sub);background:#fff;border-radius:20px;padding:2px 11px;border:2px solid var(--line)}
+.pts.on{color:#fff;background:linear-gradient(180deg,#ffd35c,#ff9a1f);border-color:#e57a00;text-shadow:0 1px 0 #c25e00;animation:pulse 1s ease-in-out infinite alternate}
+
+/* 궁극기·유혹 카드 */
+.ult{display:flex;justify-content:space-between;align-items:center;gap:10px;border-color:var(--pc);background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--pc) 14%,#fff))}
+.urgehead{display:flex;gap:12px;align-items:flex-start}.urgehead .big{font-size:32px}
+.urgestats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;text-align:center}
+.urgestats div{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px}.urgestats b{display:block;font-size:23px;color:var(--orange)}.urgestats small{color:var(--sub);font-size:11px}
+
+/* 캐릭터 */
+.prof{text-align:center;background:linear-gradient(180deg,#d9f0ff,#fffaf0 75%);border-color:#b9e0ff;box-shadow:0 4px 0 #8cc7f5}
+.prof .ava{margin:8px auto 12px;width:112px;height:112px}
+.cp{font-size:13px;color:var(--sub)}.cp b{font-size:30px;color:var(--orange);display:block;text-shadow:0 2px 0 #ffd8a8}
+.stat{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:2px dashed var(--line)}
+.sicon{font-size:22px;width:42px;height:42px;border-radius:50%;background:#fff3dc;border:2px solid #ffd9a0;display:grid;place-items:center;flex:none}
+.sbody{flex:1}.sbody b{font-size:15px}.sbody b em{font-style:normal;color:var(--orange);margin-left:5px;font-family:var(--jua);font-size:19px}
+.sbody small{display:block;font-size:12px;color:#8a5cd6}.sbody small.flav{color:var(--sub)}
+.plus{width:42px;height:42px;border-radius:50%;border:2px solid #e57a00;background:linear-gradient(180deg,#ffd35c,#ff9a1f);font-size:24px;color:#fff;font-family:var(--jua);box-shadow:0 3px 0 #c25e00;text-shadow:0 1px 0 #c25e00}
+.plus:active{transform:translateY(2px);box-shadow:0 1px 0 #c25e00}
+.plus:disabled{background:#eee3d0;border-color:#d8c7aa;box-shadow:0 3px 0 #cdb894;text-shadow:none;opacity:.6}
+.tree{font-size:16px;color:#7a4b22;margin:16px 0 6px;padding-left:4px}
+.skill{display:flex;gap:10px;align-items:center;padding:10px;border-radius:16px;background:#fff;margin-top:7px;border:2px solid var(--line)}
+.skill.has{border-color:#ffc56b;background:#fffaf0}.skill.locked{opacity:.55}
+.skicon{font-size:22px;width:42px;height:42px;border-radius:14px;background:#eef7ff;border:2px solid #cfe7ff;display:grid;place-items:center;flex:none}
+.skbody{flex:1;min-width:0}.skbody b{font-size:15px}
+.skbody small{display:block;font-size:12px;color:var(--sub)}.skbody small.next{color:#2e9a42}.skbody small.req{color:#e0546a}
+.rank{font-size:14px;color:var(--orange);margin-left:5px}
+.curjob{display:flex;gap:12px;align-items:center;background:#fff;border:3px solid var(--pc);border-radius:16px;padding:10px}
+.cj-ic{width:66px;height:66px;flex:none}.cj-ic svg{width:100%;height:100%}.curjob small{display:block;color:var(--sub);font-size:12px}
+.plist{margin:10px 0;padding-left:20px;font-size:13px}.plist li{margin:3px 0}
+.road{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.road span{font-size:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:4px 8px}
+.road span.got{border-color:#ffc56b;background:#fff6df;color:#b35c00;font-weight:700}.road small{color:var(--sub);margin-left:4px}
+.reqbox{background:#fff;border:2px dashed #e6cfa6;border-radius:14px;padding:10px 12px;margin:10px 0}
+.reqbox .req{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--sub)}.reqbox .req.ok{color:#2e9a42;font-weight:700}
+.paths{display:grid;grid-template-columns:1fr;gap:10px}
+.path{border:3px solid var(--pc);border-radius:18px;padding:12px;background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--pc) 10%,#fff))}
+.phead{display:flex;gap:10px;align-items:center}.picon{width:58px;height:58px;flex:none;border-radius:50%;background:radial-gradient(circle at 50% 30%,#fff,#e4f4ff 75%);display:grid;place-items:center}.picon svg{width:92%;height:92%}
+.phead b{font-family:var(--jua);font-weight:400;font-size:19px}.phead small{display:block;color:var(--pc);font-size:12px;font-weight:800}
+.pstory{font-size:13px;color:var(--sub);margin:8px 0 4px}.proad{font-size:12px;color:var(--sub)}
+.path ul{margin:8px 0;padding-left:18px;font-size:13px}
+
+/* 상점·기록·설정 */
+.goldbig{font-size:36px;color:#e08a00;margin-bottom:4px;text-shadow:0 2px 0 #ffe0a3}
+.rw{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:2px dashed var(--line)}.rwn{flex:1;font-weight:700}.rwp{color:#e08a00;font-family:var(--jua);font-size:17px}
+.logi{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:2px dashed var(--line);font-size:13px}.logi small{color:var(--sub);flex:none}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sbox{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center}.sbox b{display:block;font-size:19px;color:#7a4b22}.sbox small{font-size:11px;color:var(--sub)}
+.calw{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.calh{text-align:center;font-size:11px;color:var(--sub);font-weight:700}
+.cal{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;font-size:11px;background:#f3e6cf;color:#a58a6e;font-weight:700}
+.cal.c{background:linear-gradient(180deg,#9ff28a,#3fbf55);color:#fff}.cal.p{background:#cdf3c2;color:#3b8f2b}.cal.s{background:#bfe3ff;color:#1f6fc5}.cal.none{background:#f3e6cf}
+.cal.fut,.cal.pre{background:transparent;color:#d6c2a3}.cal.today{outline:3px solid var(--orange);outline-offset:-1px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--sub);margin-top:10px}.legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:4px;vertical-align:-1px}
+.legend i.c{background:#3fbf55}.legend i.p{background:#cdf3c2}.legend i.s{background:#bfe3ff}.legend i.none{background:#f3e6cf}
+.ach{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:2px dashed var(--line);opacity:.45}.ach.got{opacity:1}.ach span{font-size:24px}.ach small{display:block;color:var(--sub);font-size:12px}
+.book{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bk{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 4px;text-align:center}.bk span{font-size:30px;display:block}.bk b{font-size:12px;display:block}.bk small{font-size:11px;color:var(--sub)}.bk.unk{opacity:.5;filter:grayscale(1)}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:2px dashed var(--line)}
+.setrow span{flex:1}.setrow small{display:block;color:var(--sub);font-size:12px}.setrow.lock{opacity:.5}
+.sw{appearance:none;-webkit-appearance:none;width:50px;height:28px;border-radius:20px;background:#e6d5b8;position:relative;padding:0;border:0;flex:none;cursor:pointer;transition:background .2s;box-shadow:inset 0 2px 3px rgba(0,0,0,.12)}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 2px 3px rgba(0,0,0,.2)}
+.sw:checked{background:#5ad16a}.sw:checked::after{left:25px}
+.pvnote{background:#fff3c4;border-color:#ffd76a;color:#8a5a00;font-size:13px}
+
+/* 아래 탭·전투 버튼 */
+#tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:linear-gradient(180deg,#fffaf0,#ffefd0);border-top:3px solid var(--wood);padding:5px 4px calc(4px + env(safe-area-inset-bottom));z-index:20;border-radius:22px 22px 0 0;box-shadow:0 -3px 0 rgba(196,132,67,.25)}
+#tabs button{flex:1;background:none;border:0;color:#a7876a;padding:2px 0;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px;position:relative}
+#tabs .ti{font-size:21px;width:42px;height:34px;display:grid;place-items:center;border-radius:14px;transition:transform .15s}
+#tabs button.on{color:#d46200}#tabs button.on .ti{background:linear-gradient(180deg,#ffe08a,#ffb84d);box-shadow:0 3px 0 #e08a00;transform:translateY(-5px)}
+.badge{position:absolute;top:-2px;left:calc(50% + 8px);background:var(--red);color:#fff;font-size:10px;font-weight:800;border-radius:9px;padding:0 5px;border:2px solid #fff;font-family:-apple-system,sans-serif}
+#fab{position:fixed;right:14px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:21;background:linear-gradient(180deg,#ff8f8f,#ff4d4d);color:#fff;border:3px solid #fff;border-radius:30px;padding:11px 18px;font-size:17px;box-shadow:0 5px 0 #c23434,0 8px 18px rgba(255,77,77,.35);text-shadow:0 1px 0 #b32626}
+#fab:active{transform:translateY(3px);box-shadow:0 2px 0 #c23434}
+#fab.on{animation:pulse .8s ease-in-out infinite alternate}
+
+/* 유혹 전투 */
+#battle{position:fixed;inset:0;z-index:40;background:linear-gradient(180deg,#5cb8ff,#bfe6ff 55%,#eaf8ff);overflow-y:auto;padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 20px)}
+.bwrap{max-width:480px;margin:0 auto;text-align:center}
+.btop{display:flex;justify-content:space-between;align-items:center;font-size:19px;color:#fff;text-shadow:0 2px 0 #2f7fd0}
+.btop button{background:#fff;border:2px solid #9fd3ff;border-radius:14px;padding:5px 12px;color:#2f7fd0;font-family:var(--jua);box-shadow:0 3px 0 #74b8ef;text-shadow:none}
+.stage{position:relative;margin:10px 0 6px;padding:8px 0 24px;border-radius:24px;background:linear-gradient(180deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,.1) 64%,#8ee07a 64%,#5cc45a 100%);border:3px solid #fff;overflow:hidden;box-shadow:0 4px 0 rgba(47,127,208,.25)}
+.mname{font-size:17px;color:#fff;text-shadow:0 2px 0 #c23434,0 0 3px #c23434}
+.memoji{height:128px;display:grid;place-items:center;font-size:100px;animation:bob 1.8s ease-in-out infinite;transition:font-size 1s;position:relative;z-index:1}
+.memoji.hit{animation:hit .5s}
+.mshadow{width:110px;height:16px;border-radius:50%;background:rgba(0,60,0,.22);margin:-12px auto 0;position:relative}
+@keyframes bob{50%{transform:translateY(-10px) scale(1.03,.97)}}
+@keyframes hit{20%{transform:translateX(-10px) rotate(-8deg);filter:brightness(1.8)}50%{transform:translateX(10px) rotate(6deg)}100%{transform:none}}
+.dmg{position:absolute;top:34%;font-family:var(--jua);font-size:32px;color:#ffcf3f;-webkit-text-stroke:2px #c25e00;text-shadow:0 3px 0 #8a3c00;animation:dmgUp 1s ease-out forwards;z-index:2;pointer-events:none}
+@keyframes dmgUp{0%{transform:translateY(10px) scale(.6);opacity:0}25%{transform:translateY(-6px) scale(1.25);opacity:1}100%{transform:translateY(-54px) scale(1);opacity:0}}
+.hpbar{height:16px;background:#fff;border:3px solid #fff;border-radius:12px;overflow:hidden;margin-top:8px;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.hpbar i{display:block;height:100%;background:linear-gradient(180deg,#ff9aa2,#ff4d6d);border-radius:8px;transition:width 1s linear}
+.hptext{font-size:13px;color:#c2334d;margin-top:4px;font-weight:700}
+.btime{font-size:50px;margin:4px 0;color:#fff;text-shadow:0 3px 0 #2f7fd0,0 0 4px #2f7fd0;font-variant-numeric:tabular-nums}
+.bmsg{min-height:44px;background:#fff;border:3px solid #ffd6a5;border-radius:18px;padding:10px 12px;font-size:14px;margin:8px 0 12px;position:relative;color:#6b4320;box-shadow:0 3px 0 #f0b97a}
+.bmsg::before{content:"";position:absolute;top:-12px;left:50%;margin-left:-10px;border:10px solid transparent;border-bottom-color:#ffd6a5;border-top:0}
+.breath{display:flex;flex-direction:column;align-items:center;margin:10px 0}
+.bring{width:130px;height:130px;display:grid;place-items:center}
+.bcircle{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff,#a8f2e4 55%,#4fd1c5);box-shadow:0 0 0 6px rgba(255,255,255,.7),0 6px 18px rgba(79,209,197,.5);transform:scale(.6);transition:transform 1s linear}
+.blabel{font-family:var(--jua);font-size:19px;margin-top:8px;color:#138a7e}
+.lockhint{font-size:12px;color:var(--sub);background:rgba(255,255,255,.8);border:2px dashed #e6cfa6;border-radius:14px;padding:8px;margin:8px 0}
+.subst{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0 12px}
+.subst button{background:#fff;border:2px solid var(--line);border-radius:14px;padding:9px 6px;font-size:13px;color:#6b4320;box-shadow:0 3px 0 #e2c391}
+.subst button.on{background:#e6ffe0;border-color:#5ad16a;color:#2e7d32;box-shadow:0 3px 0 #3fbf55}
+.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:14px 0}
+.mpick{background:#fff;border:3px solid var(--line);border-radius:18px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 0 #e2c391;color:#4b3526}
+.mpick:active{transform:translateY(3px);box-shadow:0 1px 0 #e2c391}
+.mpick span{font-size:38px;animation:bob 2.2s ease-in-out infinite}.mpick b{font-family:var(--jua);font-weight:400;font-size:16px}.mpick small{color:#e0546a;font-size:11px}
+#battle h2{color:#fff;text-shadow:0 2px 0 #2f7fd0}
+#battle .sub{color:#2b5f8f}
+#battle .btn.ghost{background:#fff}
+
+/* 팝업 */
+#modal{position:fixed;inset:0;z-index:50;background:rgba(40,70,110,.45);display:flex;align-items:center;justify-content:center;padding:20px}
+.mbox{background:var(--cream);border:4px solid var(--wood);border-radius:26px;padding:20px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;animation:pop .35s cubic-bezier(.2,1.4,.4,1);box-shadow:0 6px 0 var(--wood2),0 14px 30px rgba(0,0,0,.25);position:relative}
+.mbox.fx{text-align:center;background:radial-gradient(320px 220px at 50% 0%,#fff3b8,#fffaf0 72%)}
+.mbox.fx::before{content:"✦   ✧   ✦";position:absolute;top:8px;left:0;right:0;color:#ffc93c;font-size:18px;letter-spacing:14px;animation:twinkle 1.1s ease-in-out infinite alternate;pointer-events:none}
+@keyframes twinkle{to{opacity:.35;transform:translateY(3px)}}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.burst{font-size:36px;letter-spacing:1px;color:#ffcf3f;-webkit-text-stroke:2px #e07000;text-shadow:0 4px 0 #b35400;animation:bounce .9s ease-in-out infinite alternate;margin-top:6px}
+@keyframes bounce{to{transform:translateY(-4px) scale(1.04)}}
+.biglv{font-size:62px;color:#fff;-webkit-text-stroke:3px #ff8a1f;text-shadow:0 5px 0 #c25e00}
+.tierup,.unl,.jobhint{background:#fff;border:2px dashed #ffc56b;border-radius:14px;padding:10px;margin-top:10px;font-size:13px;text-align:left}
+.tierup .chg{color:#c25e00;margin-top:3px;font-weight:700}.tierup small{display:block;color:var(--sub);margin-top:6px}
+.jobhint{color:#7c3aed;font-weight:700;text-align:center;border-color:#c9a7ff}
+.wm,.onb-ic{font-size:76px;margin:6px 0;line-height:1.15}
+.wm{animation:bob 1.8s ease-in-out infinite}
+.jf-ic{width:132px;height:132px;margin:8px auto 0;border-radius:50%;background:radial-gradient(circle at 50% 30%,#fff,#d4eeff 72%);box-shadow:0 0 0 5px #fff,0 0 0 9px #ffd34d;display:grid;place-items:center;animation:bob 1.8s ease-in-out infinite}
+.jf-ic svg{width:92%;height:92%}
+.jobfx .plist,.onb .howl{text-align:left}
+.howl div{font-size:13px;margin:7px 0;color:#5a4030;background:#fff;border-radius:12px;padding:7px 9px;border:2px solid var(--line)}
+.onb input{width:100%;margin:8px 0;text-align:center}
+
+/* 알림 */
+#toasts{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:0;right:0;z-index:60;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+.toast{background:#fff;border:3px solid #ffd6a5;color:#6b4320;border-radius:18px;padding:8px 14px;font-size:14px;font-weight:700;max-width:90%;box-shadow:0 4px 0 #f0b97a,0 6px 16px rgba(0,0,0,.12);animation:tin .3s cubic-bezier(.2,1.4,.4,1);transition:opacity .4s,transform .4s}
+.toast.out{opacity:0;transform:translateY(-10px)}
+@keyframes tin{from{transform:translateY(-14px) scale(.8);opacity:0}}
+.float{position:fixed;transform:translateX(-50%);color:#ffcf3f;font-family:var(--jua);font-size:22px;-webkit-text-stroke:1.5px #c25e00;text-shadow:0 3px 0 #8a3c00;pointer-events:none;z-index:70;animation:floatUp 1.2s ease-out forwards;white-space:nowrap}
+@keyframes floatUp{0%{transform:translate(-50%,0) scale(.7)}20%{transform:translate(-50%,-12px) scale(1.15)}100%{transform:translate(-50%,-64px) scale(1);opacity:0}}
+
+/* 레이드 */
+.raidmini{display:flex;gap:12px;align-items:center;background:linear-gradient(180deg,#fff2f2,#ffe0e0);border-color:#ffb3b3;box-shadow:0 4px 0 #f08a8a}
+.raidmini.rage{animation:ragep .8s ease-in-out infinite alternate}.raidmini.clr{background:linear-gradient(180deg,#fff6c4,#ffe27a);border-color:#f0b400;box-shadow:0 4px 0 #d49b00}
+@keyframes ragep{to{box-shadow:0 4px 0 #f08a8a,0 0 16px #ff6b6b}}
+.rm-ic{font-size:40px;animation:bob 2s ease-in-out infinite}.rm-b{flex:1;min-width:0}.rm-b b{font-family:var(--jua);font-weight:400;font-size:17px}
+.hpbar.sm{height:13px;margin:5px 0 3px;border-width:2px}.hpbar.big{height:22px}
+.dbadge{font-size:12px;color:#fff;background:var(--dc);border-radius:20px;padding:1px 9px;vertical-align:2px;text-shadow:0 1px 0 rgba(0,0,0,.3);border:2px solid #fff;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.boss{text-align:center;border-color:#ffb3b3;box-shadow:0 4px 0 #f08a8a}
+.boss.rage{border-color:#ff5b5b;box-shadow:0 4px 0 #e04848,0 0 22px rgba(255,91,91,.45)}
+.boss.cleared{border-color:#f0b400;box-shadow:0 4px 0 #d49b00}
+.boss .stage{background:linear-gradient(180deg,#9ed8ff 0%,#dff3ff 64%,#8ee07a 64%,#5cc45a 100%)}
+.bossic{font-size:92px;line-height:1.15;margin:4px 0 0;animation:bob 2s ease-in-out infinite;position:relative;z-index:1}
+.boss.cleared .bossic,.boss.failed .bossic{filter:grayscale(1);opacity:.5;animation:none}
+.boss.rage .bossic,.wm.rg{animation:rage .5s ease-in-out infinite alternate}
+@keyframes rage{from{transform:scale(1) rotate(-4deg)}to{transform:scale(1.08) rotate(4deg);filter:drop-shadow(0 0 10px #ff4d4d)}}
+.bhead{display:flex;justify-content:space-between;align-items:center}
+.weak{margin-top:10px;font-size:13px;background:#fff;border:2px dashed #ffb3b3;border-radius:14px;padding:9px;text-align:center}
+.head{margin-top:10px;text-align:left}.head b{font-size:14px}.head small{color:var(--sub);font-size:11px}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.wkd{background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px 1px}.wkd small{display:block;color:var(--sub);font-size:11px}.wkd b{display:block;font-size:12px;color:var(--orange)}.wkd em{display:block;font-style:normal;color:#e0546a;font-size:11px}
+.wkd.today{border-color:var(--orange);background:#fff6df}
+.how{font-size:13px;padding:7px 0;border-top:2px dashed var(--line)}
+.diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.dbtn{background:#fff;border:3px solid var(--line);border-radius:16px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 3px 0 #e2c391}
+.dbtn b{color:var(--dc);font-family:var(--jua);font-weight:400;font-size:18px}.dbtn small{font-size:10px;color:var(--sub)}
+.dbtn.on{border-color:var(--dc);background:color-mix(in srgb,var(--dc) 12%,#fff);box-shadow:0 3px 0 var(--dc)}.dbtn:disabled{opacity:.45}
+.drops{display:flex;gap:6px;margin-top:8px}.drops div{flex:1;background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px 4px;text-align:center;font-size:11px}.drops span{display:block;font-size:26px}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.slot{background:#fff;border:3px solid var(--rc);border-radius:16px;padding:8px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:122px}
+.slot small{font-size:10px;color:var(--sub)}.slot b{font-size:12px}.sl-ic{font-size:30px}.slot .x{font-size:11px;padding:2px 6px}
+.inv{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:2px dashed var(--line)}.inv .ic{font-size:26px}.inv div{flex:1}.inv small{display:block;font-size:12px;color:var(--sub)}
+.rar{font-size:11px;font-weight:800}
+.loot{display:flex;gap:12px;align-items:center;text-align:left;background:#fff;border:3px solid var(--rc);border-radius:16px;padding:10px;margin:10px 0;box-shadow:0 0 0 4px color-mix(in srgb,var(--rc) 25%,transparent);animation:lootpop .5s .2s both cubic-bezier(.2,1.5,.4,1)}
+@keyframes lootpop{from{transform:scale(.4) rotate(-10deg);opacity:0}}
+.loot span{font-size:42px}.loot b{display:block}.loot small{display:block;font-size:12px;color:var(--sub)}
+.hist{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:7px 0;border-top:2px dashed var(--line)}
+.hc{display:flex;justify-content:space-between;align-items:center;gap:10px;background:linear-gradient(180deg,#eef9ff,#dff3ff);border-color:#a9d4ff;box-shadow:0 4px 0 #8cc7f5}.hc.on{border-color:#3b9cff}.hc .btn{white-space:nowrap;flex:none}
+
+</style>
+</head>
+<body>
+<div id="app"><header id="hdr"></header><main id="main"></main></div>
+<button id="fab" data-act="battle-open">⚔️ 유혹이 왔다!</button>
+<nav id="tabs"></nav>
+<div id="battle" class="hidden"></div>
+<div id="modal" class="hidden"></div>
+<div id="toasts"></div>
+<script>
+'use strict';
+const VERSION='1.3.0', KEY='healthRPG.v1';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Math.round(n).toLocaleString('ko-KR');
+const pct=x=>Math.round(x*100);
+const pad=n=>String(n).padStart(2,'0');
+let inFrame=false; try{inFrame=window.self!==window.top}catch(e){inFrame=true}
+let HB=null; try{HB=window.HealthBridge||null}catch(e){HB=null}
+const inApp=!!HB;
+const isStandalone=()=>{if(inApp)return true;try{return matchMedia('(display-mode: standalone)').matches}catch(e){return false}};
+
+/* ---------- 날짜 ---------- */
+const keyOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+function todayKey(){const ds=(S&&S.dayStart!=null)?S.dayStart:4;return keyOf(new Date(Date.now()-ds*3600e3))}
+function parseKey(k){const a=k.split('-').map(Number);return new Date(a[0],a[1]-1,a[2])}
+function addDays(k,n){const d=parseKey(k);d.setDate(d.getDate()+n);return keyOf(d)}
+function weekKey(k){const d=parseKey(k);d.setDate(d.getDate()-((d.getDay()+6)%7));return keyOf(d)}
+function fmtDate(k){const d=parseKey(k);return `${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`}
+function fmtTime(ms){const d=new Date(ms);return `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`}
+
+/* ---------- 게임 데이터 ---------- */
+const CATS={
+ endure:{name:'참기',icon:'🔥',color:'#f97316',stat:'tem'},
+ body:{name:'운동',icon:'💪',color:'#22c55e',stat:'vit'},
+ mind:{name:'마음·수면',icon:'🌙',color:'#818cf8',stat:'wis'},
+ life:{name:'생활',icon:'🥗',color:'#06b6d4',stat:'wis'}};
+const CAT_BASE={endure:25,body:20,mind:20,life:15};
+const TPL=[
+ {id:'water',icon:'💧',cat:'life',type:'count',unlock:1,def:true,t:[5,6,6,7,7,8,8],name:n=>`물 ${n}잔 마시기`},
+ {id:'walk',icon:'🚶',cat:'body',type:'num',unit:'보',unlock:1,def:true,t:[4000,5000,6000,7000,8000,9000,10000],name:n=>`${n.toLocaleString('ko-KR')}보 이상 걷기`},
+ {id:'night',icon:'🌃',cat:'endure',unlock:1,def:true,t:[23,22,22,22,21,21,21],name:n=>`밤 ${n}시 이후 야식 참기`},
+ {id:'sweets',icon:'🍬',cat:'endure',unlock:1,def:true,t:['단 음료 안 마시기','단 음료 안 마시기','단 음료·과자 참기','단 음료·과자 참기','단 음료·과자·디저트 참기'],name:n=>n},
+ {id:'sleep',icon:'😴',cat:'mind',type:'sleep',unlock:1,def:true,t:[390,360,360,330,330,300],name:n=>`어젯밤 ${relLabel(n)} 전에 잠들기`},
+ {id:'exercise',icon:'🏋️',cat:'body',type:'num',unit:'분',unlock:5,def:true,t:[10,10,15,20,25,30,30],name:n=>`운동 ${n}분 (근력·유산소 무엇이든)`},
+ {id:'veggie',icon:'🥦',cat:'life',unlock:8,def:true,t:[1,1,1,2,2,2,3],name:n=>`채소 반찬 ${n}끼 챙겨 먹기`},
+ {id:'stretch',icon:'🤸',cat:'body',unlock:10,def:true,t:[5,5,5,10,10,10,15],name:n=>`스트레칭 ${n}분`},
+ {id:'phone',icon:'📵',cat:'mind',unlock:12,def:true,t:[15,15,15,30,30,45,60],name:n=>`잠들기 ${n}분 전 휴대폰 내려놓기`},
+ {id:'meditate',icon:'🕯️',cat:'mind',unlock:15,def:true,t:[3,3,3,5,5,7,10],name:n=>`명상·호흡 ${n}분`},
+ {id:'alcohol',icon:'🍶',cat:'endure',unlock:1,def:false,t:['술 마시지 않기'],name:n=>n},
+ {id:'smoke',icon:'🚭',cat:'endure',unlock:1,def:false,t:['담배 참기'],name:n=>n}];
+const tval=(t,tier)=>t.t[Math.min(tier,t.t.length-1)];
+const tierOf=lv=>lv<5?0:lv<10?1:lv<15?2:lv<20?3:lv<30?4:lv<40?5:6;
+const need=L=>80+40*L;
+
+/* ---------- 레이드·장비 데이터 ---------- */
+function relLabel(n){const m=18*60+n,h=Math.floor(m/60)%24,mm=m%60;if(h===0&&mm===0)return'자정';const t=mm?` ${mm}분`:'';return h<12?`새벽 ${h}시${t}`:`밤 ${h-12}시${t}`}
+function toRel(s){const a=s.split(':').map(Number);let t=a[0]*60+a[1];if(a[0]<12)t+=1440;return t-1080}
+const BOSSES={
+ goblin:{name:'고블린 킹',icon:'👺',lore:'밤마다 야식 냄새를 풍기며 고블린들을 이끄는 왕.',hint:'밤이 깊어질수록 힘이 세지는 것 같다…',weakQ:['night'],weakM:['night'],weakLabel:'야식 참기 퀘스트 · 야식 유혹 전투'},
+ dragon:{name:'설탕 드래곤',icon:'🐉',lore:'달콤한 숨결로 군것질 욕구를 일으키는 용.',hint:'단 것을 먹을수록 비늘이 단단해진다…',weakQ:['sweets'],weakM:['sweet'],weakLabel:'단 음료·군것질 참기 · 단 것 유혹 전투'},
+ giant:{name:'게으름의 거인',icon:'🗿',lore:'한 번 앉으면 일어나지 않는 돌의 거인.',hint:'움직이는 자를 가장 두려워한다…',weakCat:['body'],weakM:['lazy'],weakSteps:true,weakLabel:'운동 계열 퀘스트 · 초과 걸음 · 운동 미루기 유혹 전투'},
+ lich:{name:'불면의 리치',icon:'💀',lore:'밤새 화면 불빛으로 잠을 빼앗는 언데드 마법사.',hint:'일찍 잠드는 자의 빛을 견디지 못한다…',weakQ:['sleep','phone','meditate'],weakM:['phone'],weakLabel:'수면·휴대폰 내려놓기·명상 퀘스트 · 폰 유혹 전투'},
+ hydra:{name:'도파민 히드라',icon:'🐍',lore:'머리 셋이 각각 다른 욕망을 속삭이는 괴물.',hint:'머리마다 통하는 공격이 다르다. 셋을 모두 베어야 쓰러진다.',weakBonus:true,weakLabel:'올클리어 필살기'}};
+const BOSS_ORDER=['goblin','dragon','giant','lich','hydra'];
+const HEADS={endure:{name:'욕망의 머리',sub:'참기 퀘스트 · 유혹 격퇴'},body:{name:'나태의 머리',sub:'운동 계열 퀘스트 · 초과 걸음'},mindlife:{name:'혼돈의 머리',sub:'마음·수면·생활 퀘스트'}};
+const DIFF={normal:{name:'노말',f:4.5,heal:.05,col:'#3fbf55',tier:0,xp:.3,gold:150,r:0},hard:{name:'하드',f:5.5,heal:.10,col:'#f59e0b',tier:1,xp:.4,gold:300,r:1},hell:{name:'헬',f:6.5,heal:.15,col:'#ef4444',tier:2,xp:.5,gold:500,r:2}};
+const SLOTS={weapon:{name:'무기',icon:'🗡️'},armor:{name:'방어구',icon:'🛡️'},acc:{name:'장신구',icon:'💍'}};
+const RAR=[{name:'일반',col:'#7c8a99',m:1},{name:'희귀',col:'#2f8cff',m:1.5},{name:'전설',col:'#ff8a00',m:2}];
+const EFX={urge:'유혹 격퇴 XP',endure:'참기 퀘스트 XP',body:'운동 퀘스트 XP',mindlife:'마음·수면·생활 XP',all:'모든 XP',gold:'골드 획득',raid:'레이드 피해',crit:'크리티컬 확률',allclear:'올클리어 보너스',heal:'보스 회복량'};
+const ITEMS={
+ goblin_weapon:{name:'고블린 킹의 이빨',icon:'🦷',slot:'weapon',fx:'urge',v:10},
+ goblin_armor:{name:'야식 차단 갑옷',icon:'🥋',slot:'armor',fx:'endure',v:8},
+ goblin_acc:{name:'달빛 반지',icon:'💍',slot:'acc',fx:'gold',v:10},
+ dragon_weapon:{name:'드래곤 슬레이어',icon:'⚔️',slot:'weapon',fx:'raid',v:12},
+ dragon_armor:{name:'설탕 결정 방패',icon:'🛡️',slot:'armor',fx:'endure',v:8},
+ dragon_acc:{name:'용의 눈',icon:'👁️',slot:'acc',fx:'crit',v:3},
+ giant_weapon:{name:'거인의 망치',icon:'🔨',slot:'weapon',fx:'body',v:12},
+ giant_armor:{name:'강철 근육 갑옷',icon:'🦺',slot:'armor',fx:'allclear',v:10},
+ giant_acc:{name:'만보기 부적',icon:'📿',slot:'acc',fx:'all',v:4},
+ lich_weapon:{name:'수면의 지팡이',icon:'🪄',slot:'weapon',fx:'mindlife',v:12},
+ lich_armor:{name:'꿈의 로브',icon:'🧥',slot:'armor',fx:'heal',v:20},
+ lich_acc:{name:'리치의 성물함',icon:'⚱️',slot:'acc',fx:'urge',v:8},
+ hydra_weapon:{name:'히드라 독검',icon:'🗡️',slot:'weapon',fx:'raid',v:12},
+ hydra_armor:{name:'히드라 비늘 갑옷',icon:'🦎',slot:'armor',fx:'all',v:4},
+ hydra_acc:{name:'도파민 차단 목걸이',icon:'🧿',slot:'acc',fx:'urge',v:10}};
+const SHEALTH='intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.sec.android.app.shealth;end';
+
+const STATS={
+ wil:{name:'의지력',icon:'🔥',per:5,desc:v=>`유혹 격퇴 XP +${v*5}%`,flav:'욕구를 이겨낼수록 보상이 커져요'},
+ tem:{name:'절제력',icon:'🧊',per:4,desc:v=>`참기 퀘스트 XP +${v*4}%`,flav:'야식·군것질을 참아내는 힘'},
+ vit:{name:'체력',icon:'💪',per:4,desc:v=>`운동 퀘스트 XP +${v*4}%`,flav:'움직인 만큼 단단해지는 몸'},
+ wis:{name:'지혜',icon:'📖',per:4,desc:v=>`마음·수면·생활 퀘스트 XP +${v*4}%`,flav:'좋은 습관을 설계하는 머리'},
+ luk:{name:'행운',icon:'🍀',per:1,desc:v=>`크리티컬(XP 2배) 확률 +${v}%`,flav:'가끔 찾아오는 두 배의 보상'}};
+
+const TREES={urge:'⚔️ 유혹 저항',streak:'🔥 꾸준함',growth:'📈 성장'};
+const SKILLS=[
+ {id:'breath',tree:'urge',name:'심호흡',icon:'🌬️',max:1,lv:1,desc:()=>'유혹 전투에 호흡 가이드 등장 + 전투 XP +10%'},
+ {id:'subst',tree:'urge',name:'대체 행동',icon:'🔄',max:1,lv:3,req:'breath',desc:()=>'전투 중 대체 행동 카드 등장. 하나 실행하면 승리 XP +15'},
+ {id:'hunter',tree:'urge',name:'유혹 사냥꾼',icon:'🏹',max:3,lv:6,req:'breath',desc:r=>`유혹 격퇴 XP +${15*r}%, 골드 +${10*r}%`},
+ {id:'ironwall',tree:'urge',name:'철벽',icon:'🧱',max:1,lv:10,req:'hunter',desc:()=>'하루에 유혹 3번 격퇴하면 다음 날 모든 XP +20%'},
+ {id:'steady',tree:'streak',name:'꾸준함',icon:'📅',max:3,lv:2,desc:r=>`연속 보너스 상한 +${10*r}일 (하루 +2%씩)`},
+ {id:'allclear',tree:'streak',name:'올클리어 마스터',icon:'🏆',max:3,lv:4,desc:r=>`올클리어 보너스 +${25*r}%`},
+ {id:'shield',tree:'streak',name:'불굴',icon:'🛡️',max:2,lv:8,req:'steady',desc:r=>`매주 연속 보호막 ${r}개 (못 한 날에도 연속 유지)`},
+ {id:'learn',tree:'growth',name:'빠른 학습',icon:'📚',max:5,lv:1,desc:r=>`모든 XP +${4*r}%`},
+ {id:'goldhand',tree:'growth',name:'황금 손',icon:'💰',max:3,lv:3,desc:r=>`골드 획득 +${15*r}%`},
+ {id:'lucky',tree:'growth',name:'행운의 손',icon:'🍀',max:3,lv:5,desc:r=>`크리티컬 확률 +${3*r}%`}];
+const SK=Object.fromEntries(SKILLS.map(s=>[s.id,s]));
+
+const PATHS={
+ monk:{name:'수도승',icon:'🧘',color:'#8b5cf6',tag:'유혹 저항 특화',tiers:['수도승','절제의 수행자','무념의 대사','해탈한 성자'],
+  passive:t=>({urge:[.3,.6,1,1.5][t-1],endure:[.15,.3,.5,.75][t-1]}),ult:{name:'금강불괴',desc:'오늘 하루 유혹 격퇴 보상 3배'},story:'욕망을 다스리는 자. 참을수록 강해진다.'},
+ warrior:{name:'전사',icon:'🦸',color:'#ef4444',tag:'운동 특화',tiers:['전사','검투사','광전사','불멸의 투신'],
+  passive:t=>({body:[.3,.6,1,1.5][t-1],urge:[.1,.2,.3,.5][t-1]}),ult:{name:'투혼 폭발',desc:'오늘 하루 운동 퀘스트 XP 3배'},story:'몸을 단련하는 자. 땀은 배신하지 않는다.'},
+ sage:{name:'현자',icon:'🧙',color:'#0ea5e9',tag:'수면·마음·생활 특화',tiers:['현자','마도사','대현자','시간의 현자'],
+  passive:t=>({mindlife:[.3,.6,1,1.5][t-1],urge:[.1,.2,.3,.5][t-1]}),ult:{name:'깨달음',desc:'오늘 하루 마음·수면·생활 퀘스트 XP 3배'},story:'습관을 설계하는 자. 작은 루틴이 운명을 바꾼다.'},
+ paladin:{name:'성기사',icon:'🛡️',color:'#e08a00',tag:'꾸준함·연속 특화',tiers:['성기사','수호기사','성전사','빛의 수호신'],
+  passive:t=>({allclear:[.5,1,1.5,2][t-1],streakCap:[5,10,15,20][t-1]}),ult:{name:'신성한 가호',desc:'이번 주 연속 보호막 +1'},story:'매일을 지키는 자. 꾸준함이 최강의 무기다.'}};
+const JOBREQ=[null,{lv:5,clears:3,urges:1},{lv:15,best:7,urges:10},{lv:30,best:21,urges:30},{lv:50,best:30,urges:100}];
+const AURA=['#d9c4a4','#d08a4a','#9fb3c8','#ffc21a','#ffb3d9'];
+
+const MONS={
+ night:{name:'야식 고블린',icon:'🍗',label:'야식'},
+ sweet:{name:'설탕 슬라임',icon:'🍩',label:'단 것·군것질'},
+ drink:{name:'취기의 정령',icon:'🍺',label:'술'},
+ smoke:{name:'연기 망령',icon:'🚬',label:'담배'},
+ phone:{name:'도파민 마귀',icon:'📱',label:'폰·게임·SNS'},
+ lazy:{name:'소파 트롤',icon:'🛋️',label:'운동 미루기'},
+ etc:{name:'유혹의 악마',icon:'👹',label:'기타 유혹'}};
+const BATTLE_XP={5:20,10:35,15:50,20:65};
+const MSGS=['유혹은 파도와 같아요. 정점을 지나면 반드시 가라앉아요.','버티기만 해도 몬스터의 체력이 줄어들어요.','지금 이 몇 분이 내일의 나를 만들어요.','물 한 잔 마시고 자리에서 잠깐 일어나 보세요.','이 욕구는 감정일 뿐, 명령이 아니에요.','끝나고도 원하면 그때 다시 생각해도 늦지 않아요.','숨을 천천히, 길게 내쉬어 보세요. 몸이 먼저 진정돼요.','몬스터가 흔들리고 있어요! 조금만 더!'];
+const SUBST=['💧 물 한 컵 마시기','🚶 5분 걷고 오기','🪥 양치하기','🧼 세수하기','🎵 노래 한 곡 듣기','📝 지금 기분 한 줄 적기','📞 친구에게 메시지','🙆 스트레칭 1분'];
+
+const ACH=[
+ {id:'first',name:'첫걸음',desc:'첫 올클리어',ok:()=>S.totals.clears>=1,gold:50},
+ {id:'s3',name:'작심삼일 돌파',desc:'3일 연속 올클리어',ok:()=>liveBest()>=3,gold:100},
+ {id:'s7',name:'일주일의 기적',desc:'7일 연속 올클리어',ok:()=>liveBest()>=7,gold:200},
+ {id:'s30',name:'습관의 탄생',desc:'30일 연속 올클리어',ok:()=>liveBest()>=30,gold:1000},
+ {id:'s100',name:'백일의 전설',desc:'100일 연속 올클리어',ok:()=>liveBest()>=100,gold:3000},
+ {id:'u1',name:'첫 승리',desc:'유혹 첫 격퇴',ok:()=>S.totals.urgeWins>=1,gold:30},
+ {id:'u10',name:'유혹 사냥꾼',desc:'유혹 10회 격퇴',ok:()=>S.totals.urgeWins>=10,gold:150},
+ {id:'u50',name:'강철 멘탈',desc:'유혹 50회 격퇴',ok:()=>S.totals.urgeWins>=50,gold:500},
+ {id:'u100',name:'욕망의 지배자',desc:'유혹 100회 격퇴',ok:()=>S.totals.urgeWins>=100,gold:1000},
+ {id:'kinds',name:'몬스터 연구가',desc:'서로 다른 유혹 몬스터 4종 격퇴',ok:()=>Object.values(S.book).filter(n=>n>0).length>=4,gold:300},
+ {id:'l10',name:'성장하는 모험가',desc:'레벨 10 달성',ok:()=>S.level>=10,gold:200},
+ {id:'l30',name:'베테랑',desc:'레벨 30 달성',ok:()=>S.level>=30,gold:800},
+ {id:'l50',name:'전설의 시작',desc:'레벨 50 달성',ok:()=>S.level>=50,gold:2000},
+ {id:'j1',name:'새로운 길',desc:'첫 전직',ok:()=>S.cls.tier>=1,gold:200},
+ {id:'j4',name:'정점에 서다',desc:'최종(4차) 전직',ok:()=>S.cls.tier>=4,gold:5000},
+ {id:'r1',name:'보스 사냥꾼',desc:'첫 레이드 클리어',ok:()=>S.raidStats.clears>=1,gold:100},
+ {id:'rh',name:'하드 공략',desc:'하드 레이드 클리어',ok:()=>S.raidStats.byDiff.hard>=1,gold:300},
+ {id:'rx',name:'지옥에서 돌아온 자',desc:'헬 레이드 클리어',ok:()=>S.raidStats.byDiff.hell>=1,gold:800},
+ {id:'r4',name:'4주 연속 공략',desc:'레이드 4주 연속 클리어',ok:()=>S.raidStats.best>=4,gold:600},
+ {id:'g5',name:'장인의 손길',desc:'장비 +5 강화',ok:()=>S.inv.some(i=>i.plus>=5),gold:500}];
+
+
+/* ---------- 꼬마 캐릭터 (직업별) ---------- */
+function avatarSVG(path,tier){
+ const C={none:['#9a6a3a','#7ccf6a','#4f9e3f'],monk:['#3b2a20','#ffa24a','#d9534f'],warrior:['#6b4226','#ff6b6b','#b83232'],sage:['#7a56e0','#9b7bf5','#5a3dc4'],paladin:['#f3c34f','#fff4dc','#e0a419']}[path||'none']||['#9a6a3a','#7ccf6a','#4f9e3f'];
+ const [hair,body,belt]=C,skin='#ffe2c6',sk2='#f0bd92';
+ let back='',side='',hat='';
+ if(!path)hat=`<path d="M50 14 Q50 9 50 5" stroke="#4f9e3f" stroke-width="2.6" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="6" rx="6.5" ry="3.6" fill="#7ccf6a" transform="rotate(-28 44 6)"/><ellipse cx="56.5" cy="6" rx="6.5" ry="3.6" fill="#94dd7f" transform="rotate(28 56.5 6)"/>`;
+ if(path==='monk'){hat=`<rect x="24" y="29" width="52" height="6.5" rx="3.2" fill="#d9534f"/><path d="M75 32 l9 -4 l-2 8z" fill="#d9534f"/>`;side=`<g fill="#a0522d">${[36,42,48,54,60].map(x=>`<circle cx="${x+2}" cy="${x<48?61+(48-x)/6:61+(x-48)/6}" r="2.3"/>`).join('')}</g>`}
+ if(path==='warrior'){hat=`<path d="M22 38 C22 17 36 10 50 10 C64 10 78 17 78 38 Z" fill="#dfe7f0" stroke="#8a99ab" stroke-width="1.6"/><rect x="22" y="33" width="56" height="6" rx="3" fill="#b8c6d6"/><path d="M50 10 C47 2 52 -4 57 -6 C55 0 57 5 52 10Z" fill="#ff6b6b"/>`;side=`<rect x="80.5" y="50" width="4.5" height="27" rx="2" fill="#eef3f8" stroke="#9aa9ba" stroke-width="1"/><rect x="76.5" y="73" width="12.5" height="4.5" rx="2" fill="#a0522d"/>`}
+ if(path==='sage'){hat=`<path d="M50 -7 C56 4 66 18 76 31 L24 31 C34 18 44 4 50 -7Z" fill="#8b6cf0"/><ellipse cx="50" cy="31" rx="31" ry="6.5" fill="#6d4fe0"/><path d="M51 6 l2.3 4.7 5.1.7-3.7 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.7-3.6 5.1-.7z" fill="#ffd34d"/>`;side=`<rect x="81" y="50" width="3.4" height="36" rx="1.7" fill="#a0522d"/><circle cx="82.7" cy="47" r="6" fill="#9be7ff" stroke="#4fb3d9" stroke-width="1.5"/><circle cx="80.8" cy="45" r="1.8" fill="#fff"/>`}
+ if(path==='paladin'){hat=`<path d="M27 31 L30 13 L40 23 L50 9 L60 23 L70 13 L73 31 Z" fill="#ffcf3f" stroke="#d4a017" stroke-width="1.6" stroke-linejoin="round"/><circle cx="50" cy="20" r="3" fill="#ff6b9a"/>`;side=`<path d="M73 60 h15 v9 c0 8 -7.5 12 -7.5 12 c0 0 -7.5 -4 -7.5 -12z" fill="#5aaeff" stroke="#2f6fb0" stroke-width="1.6"/><path d="M80.5 63 v14 M75.5 69 h10" stroke="#fff" stroke-width="2"/>`}
+ const sp=tier>=3?`<g fill="#ffd34d"><path d="M10 22 l1.6 3.6 3.6 1.6-3.6 1.6-1.6 3.6-1.6-3.6-3.6-1.6 3.6-1.6z"/><path d="M90 14 l1.2 2.7 2.7 1.2-2.7 1.2-1.2 2.7-1.2-2.7-2.7-1.2 2.7-1.2z"/></g>`:'';
+ return `<svg viewBox="0 -10 100 110" xmlns="http://www.w3.org/2000/svg">${sp}<ellipse cx="50" cy="95" rx="21" ry="4" fill="rgba(0,0,0,.14)"/>${back}
+ <rect x="38" y="82" width="9.5" height="10" rx="4.5" fill="#6b4f3a"/><rect x="52.5" y="82" width="9.5" height="10" rx="4.5" fill="#6b4f3a"/>
+ <rect x="32.5" y="59" width="35" height="26" rx="12" fill="${body}" stroke="rgba(0,0,0,.08)"/><rect x="32.5" y="72" width="35" height="4.5" fill="${belt}"/>
+ <circle cx="31" cy="68" r="5.8" fill="${skin}" stroke="${sk2}" stroke-width="1"/><circle cx="69" cy="68" r="5.8" fill="${skin}" stroke="${sk2}" stroke-width="1"/>${side}
+ <circle cx="50" cy="40" r="26" fill="${skin}" stroke="${sk2}" stroke-width="1.3"/>
+ <path d="M24 41 C23 22 36 13 50 13 C64 13 77 22 76 41 C72 31 63 27 56 28 C52 31 46 31 42 28 C35 28 28 32 24 41Z" fill="${hair}"/>
+ <ellipse cx="41" cy="44.5" rx="3.5" ry="4.6" fill="#3b2a20"/><ellipse cx="59" cy="44.5" rx="3.5" ry="4.6" fill="#3b2a20"/>
+ <circle cx="42.4" cy="42.6" r="1.4" fill="#fff"/><circle cx="60.4" cy="42.6" r="1.4" fill="#fff"/>
+ <ellipse cx="34" cy="51.5" rx="4.8" ry="2.7" fill="#ffa8bd" opacity=".85"/><ellipse cx="66" cy="51.5" rx="4.8" ry="2.7" fill="#ffa8bd" opacity=".85"/>
+ <path d="M46.5 52 Q50 55.8 53.5 52" stroke="#b5651d" stroke-width="1.9" fill="none" stroke-linecap="round"/>${hat}</svg>`}
+
+/* ---------- 상태 ---------- */
+function defaults(){return{
+ v:1,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
+ level:1,xp:0,gold:0,statPts:3,skillPts:1,grantStat:3,grantSkill:1,
+ stats:{wil:0,tem:0,vit:0,wis:0,luk:0},skills:{},cls:{path:null,tier:0},
+ streak:0,bestStreak:0,shields:0,shieldWeek:'',ultWeek:'',ultDay:'',buffDay:'',
+ totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0},book:{},ach:{},
+ enabled:Object.fromEntries(TPL.map(t=>[t.id,t.def&&t.unlock<=1])),autoUnlocked:{},
+ custom:[],rewards:[{id:'r1',name:'보고 싶던 영화·드라마 보기',price:300},{id:'r2',name:'카페에서 여유 즐기기',price:200},{id:'r3',name:'좋아하는 음식 한 끼',price:600},{id:'r4',name:'갖고 싶던 물건 사기',price:3000}],
+ today:null,history:{},battle:null,log:[],
+ raid:null,raidHist:[],raidStats:{n:0,clears:0,streak:0,best:0,lastClearWeek:'',byDiff:{normal:0,hard:0,hell:0}},raidDiffNext:'normal',raidSeen:'',inv:[],gear:{weapon:null,armor:null,acc:null},hcLast:0}}
+function merge(def,obj){
+ if(obj==null||typeof obj!=='object'||Array.isArray(obj))return def;
+ const out={...def};
+ for(const k in obj){const d=def[k],o=obj[k];
+  if(d&&typeof d==='object'&&!Array.isArray(d)&&o&&typeof o==='object'&&!Array.isArray(o))out[k]=merge(d,o);
+  else out[k]=o;}
+ return out}
+let S=null, storageOK=true;
+function load(){try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):null}catch(e){storageOK=false;return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));storageOK=true}catch(e){storageOK=false}}
+
+/* ---------- 계산 ---------- */
+const sk=id=>S.skills[id]||0;
+function clsP(){const c=S.cls;return(c.path&&c.tier)?PATHS[c.path].passive(c.tier):{}}
+const streakCap=()=>10+sk('steady')*10+(clsP().streakCap||0);
+const streakBonus=()=>Math.min(S.streak,streakCap())*0.02;
+const buffOn=()=>S.buffDay===S.today.date;
+const ultOn=()=>S.cls.tier>0&&S.ultDay===S.today.date;
+const ultAvail=()=>S.cls.tier>0&&S.ultWeek!==weekKey(S.today.date);
+const generalBonus=()=>sk('learn')*0.04+streakBonus()+(buffOn()?0.2:0)+gearB('all');
+const goldMult=()=>1+sk('goldhand')*0.15+gearB('gold');
+const critChance=()=>Math.min(0.5,S.stats.luk*0.01+sk('lucky')*0.03+gearB('crit'));
+function questMult(cat){
+ const st=CATS[cat].stat,p=clsP();
+ let m=1+S.stats[st]*STATS[st].per/100+generalBonus()+(p[cat]||0)+gearB(cat==='endure'?'endure':cat==='body'?'body':'mindlife');
+ if(cat==='mind'||cat==='life')m+=(p.mindlife||0);
+ if(ultOn()){const u=S.cls.path;if(u==='warrior'&&cat==='body')m*=3;if(u==='sage'&&(cat==='mind'||cat==='life'))m*=3}
+ return m}
+const questBase=q=>q.custom?CAT_BASE[q.cat]:Math.round(CAT_BASE[q.cat]*(1+0.1*S.today.tier));
+function urgeMult(){const p=clsP();let m=1+S.stats.wil*0.05+(sk('breath')?0.1:0)+sk('hunter')*0.15+(p.urge||0)+generalBonus()+gearB('urge');if(ultOn()&&S.cls.path==='monk')m*=3;return m}
+function bonusCalc(){const t=S.today.tier,p=clsP();return{xp:Math.round((40+10*t)*(1+sk('allclear')*0.25+(p.allclear||0)+gearB('allclear'))*(1+generalBonus())),gold:Math.round((20+5*t)*goldMult())}}
+const todayCleared=()=>{const q=S.today.quests;return q.length>0&&q.every(x=>x.done)};
+const dispStreak=()=>S.streak+(todayCleared()?1:0);
+const liveBest=()=>Math.max(S.bestStreak,dispStreak());
+const clsTitle=()=>S.cls.tier?PATHS[S.cls.path].tiers[S.cls.tier-1]:'견습 모험가';
+const avatar=()=>avatarSVG(S.cls.tier?S.cls.path:null,S.cls.tier);
+const power=()=>Math.round(S.level*100+Object.values(S.stats).reduce((a,b)=>a+b,0)*30+Object.values(S.skills).reduce((a,b)=>a+b,0)*60+S.cls.tier*800+S.totals.urgeWins*5+S.inv.reduce((a,i)=>a+(i.r+1)*100*(1+i.plus*.2),0));
+function passiveLines(p){const L=[];
+ if(p.urge)L.push(`유혹 격퇴 XP +${pct(p.urge)}%`);if(p.endure)L.push(`참기 퀘스트 XP +${pct(p.endure)}%`);
+ if(p.body)L.push(`운동 퀘스트 XP +${pct(p.body)}%`);if(p.mindlife)L.push(`마음·수면·생활 퀘스트 XP +${pct(p.mindlife)}%`);
+ if(p.allclear)L.push(`올클리어 보너스 +${pct(p.allclear)}%`);if(p.streakCap)L.push(`연속 보너스 상한 +${p.streakCap}일`);return L}
+function reqList(t){const r=JOBREQ[t],L=[{label:`레벨 ${r.lv}`,cur:S.level,need:r.lv}];
+ if(r.clears)L.push({label:`올클리어 누적 ${r.clears}회`,cur:S.totals.clears,need:r.clears});
+ if(r.best)L.push({label:`최고 연속 ${r.best}일`,cur:liveBest(),need:r.best});
+ if(r.urges)L.push({label:`유혹 격퇴 누적 ${r.urges}회`,cur:S.totals.urgeWins,need:r.urges});
+ L.forEach(x=>x.ok=x.cur>=x.need);return L}
+const canJob=()=>S.cls.tier<4&&reqList(S.cls.tier+1).every(x=>x.ok);
+
+/* ---------- 하루 관리 ---------- */
+function questFromTpl(t,tier){const v=tval(t,tier),ty=t.type||'check';return{id:t.id,icon:t.icon,name:t.name(v),cat:t.cat,type:ty,unit:t.unit||'',target:ty==='check'?1:v,prog:0,val:null,done:false,xp:0,gold:0}}
+function questFromCustom(c){return{id:'c_'+c.id,name:c.name,cat:c.cat,type:'check',target:1,prog:0,done:false,xp:0,gold:0,custom:true}}
+function refillShields(k){const w=weekKey(k);if(S.shieldWeek!==w){S.shieldWeek=w;S.shields=sk('shield')}}
+function newDay(k){
+ refillShields(k);const tier=tierOf(S.level);
+ const quests=TPL.filter(t=>S.enabled[t.id]&&S.level>=t.unlock).map(t=>questFromTpl(t,tier)).concat(S.custom.map(questFromCustom));
+ return{date:k,tier,quests,bonus:0,bonusGold:0,urgeWins:0}}
+function missDay(date,msgs,rec){
+ rec=rec||(S.history[date]=S.history[date]||{c:false,q:0,t:0,u:0});
+ refillShields(date);
+ if(S.streak>0&&S.shields>0){S.shields--;rec.s=true;msgs.push(`🛡️ 보호막이 ${fmtDate(date)}의 연속 기록을 지켰어요!`);addLog('🛡️',`보호막 발동 (${fmtDate(date)})`)}
+ else{if(S.streak>=3)msgs.push(`연속 ${S.streak}일 기록이 끊겼어요. 괜찮아요, 오늘부터 다시 1일!`);S.streak=0}
+ if(!rec.s&&raidOn()&&S.raid.week===weekKey(date)){const a=raidHeal(DIFF[S.raid.diff].heal,date);if(a)msgs.push(`${BOSSES[S.raid.boss].icon} ${BOSSES[S.raid.boss].name}이(가) HP를 ${fmt(a)} 회복했어요`)}}
+function rollover(){
+ const tk=todayKey(),msgs=[];
+ if(!S.today){S.today=newDay(tk);ensureRaid();return msgs}
+ if(tk<=S.today.date){ensureRaid();return msgs}
+ const d0=S.today,cleared=d0.quests.length>0&&d0.quests.every(q=>q.done);
+ const rec={c:cleared,q:d0.quests.filter(q=>q.done).length,t:d0.quests.length,u:d0.urgeWins};
+ S.history[d0.date]=rec;
+ if(cleared){S.streak++;S.bestStreak=Math.max(S.bestStreak,S.streak);msgs.push(`🔥 어제 올클리어! 연속 ${S.streak}일째`)}
+ else missDay(d0.date,msgs,rec);
+ let d=addDays(d0.date,1),n=0;
+ while(d<tk&&n<400){missDay(d,msgs);d=addDays(d,1);n++}
+ S.today=newDay(tk);
+ const keys=Object.keys(S.history).sort();if(keys.length>420)keys.slice(0,keys.length-420).forEach(k=>delete S.history[k]);
+ ensureRaid();return msgs}
+function checkUnlocks(){const out=[];
+ for(const t of TPL)if(t.unlock>1&&t.def&&S.level>=t.unlock&&!S.autoUnlocked[t.id]){S.autoUnlocked[t.id]=true;S.enabled[t.id]=true;out.push(t)}
+ return out}
+
+/* ---------- 경험치 ---------- */
+let lvFrom=null;
+function gainXP(a){if(a<=0)return;if(lvFrom===null)lvFrom=S.level;S.xp+=a;
+ while(S.xp>=need(S.level)){S.xp-=need(S.level);S.level++;S.statPts+=3;S.skillPts+=1;S.grantStat+=3;S.grantSkill+=1}}
+function loseXP(a){S.xp=Math.max(0,S.xp-a)}
+function flushLv(){if(lvFrom===null)return;const from=lvFrom;lvFrom=null;if(S.level<=from)return;
+ const unl=checkUnlocks();addLog('⬆️',`레벨 업! Lv.${S.level}`);levelModal(from,S.level,unl)}
+function addLog(icon,text){S.log.unshift({d:Date.now(),t:icon+' '+text});if(S.log.length>80)S.log.length=80}
+function checkAch(){for(const a of ACH)if(!S.ach[a.id]&&a.ok()){S.ach[a.id]=S.today.date;S.gold+=a.gold;addLog('🏅',`업적 「${a.name}」 +${a.gold}G`);toast(`🏅 업적 달성: ${a.name} (+${a.gold}G)`)}}
+function commit(){flushRaid();flushLv();checkAch();save();render()}
+
+/* ---------- 퀘스트 ---------- */
+const findQ=id=>S.today.quests.find(q=>q.id===id);
+function complete(q,el){
+ let xp=questBase(q)*questMult(q.cat);const crit=Math.random()<critChance();if(crit)xp*=2;xp=Math.round(xp);
+ const gold=Math.round((5+S.today.tier)*goldMult());
+ q.done=true;q.xp=xp;q.gold=gold;S.gold+=gold;S.totals.quests++;
+ const hit=raidHit(xp,{kind:'quest',q});q.map=hit?hit.map:null;q.dmg=hit?hit.dmg:0;
+ floatText(el,`+${xp} XP${crit?' 크리티컬!':''}${hit?(hit.dmg?` ⚔️${hit.dmg}${hit.weak?' 약점!':''}`:' (잘린 머리)'):''}`);vib(25);gainXP(xp);recheckClear()}
+function uncomplete(q,skip){q.done=false;loseXP(q.xp);S.gold=Math.max(0,S.gold-q.gold);S.totals.quests=Math.max(0,S.totals.quests-1);q.xp=0;q.gold=0;
+ raidUnhit(q.map);q.map=null;q.dmg=0;if(q.smap){raidUnhit(q.smap);q.smap=null;q.sdmg=0}if(!skip)recheckClear()}
+function setInputDone(q,ok,el){if(ok&&!q.done)complete(q,el);else if(!ok&&q.done)uncomplete(q)}
+function applySteps(q){const extra=Math.max(0,Math.min(q.val||0,q.target+5000)-q.target);const want=q.done?Math.floor(extra/1000)*Math.round(5*(1+.1*S.today.tier)):0;
+ if(q.smap){raidUnhit(q.smap);q.smap=null;q.sdmg=0}
+ if(want>0){const r=raidHit(want,{kind:'steps'});if(r&&r.dmg){q.smap=r.map;q.sdmg=r.dmg;toast(`🚶 초과 걸음 보너스! 보스에게 ⚔️${r.dmg}`)}}}
+function recheckClear(){const d=S.today,all=todayCleared();
+ if(all&&!d.bonus){const b=bonusCalc();d.bonus=b.xp;d.bonusGold=b.gold;S.gold+=b.gold;S.totals.clears++;gainXP(b.xp);addLog('🏆',`올클리어! +${b.xp} XP`);vib([40,60,40]);
+  const hit=raidHit(Math.round(b.xp*1.5),{kind:'bonus'});d.bmap=hit?hit.map:null;
+  showModal(`<div class="wm">🏆</div><div class="burst">ALL CLEAR!</div><h2>오늘의 퀘스트 완료</h2><p>보너스 +${b.xp} XP · +${b.gold}G</p>${hit&&hit.dmg?`<p class="gold">💥 필살기! ${BOSSES[S.raid.boss].name}에게 ⚔️${fmt(hit.dmg)}${hit.weak?' (약점 2배!)':''}</p>`:''}<p class="sub">🔥 연속 ${dispStreak()}일째 · 내일도 이어가면 연속 보너스가 커져요</p><button class="btn primary wide" data-act="close">최고야!</button>`,{cls:'fx'})}
+ else if(!all&&d.bonus){loseXP(d.bonus);S.gold=Math.max(0,S.gold-d.bonusGold);S.totals.clears=Math.max(0,S.totals.clears-1);d.bonus=0;d.bonusGold=0;raidUnhit(d.bmap);d.bmap=null}}
+function removeQuest(id){const qs=S.today.quests,i=qs.findIndex(q=>q.id===id);if(i<0)return;if(qs[i].done)uncomplete(qs[i],true);qs.splice(i,1);recheckClear()}
+function toggleTpl(id,on){const t=TPL.find(x=>x.id===id);if(!t||S.level<t.unlock)return;S.enabled[id]=on;
+ if(on){if(!findQ(id)){S.today.quests.push(questFromTpl(t,S.today.tier));recheckClear()}}else removeQuest(id)}
+
+/* ---------- 전직·궁극기 ---------- */
+function doJob(path){if(!canJob())return;
+ if(S.cls.tier===0){if(!PATHS[path])return;S.cls.path=path}
+ S.cls.tier++;S.statPts+=5;S.skillPts+=2;S.grantStat+=5;S.grantSkill+=2;
+ const p=PATHS[S.cls.path],nm=p.tiers[S.cls.tier-1];addLog('⚡',`${nm}(으)로 전직!`);vib([60,40,60,40,120]);
+ showModal(`<div class="jobfx"><div class="jf-ic">${avatarSVG(S.cls.path,S.cls.tier)}</div><div class="burst">CLASS CHANGE!</div><h2 style="color:${p.color}">${nm}</h2><p class="sub">${p.story}</p><ul class="plist">${passiveLines(p.passive(S.cls.tier)).map(l=>`<li>${l}</li>`).join('')}<li>궁극기 「${p.ult.name}」: ${p.ult.desc} (주 1회)</li><li>스탯 포인트 +5 · 스킬 포인트 +2</li></ul></div><button class="btn primary wide" data-act="close">새로운 힘을 받아들인다</button>`,{cls:'fx'});
+ commit()}
+function useUlt(){if(!ultAvail())return;const p=PATHS[S.cls.path];S.ultWeek=weekKey(S.today.date);
+ if(S.cls.path==='paladin')S.shields++;else S.ultDay=S.today.date;
+ addLog('💥',`궁극기 「${p.ult.name}」 발동`);vib([80,40,80]);
+ showModal(`<div class="wm">💥</div><div class="burst">${p.ult.name}!</div><p>${p.ult.desc}</p><p class="sub">${S.cls.path==='paladin'?'보호막이 하루 실패를 막아 줘요.':'지금부터 완료하는 것에 적용돼요. 오늘을 불태우세요!'}</p><button class="btn primary wide" data-act="close">간다!</button>`,{cls:'fx'});commit()}
+
+/* ---------- 유혹 전투 ---------- */
+let btimer=null,lastMsg=-1;
+function battleMsgs(){const m=MSGS.slice();if(S.totals.urgeWins>0)m.splice(2,0,`지금까지 ${S.totals.urgeWins}번 이겼어요. 이번에도 이길 수 있어요.`);return m}
+function openBattle(){if(S.battle){showBattle();return}
+ $('#battle').innerHTML=`<div class="bwrap"><div class="btop"><span>⚔️ 유혹 전투</span><button data-act="battle-close">닫기</button></div>
+ <h2 style="margin-top:18px">어떤 유혹이 찾아왔나요?</h2><p class="sub">${S.battleMin}분 동안 버티면 승리! 시간이 지날수록 몬스터가 약해져요.</p>
+ <div class="mgrid">${Object.entries(MONS).map(([k,m])=>`<button class="mpick" data-act="battle-start" data-arg="${k}"><span>${m.icon}</span><b>${m.label}</b><small>${m.name}</small></button>`).join('')}</div>
+ <p class="sub">승리 보상 약 +${Math.round(BATTLE_XP[S.battleMin]*urgeMult())} XP · 지더라도 잃는 건 없어요</p></div>`;
+ $('#battle').classList.remove('hidden');$('#fab').classList.add('hidden')}
+function startBattle(mon){if(S.battle||!MONS[mon])return;S.battle={mon,start:Date.now(),min:S.battleMin,subst:false,si:-1};save();vib(40);showBattle()}
+function battleHTML(){const b=S.battle,m=MONS[b.mon];
+ const breath=sk('breath')?`<div class="breath"><div class="bring"><div class="bcircle" id="bc"></div></div><div class="blabel" id="bl">들이쉬기</div></div>`:`<div class="lockhint">🔒 스킬 「심호흡」을 배우면 호흡 가이드가 열려요</div>`;
+ const subst=sk('subst')?`<div class="sub">대체 행동 하나를 해 보세요 (승리 XP +15)</div><div class="subst">${SUBST.map((s,i)=>`<button class="${b.si===i?'on':''}" data-act="subst" data-arg="${i}">${s}</button>`).join('')}</div>`:`<div class="lockhint">🔒 스킬 「대체 행동」을 배우면 행동 카드가 열려요</div>`;
+ return `<div class="bwrap"><div class="btop"><span>⚔️ 유혹 전투</span><button data-act="battle-min">접어두기</button></div>
+ <div class="stage"><div class="mname">Lv.${S.level} ${m.name}</div><div class="memoji" id="bm">${m.icon}</div><div class="mshadow"></div></div>
+ <div class="hpbar"><i id="bhp" style="width:100%"></i></div><div class="hptext" id="bhpt"></div>
+ <div class="btime" id="btime">--:--</div><div class="bmsg" id="bmsg"></div>${breath}${subst}
+ <button class="btn ghost wide" data-act="battle-lose">🏳️ 졌어요… (참지 못했어요)</button>
+ <button class="btn ghost wide" style="border:0;color:var(--sub);font-weight:400" data-act="battle-cancel">잘못 눌렀어요 (취소)</button></div>`}
+function popDmg(t){const st=document.querySelector('#battle .stage');if(!st)return;const d=document.createElement('div');d.className='dmg';d.textContent=t;d.style.left=(38+Math.random()*18)+'%';st.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function showBattle(){$('#battle').innerHTML=battleHTML();$('#battle').classList.remove('hidden');$('#fab').classList.add('hidden');clearInterval(btimer);btimer=setInterval(battleTick,1000);lastMsg=-1;battleTick()}
+function hideBattle(){clearInterval(btimer);btimer=null;$('#battle').classList.add('hidden');$('#battle').innerHTML='';render()}
+function battleTick(){const b=S.battle;if(!b)return;
+ const total=b.min*60,el=Math.max(0,Math.floor((Date.now()-b.start)/1000)),rem=total-el;
+ if(rem<=0){winBattle();return}
+ const hp=$('#bhp');if(!hp)return;
+ hp.style.width=(rem/total*100)+'%';$('#bhpt').textContent=`HP ${rem} / ${total}`;
+ $('#btime').textContent=`${Math.floor(rem/60)}:${pad(rem%60)}`;
+ const m=$('#bm');m.style.fontSize=(60+40*rem/total)+'px';
+ const mi=Math.floor(el/15);if(mi!==lastMsg){lastMsg=mi;const ms=battleMsgs();$('#bmsg').textContent=ms[mi%ms.length];if(el>0){m.classList.remove('hit');void m.offsetWidth;m.classList.add('hit');popDmg('-15')}}
+ const bc=$('#bc');if(bc){const ph=el%14;let s,l,c;
+  if(ph<4){s=.55+.45*(ph+1)/4;l='들이쉬기';c=4-ph}else if(ph<8){s=1;l='멈추기';c=8-ph}else{s=1-.45*(ph-7)/6;l='내쉬기';c=14-ph}
+  bc.style.transform=`scale(${s})`;$('#bl').textContent=`${l} ${c}`}}
+function winBattle(){const b=S.battle;if(!b)return;S.battle=null;const m=MONS[b.mon]||MONS.etc;
+ const over=S.today.urgeWins>=5;let xp=(BATTLE_XP[b.min]||35)*urgeMult();if(over)xp*=.5;
+ const crit=Math.random()<critChance();if(crit)xp*=2;xp=Math.round(xp)+(b.subst?15:0);
+ const gold=Math.round(10*goldMult()*(1+sk('hunter')*.1)*(ultOn()&&S.cls.path==='monk'?3:1)*(over?.5:1));
+ S.today.urgeWins++;S.totals.urgeWins++;S.book[b.mon]=(S.book[b.mon]||0)+1;S.gold+=gold;
+ let iron=false;if(sk('ironwall')&&S.today.urgeWins===3){S.buffDay=addDays(S.today.date,1);iron=true}
+ const hit=raidHit(xp,{kind:'urge',mon:b.mon});
+ addLog('⚔️',`${m.name} 격퇴 +${xp} XP`);vib([50,50,120]);
+ clearInterval(btimer);btimer=null;$('#battle').classList.add('hidden');$('#battle').innerHTML='';
+ showModal(`<div class="wm">${m.icon}</div><div class="burst">VICTORY!</div><h2>${m.name} 격퇴!</h2><p>+${xp} XP${crit?' (크리티컬!)':''} · +${gold}G</p>${hit&&hit.dmg?`<p class="gold">⚔️ ${BOSSES[S.raid.boss].name}에게 ${fmt(hit.dmg)} 피해${hit.weak?' (약점 2배!)':''}</p>`:''}${b.subst?'<p class="sub">대체 행동 보너스 +15 XP 포함</p>':''}${over?'<p class="sub">하루 6번째 전투부터는 보상이 절반이에요</p>':''}${iron?'<p class="gold">🧱 철벽 발동! 내일 모든 XP +20%</p>':''}<p class="sub">오늘 ${S.today.urgeWins}회 · 누적 ${S.totals.urgeWins}회 격퇴</p><button class="btn primary wide" data-act="close">해냈다!</button>`,{cls:'fx'});
+ gainXP(xp);commit()}
+function loseBattle(){if(!S.battle)return;const m=MONS[S.battle.mon]||MONS.etc;S.battle=null;S.totals.urgeLosses++;addLog('🏳️',`${m.name}에게 패배`);
+ const heal=(raidOn()&&S.raid.diff==='hell')?raidHeal(.05,S.today.date):0;
+ clearInterval(btimer);btimer=null;$('#battle').classList.add('hidden');$('#battle').innerHTML='';
+ showModal(`<div class="wm">🌧️</div><h2>괜찮아요</h2><p>한 번 졌다고 모험이 끝나지 않아요. 잃은 경험치도 없어요.</p>${heal?`<p class="sub">☠️ 헬 난이도라 보스가 HP를 ${fmt(heal)} 회복했어요.</p>`:''}<p class="sub">다음에 같은 유혹이 오면 물 한 잔 마시고, 자리에서 일어난 다음 전투를 시작해 보세요.</p><button class="btn primary wide" data-act="close">다시 일어선다</button>`,{cls:'fx'});commit()}
+
+/* ---------- UI 공통 ---------- */
+const mq=[];let modalOpen=false,pendingCf=null;
+function showModal(html,o){mq.push({html,o:o||{}});if(!modalOpen)nextModal()}
+function nextModal(){const m=mq.shift();const el=$('#modal');if(!m){modalOpen=false;el.classList.add('hidden');el.innerHTML='';return}
+ modalOpen=true;el.innerHTML=`<div class="mbox ${m.o.cls||''}">${m.html}</div>`;el.classList.remove('hidden')}
+function confirmBox(msg,fn){pendingCf=fn;showModal(`<p style="font-size:16px">${msg}</p><div class="row"><button class="btn ghost" data-act="close">취소</button><button class="btn primary" data-act="cf-yes">확인</button></div>`)}
+function toast(msg){const box=$('#toasts');while(box.children.length>=3)box.firstChild.remove();const el=document.createElement('div');el.className='toast';el.textContent=msg;box.appendChild(el);setTimeout(()=>el.classList.add('out'),2400);setTimeout(()=>el.remove(),2900)}
+function floatText(el,text){if(!el)return;const r=el.getBoundingClientRect();const f=document.createElement('div');f.className='float';f.textContent=text;f.style.left=(r.left+r.width/2)+'px';f.style.top=(r.top+4)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1300)}
+function vib(p){try{if(inApp){HB.vibrate(Array.isArray(p)?p.filter((_,i)=>i%2===0).reduce((a,b)=>a+b,0):p);return}navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+function levelModal(from,to,unl){const tf=tierOf(from),tt=tierOf(to),g=to-from;
+ let h=`<div class="burst">LEVEL UP!</div><div class="biglv">Lv.${to}</div><p>스탯 포인트 +${3*g} · 스킬 포인트 +${g}</p>`;
+ if(tt>tf){const ch=TPL.filter(t=>S.enabled[t.id]&&t.unlock<=from&&t.name(tval(t,tf))!==t.name(tval(t,tt)));
+  h+=`<div class="tierup"><b>⚔️ 내일부터 난이도 상승! <span class="stars">${'★'.repeat(tt+1)}</span></b>${ch.map(t=>`<div class="chg">▸ ${t.name(tval(t,tt))}</div>`).join('')}<small>어려워진 만큼 경험치와 골드도 늘어나요.</small></div>`}
+ if(unl.length)h+=`<div class="unl"><b>🆕 새 퀘스트 해금 (내일부터)</b>${unl.map(t=>`<div>${t.icon} ${t.name(tval(t,tt))}</div>`).join('')}</div>`;
+ const nj=JOBREQ[S.cls.tier+1];if(nj&&from<nj.lv&&to>=nj.lv)h+=`<div class="jobhint">⚡ 전직 레벨 도달! 캐릭터 탭에서 조건을 확인하세요</div>`;
+ h+=`<div class="row"><button class="btn ghost" data-act="close">계속</button><button class="btn primary" data-act="goto" data-arg="char">포인트 찍기</button></div>`;
+ vib([30,30,30,30,90]);showModal(h,{cls:'fx'})}
+function howto(first){
+ showModal(`<div class="onb"><div class="jf-ic">${avatarSVG(null,0)}</div><h2>건강 RPG</h2>${first?`<p class="sub">모험가의 이름을 정해 주세요</p><input id="onbName" placeholder="모험가 이름" maxlength="12">`:''}
+ <div class="howl"><div>📜 <b>일일 퀘스트</b> — 건강 목표를 달성하면 경험치와 골드. 전부 해내면 올클리어 보너스!</div>
+ <div>⬆️ <b>레벨 업</b> — 레벨마다 스탯 3·스킬 1 포인트. 레벨이 오를수록 퀘스트도 어려워지고 보상도 커져요.</div>
+ <div>⚔️ <b>유혹 전투</b> — 야식·군것질 같은 욕구가 올라오면 '유혹이 왔다!'를 누르고 정해진 시간만 버티세요. 욕구는 파도처럼 지나가요.</div>
+ <div>🧙 <b>전직</b> — Lv.5부터 수도승·전사·현자·성기사 중 하나로 전직. 4차까지 강해지고 궁극기도 생겨요.</div>
+ <div>👹 <b>주간 레이드</b> — 매주 월요일 새 보스 등장. 퀘스트·올클리어·유혹 격퇴로 피해를 주고 일요일까지 쓰러뜨리면 장비 획득!</div>
+ <div>🚶 <b>걸음·수면 입력</b> — 걷기·운동·수면은 삼성 헬스(갤럭시 핏) 숫자를 넣으면 자동으로 판정돼요.</div>
+ <div>🎁 <b>보상 상점</b> — 모은 골드로 내가 정한 진짜 보상을 사세요.</div>
+ <div>🛡️ <b>백업</b> — 기록은 이 휴대폰에만 저장돼요. 설정에서 가끔 백업해 두세요.</div></div></div>
+ <button class="btn primary wide" data-act="${first?'onb-done':'close'}">모험 시작!</button>`,{cls:'fx'})}
+
+/* ---------- 렌더링 ---------- */
+let tab='quest',deferredPrompt=null;
+const TABS=[['quest','📜','퀘스트'],['raid','👹','레이드'],['char','🧙','캐릭터'],['shop','🎁','상점'],['rec','📊','기록'],['set','⚙️','설정']];
+function render(){
+ const c=S.cls,nd=need(S.level),rt=raidTitle();
+ $('#hdr').innerHTML=`${inFrame?'<div class="pv">미리보기 화면 · 설치한 앱과 기록이 따로 저장돼요</div>':''}<div class="hero"><div class="ava t${c.tier}" style="--aura:${AURA[c.tier]}">${avatar()}${rt?`<span class="rbadge">${rt[0]}</span>`:''}</div><div class="hinfo">
+  <div class="hname"><b>${esc(S.name)}</b><span class="ctitle" style="color:${c.tier?PATHS[c.path].color:'var(--sub)'}">${clsTitle()}</span></div>
+  <div class="lvrow"><span class="lv">Lv.${S.level}</span><div class="xpbar"><i style="width:${Math.min(100,S.xp/nd*100)}%"></i></div></div>
+  <div class="xpt">${fmt(S.xp)} / ${fmt(nd)} XP</div>
+  <div class="chips"><span>🔥 ${dispStreak()}일 연속</span><span>💰 ${fmt(S.gold)}G</span>${S.shields?`<span>🛡️ ${S.shields}</span>`:''}</div></div></div>`;
+ $('#main').innerHTML={quest:vQuest,raid:vRaid,char:vChar,shop:vShop,rec:vRec,set:vSet}[tab]();
+ $('#tabs').innerHTML=TABS.map(([k,i,n])=>{let b='';if(k==='char'&&(S.statPts||S.skillPts||canJob()))b='!';if(k==='raid'&&raidOn()&&S.raidSeen!==S.raid.week)b='N';return `<button class="${tab===k?'on':''}" data-act="tab" data-arg="${k}"><span class="ti">${i}</span>${n}${b?`<span class="badge">${b}</span>`:''}</button>`}).join('');
+ const fab=$('#fab'),bOpen=!$('#battle').classList.contains('hidden');
+ fab.classList.toggle('hidden',bOpen);fab.classList.toggle('on',!!S.battle);fab.textContent=S.battle?'⚔️ 전투 중 — 돌아가기':'⚔️ 유혹이 왔다!'}
+function installCard(){return(deferredPrompt&&!isStandalone())?`<div class="card install"><b>📲 홈 화면에 앱으로 설치할 수 있어요</b><button class="btn primary sm" data-act="install">설치</button></div>`:''}
+function vQuest(){const d=S.today,qs=d.quests,done=qs.filter(q=>q.done).length,tot=qs.length,t=d.tier;
+ let h=installCard();
+ if(canJob())h+=`<div class="card tap jobready" data-act="tab" data-arg="char">⚡ <b>전직 조건 달성!</b> 캐릭터 탭에서 전직하세요 ›</div>`;
+ if(S.statPts||S.skillPts)h+=`<div class="card tap ptsnote" data-act="tab" data-arg="char">✨ 남은 포인트 — 스탯 ${S.statPts} · 스킬 ${S.skillPts} ›</div>`;
+ const chips=[];const sb=streakBonus();if(sb>0)chips.push(`🔥 연속 보너스 +${pct(sb)}%`);if(buffOn())chips.push('🧱 철벽: 모든 XP +20%');if(ultOn())chips.push(`💥 ${PATHS[S.cls.path].ult.name} 발동 중`);if(S.shields)chips.push(`🛡️ 보호막 ${S.shields}개`);
+ h+=`<section class="card"><div class="dayhead"><div><div class="dtitle">${fmtDate(d.date)}</div><div class="sub">오늘의 난이도 <span class="stars">${'★'.repeat(t+1)}${'☆'.repeat(6-t)}</span></div></div><div class="dcount"><b>${done}</b>/${tot}</div></div>
+  <div class="pbar"><i style="width:${tot?done/tot*100:0}%"></i></div>
+  ${d.bonus?`<div class="clear">🏆 올클리어! 보너스 +${d.bonus} XP · +${d.bonusGold}G</div>`:`<div class="sub mt">전부 완료하면 올클리어 보너스 <b class="gold">+${bonusCalc().xp} XP</b></div>`}
+  ${chips.length?`<div class="buffs">${chips.map(x=>`<span>${x}</span>`).join('')}</div>`:''}</section>`;
+ h+=raidMini();h+=hcCard();h+=`<div class="qlist">${qs.map(qHTML).join('')}</div>`;
+ if(!tot)h+=`<div class="card sub">진행할 퀘스트가 없어요. 설정에서 퀘스트를 켜 주세요.</div>`;
+ if(S.cls.tier){const p=PATHS[S.cls.path],u=p.ult,av=ultAvail();
+  h+=`<section class="card ult" style="--pc:${p.color}"><div><b>💥 궁극기 「${u.name}」</b><div class="sub">${u.desc}</div><div class="sub">${ultOn()?'🔥 오늘 발동 중!':av?'이번 주 1회 사용 가능':'다음 주 월요일에 다시 사용 가능'}</div></div>${av?`<button class="btn primary sm" data-act="ult">발동</button>`:''}</section>`}
+ h+=`<section class="card"><div class="urgehead"><span class="big">⚔️</span><div><b>유혹 전투</b><div class="sub">참기 힘든 욕구가 올라오면 오른쪽 아래 버튼을 누르세요. ${S.battleMin}분 버티면 몬스터를 쓰러뜨리고 경험치를 얻어요.</div></div></div>
+  <div class="urgestats"><div><b>${d.urgeWins}</b><small>오늘 격퇴</small></div><div><b>${S.totals.urgeWins}</b><small>누적 격퇴</small></div><div><b>+${Math.round(BATTLE_XP[S.battleMin]*urgeMult())}</b><small>승리 XP</small></div></div></section>`;
+ return h}
+function qHTML(q){const c=CATS[q.cat],xp=q.done?q.xp:Math.round(questBase(q)*questMult(q.cat)),ic=q.icon||c.icon,dc=q.done?'done':'';
+ const meta=`${c.name} · ${q.done?'획득 ':''}+${xp} XP${q.done&&(q.dmg||q.sdmg)?` · ⚔️${fmt((q.dmg||0)+(q.sdmg||0))}`:''}`;
+ if(q.type==='count')return `<div class="quest ${dc}" style="--c:${c.color}"><div class="qicon">${ic}</div><div class="qbody"><div class="qname">${esc(q.name)}</div><div class="qmeta">${meta}</div><div class="dots">${Array.from({length:q.target},(_,i)=>i<q.prog?'💧':'⚪').join('')}</div></div><div class="counter"><button data-act="q-dec" data-arg="${q.id}">−</button><span>${q.prog}/${q.target}</span><button data-act="q-inc" data-arg="${q.id}">+</button></div></div>`;
+ if(q.type==='num'){const hv=q.val!=null,steps=q.unit==='보';return `<div class="quest ${dc}" style="--c:${c.color}"><div class="qicon">${ic}</div><div class="qbody"><div class="qname">${esc(q.name)}</div><div class="qmeta">${meta}</div>
+  <div class="numrow"><input type="number" inputmode="numeric" min="0" id="in_${q.id}" placeholder="${steps?'오늘 걸음 수':'운동한 시간'}" value="${hv?q.val:''}"><span>${q.unit}</span><button class="btn sm primary" data-act="q-num" data-arg="${q.id}">${hv?'수정':'입력'}</button>${steps?`<a class="shl" href="${SHEALTH}">📲 삼성 헬스</a>`:''}</div>
+  ${hv?`<div class="qmeta">${fmt(q.val)} / ${fmt(q.target)}${q.unit} ${q.done?'✅':'— 조금만 더!'}${q.sdmg?` · 초과 걸음 보너스 ⚔️${q.sdmg}`:''}</div>`:''}</div><div class="qcheck">${q.done?'✓':''}</div></div>`}
+ if(q.type==='sleep'){const hv=!!q.val;return `<div class="quest ${dc}" style="--c:${c.color}"><div class="qicon">${ic}</div><div class="qbody"><div class="qname">${esc(q.name)}</div><div class="qmeta">${meta}</div>
+  <div class="numrow"><input type="time" id="in_${q.id}" value="${hv?q.val:''}"><button class="btn sm primary" data-act="q-sleep" data-arg="${q.id}">${hv?'수정':'입력'}</button><a class="shl" href="${SHEALTH}">📲 삼성 헬스</a></div>
+  <div class="qmeta">${hv?`잠든 시각 ${q.val} · ${q.done?'달성 ✅':'목표보다 늦었어요'}`:q.done?'달성 ✅':'삼성 헬스 수면 기록의 잠든 시각을 넣어 주세요'}</div></div><div class="qcheck">${q.done?'✓':''}</div></div>`}
+ return `<div class="quest ${dc}" style="--c:${c.color}" data-act="q-toggle" data-arg="${q.id}"><div class="qicon">${ic}</div><div class="qbody"><div class="qname">${esc(q.name)}</div><div class="qmeta">${meta}</div></div><div class="qcheck">${q.done?'✓':''}</div></div>`}
+function vChar(){const c=S.cls;
+ let h=`<section class="card prof"><div class="ava t${c.tier}" style="--aura:${AURA[c.tier]}">${avatar()}${raidTitle()?`<span class="rbadge">${raidTitle()[0]}</span>`:''}</div>${raidTitle()?`<div class="sub">${raidTitle()[1]}</div>`:''}<div style="font-size:18px;font-weight:800">${esc(S.name)}</div><div class="ctitle" style="color:${c.tier?PATHS[c.path].color:'var(--sub)'}">Lv.${S.level} ${clsTitle()}</div><div class="cp mt">전투력<b>${fmt(power())}</b></div></section>`;
+ h+=vJob();h+=vGear();
+ h+=`<section class="card"><div class="sechead"><h3>스탯</h3><span class="pts ${S.statPts?'on':''}">남은 포인트 ${S.statPts}</span></div>
+  ${Object.entries(STATS).map(([k,s])=>`<div class="stat"><span class="sicon">${s.icon}</span><div class="sbody"><b>${s.name}<em>${S.stats[k]}</em></b><small>${s.desc(S.stats[k])}</small><small class="flav">${s.flav}</small></div><button class="plus" data-act="stat-up" data-arg="${k}" ${S.statPts?'':'disabled'}>+</button></div>`).join('')}</section>`;
+ h+=`<section class="card"><div class="sechead"><h3>스킬</h3><span class="pts ${S.skillPts?'on':''}">남은 포인트 ${S.skillPts}</span></div>`;
+ for(const [tk,tn] of Object.entries(TREES))h+=`<div class="tree">${tn}</div>`+SKILLS.filter(s=>s.tree===tk).map(skHTML).join('');
+ return h+'</section>'}
+function skHTML(s){const r=sk(s.id),mx=r>=s.max,lockLv=S.level<s.lv,lockReq=s.req&&!sk(s.req),can=!mx&&!lockLv&&!lockReq&&S.skillPts>0;
+ const req=[];if(lockLv)req.push(`Lv.${s.lv} 필요`);if(lockReq)req.push(`「${SK[s.req].name}」 먼저`);
+ return `<div class="skill ${r?'has':''} ${lockLv||lockReq?'locked':''}"><div class="skicon">${s.icon}</div><div class="skbody"><b>${s.name}<span class="rank">${r}/${s.max}</span></b><small>${s.desc(Math.max(1,r))}</small>${r&&!mx?`<small class="next">다음: ${s.desc(r+1)}</small>`:''}${req.length?`<small class="req">🔒 ${req.join(' · ')}</small>`:''}</div><button class="btn sm ${can?'primary':''}" data-act="skill-up" data-arg="${s.id}" ${can?'':'disabled'}>${mx?'MAX':'배우기'}</button></div>`}
+function pathCard(k,p,ok){return `<div class="path" style="--pc:${p.color}"><div class="phead"><span class="picon">${avatarSVG(k,1)}</span><div><b>${p.name} 계열</b><small>${p.tag}</small></div></div><p class="pstory">${p.story}</p><div class="proad">${p.tiers.join(' → ')}</div><ul>${passiveLines(p.passive(1)).map(l=>`<li>${l}</li>`).join('')}<li>궁극기 「${p.ult.name}」: ${p.ult.desc}</li></ul>${ok?`<button class="btn primary wide glow" data-act="job-pick" data-arg="${k}">이 길로 전직</button>`:''}</div>`}
+function vJob(){const c=S.cls,nx=c.tier+1;let h=`<section class="card"><div class="sechead"><h3>전직</h3><span class="pts">${c.tier}/4차</span></div>`;
+ if(c.tier){const p=PATHS[c.path];
+  h+=`<div class="curjob" style="--pc:${p.color}"><div class="cj-ic">${avatarSVG(c.path,c.tier)}</div><div><b style="color:${p.color}">${p.tiers[c.tier-1]}</b><small>${p.story}</small></div></div><ul class="plist">${passiveLines(p.passive(c.tier)).map(l=>`<li>${l}</li>`).join('')}<li>궁극기 「${p.ult.name}」: ${p.ult.desc} (주 1회)</li></ul>
+  <div class="road">${p.tiers.map((n,i)=>`<span class="${i<c.tier?'got':''}">${i<c.tier?'✅':'🔒'} ${n}<small>Lv.${JOBREQ[i+1].lv}</small></span>`).join('')}</div>`}
+ if(nx<=4){const rl=reqList(nx),ok=rl.every(x=>x.ok);
+  h+=`<div class="reqbox"><b>${nx}차 전직 조건</b>${rl.map(x=>`<div class="req ${x.ok?'ok':''}"><span>${x.ok?'✅':'⬜'} ${x.label}</span><span>${fmt(Math.min(x.cur,x.need))}/${fmt(x.need)}</span></div>`).join('')}</div>`;
+  if(!c.tier)h+=`<p class="sub">첫 전직에서 고른 계열로 4차까지 성장해요. 계열은 나중에 바꿀 수 없어요.</p><div class="paths">${Object.entries(PATHS).map(([k,p])=>pathCard(k,p,ok)).join('')}</div>`;
+  else{const p=PATHS[c.path];h+=ok?`<button class="btn primary wide glow" data-act="job-up">⚡ ${p.tiers[nx-1]}(으)로 전직하기</button><p class="sub center">다음 패시브: ${passiveLines(p.passive(nx)).join(' · ')}</p>`:`<p class="sub">다음 전직 <b style="color:${p.color}">${p.tiers[nx-1]}</b> — ${passiveLines(p.passive(nx)).join(' · ')}</p>`}}
+ else h+=`<div class="clear">👑 최종 전직 완료! 당신은 전설이에요.</div>`;
+ return h+`<p class="sub mt">전직할 때마다 스탯 +5, 스킬 +2 포인트를 받아요.</p></section>`}
+function vShop(){
+ let h=`<section class="card"><div class="goldbig">💰 ${fmt(S.gold)} G</div><div class="sub">참아서 모은 골드로 '계획된 보상'을 사세요. 충동적으로 하는 것보다 훨씬 개운해요.</div><div class="sub mt">하루 올클리어 시 대략 60~100G를 모을 수 있어요.</div></section>`;
+ h+=`<section class="card"><h3>보상 목록</h3>${S.rewards.length?S.rewards.map(r=>`<div class="rw"><div class="rwn">🎁 ${esc(r.name)}</div><div class="rwp">${fmt(r.price)}G</div><button class="btn sm ${S.gold>=r.price?'primary':''}" data-act="buy" data-arg="${esc(r.id)}" ${S.gold>=r.price?'':'disabled'}>구매</button><button class="x" data-act="rw-del" data-arg="${esc(r.id)}">✕</button></div>`).join(''):'<div class="sub">아래에서 보상을 추가해 보세요.</div>'}</section>`;
+ h+=`<section class="card"><h3>보상 추가</h3><div class="form"><input id="rwName" placeholder="예: 새 운동화 사기" maxlength="40"><input id="rwPrice" type="number" inputmode="numeric" placeholder="가격 (G)" min="1"><button class="btn primary" data-act="rw-add">추가</button></div></section>`;
+ const buys=S.log.filter(l=>l.t.startsWith('🎁')).slice(0,10);
+ if(buys.length)h+=`<section class="card"><h3>최근 받은 보상</h3>${buys.map(l=>`<div class="logi"><span>${esc(l.t)}</span><small>${fmtTime(l.d)}</small></div>`).join('')}</section>`;
+ return h}
+function vRec(){const t=S.today.date,w=S.totals.urgeWins,l=S.totals.urgeLosses;
+ const box=(i,n,v)=>`<div class="sbox"><b>${i} ${v}</b><small>${n}</small></div>`;
+ let h=`<section class="card"><h3>모험 기록</h3><div class="grid3">${box('🏆','올클리어',S.totals.clears+'일')}${box('🔥','현재 연속',dispStreak()+'일')}${box('⭐','최고 연속',liveBest()+'일')}${box('⚔️','유혹 격퇴',w+'회')}${box('🎯','격퇴율',w+l?Math.round(w/(w+l)*100)+'%':'-')}${box('✅','완료 퀘스트',fmt(S.totals.quests))}</div><p class="sub center">모험 시작일 ${fmtDate(S.created)}</p></section>`;
+ const start=addDays(weekKey(t),-28);let cells='';
+ for(let i=0;i<35;i++){const k=addDays(start,i);let cls;
+  if(k>t)cls='fut';else if(k<S.created)cls='pre';else if(k===t)cls='today '+(todayCleared()?'c':S.today.quests.some(q=>q.done)?'p':'');
+  else{const r=S.history[k];cls=!r?'none':r.c?'c':r.s?'s':r.q>0?'p':'none'}
+  cells+=`<div class="cal ${cls}">${parseKey(k).getDate()}</div>`}
+ h+=`<section class="card"><h3>최근 5주</h3><div class="calw">${'월화수목금토일'.split('').map(x=>`<div class="calh">${x}</div>`).join('')}${cells}</div><div class="legend"><span><i class="c"></i>올클리어</span><span><i class="p"></i>일부 완료</span><span><i class="s"></i>보호막</span><span><i class="none"></i>미완료</span></div></section>`;
+ h+=`<section class="card"><h3>업적 ${Object.keys(S.ach).length}/${ACH.length}</h3>${ACH.map(a=>`<div class="ach ${S.ach[a.id]?'got':''}"><span>${S.ach[a.id]?'🏅':'🔒'}</span><div><b>${a.name}</b><small>${a.desc} · +${fmt(a.gold)}G</small></div></div>`).join('')}</section>`;
+ h+=`<section class="card"><h3>유혹 몬스터 도감</h3><div class="book">${Object.entries(MONS).map(([k,m])=>{const n=S.book[k]||0;return `<div class="bk ${n?'':'unk'}"><span>${n?m.icon:'❔'}</span><b>${n?m.name:'???'}</b><small>${n}회 격퇴</small></div>`}).join('')}</div></section>`;
+ h+=`<section class="card"><h3>최근 활동</h3>${S.log.slice(0,25).map(x=>`<div class="logi"><span>${esc(x.t)}</span><small>${fmtTime(x.d)}</small></div>`).join('')||'<div class="sub">아직 기록이 없어요.</div>'}</section>`;
+ return h}
+function vSet(){const tier=tierOf(S.level);
+ let h=inFrame?`<div class="card pvnote">지금은 미리보기 화면이에요. 홈 화면 앱으로 설치하면 기록이 앱 안에 따로 저장돼요. 여기 기록을 옮기려면 아래 백업 코드를 쓰세요.</div>`:'';
+ h+=installCard();
+ if(inApp)h+=`<section class="card"><h3>⌚ 갤럭시 핏 · 헬스 커넥트</h3><p class="sub">삼성 헬스 → 설정 → 헬스 커넥트에서 걸음·수면·운동 공유를 켜 두면, 앱을 열 때마다 자동으로 퀘스트에 반영돼요.</p><div class="row"><button class="btn" data-act="hc-perm">권한 설정</button><button class="btn" data-act="hc-open">헬스 커넥트 열기</button></div><button class="btn wide" data-act="app-url">게임 주소 바꾸기</button><p class="sub center mt">앱 버전 ${esc(HB.appVersion())}</p></section>`;
+ h+=`<section class="card"><h3>모험가 이름</h3><div class="form"><input id="nmIn" value="${esc(S.name)}" maxlength="12"><button class="btn primary" data-act="name-save">저장</button></div></section>`;
+ h+=`<section class="card"><h3>기본 설정</h3>
+  <label class="setrow"><span>하루가 바뀌는 시간<small>이 시간 전까지는 전날로 기록돼요</small></span><select data-chg="daystart">${[0,2,3,4,5,6].map(v=>`<option value="${v}" ${S.dayStart===v?'selected':''}>${v?'새벽 '+v+'시':'자정'}</option>`).join('')}</select></label>
+  <label class="setrow"><span>유혹 전투 시간<small>길수록 승리 보상이 커요</small></span><select data-chg="bmin">${[5,10,15,20].map(v=>`<option value="${v}" ${S.battleMin===v?'selected':''}>${v}분</option>`).join('')}</select></label></section>`;
+ h+=`<section class="card"><h3>기본 퀘스트</h3><p class="sub">목표 수치는 레벨에 따라 자동으로 올라가요. 켜고 끄면 오늘 퀘스트에 바로 반영돼요.</p>${TPL.map(t=>{const lock=S.level<t.unlock;return `<label class="setrow ${lock?'lock':''}"><span>${t.icon} ${t.name(tval(t,tier))}${lock?`<small>🔒 Lv.${t.unlock}에 해금 (자동 추가)</small>`:''}</span><input type="checkbox" class="sw" data-chg="tpl" data-arg="${t.id}" ${S.enabled[t.id]?'checked':''} ${lock?'disabled':''}></label>`}).join('')}</section>`;
+ h+=`<section class="card"><h3>나만의 퀘스트</h3>${S.custom.map(c=>`<div class="setrow"><span>${CATS[c.cat].icon} ${esc(c.name)}<small>${CATS[c.cat].name} · 난이도 고정</small></span><button class="x" data-act="cq-del" data-arg="${esc(c.id)}">✕</button></div>`).join('')||'<p class="sub">예: 영양제 챙겨 먹기, 계단으로 다니기</p>'}
+  <div class="form mt"><input id="cqName" placeholder="퀘스트 이름" maxlength="30"><select id="cqCat">${Object.entries(CATS).map(([k,c])=>`<option value="${k}">${c.icon} ${c.name}</option>`).join('')}</select><button class="btn primary" data-act="cq-add">추가</button></div></section>`;
+ h+=`<section class="card"><h3>데이터 백업</h3><p class="sub">기록은 이 휴대폰 안에만 저장돼요. 브라우저 데이터를 지우거나 앱을 삭제하면 사라지니 가끔 백업해 두세요.</p>
+  <div class="row"><button class="btn" data-act="bk-make">백업 코드 만들기</button>${inFrame||inApp?'':'<button class="btn" data-act="bk-file">파일로 저장</button>'}</div>
+  <div id="bkBox" class="hidden mt"><textarea id="bkOut" readonly></textarea><button class="btn primary wide" data-act="bk-copy">복사하기</button></div>
+  <div class="mt"><textarea id="bkIn" placeholder="백업 코드를 여기에 붙여넣으세요"></textarea><div class="row"><button class="btn" data-act="bk-restore">코드로 복원</button><label class="btn">파일로 복원<input type="file" data-chg="bkfile" accept=".json,.txt,application/json,text/plain" hidden></label></div></div></section>`;
+ h+=`<section class="card"><h3>기타</h3><button class="btn wide" data-act="howto">게임 방법 다시 보기</button><button class="btn wide" data-act="respec">스탯·스킬 초기화 (500G)</button><button class="btn wide danger" data-act="reset-all">모든 데이터 초기화</button>
+  <p class="sub center mt">건강 RPG v${VERSION} · 저장 ${storageOK?'정상':'<b style="color:#e0546a">불가 — 화면을 닫으면 기록이 사라져요</b>'} · ${isStandalone()?'앱 모드':'브라우저 모드'}</p></section>`;
+ return h}
+
+/* ---------- 레이드 시스템 ---------- */
+let pendingIntro=false,pendingRage=false,pendingClear=null,pendingEscape=null;
+const dayIdx=k=>(parseKey(k).getDay()+6)%7;
+function raidOn(){return !!(S.raid&&S.raid.status==='active'&&BOSSES[S.raid.boss])}
+function getItem(uid){return uid?S.inv.find(i=>i.uid===uid)||null:null}
+function itemVal(it){return Math.round(ITEMS[it.key].v*RAR[it.r].m*(1+.2*it.plus)*10)/10}
+function gearB(fx){let t=0;if(!S||!S.gear)return 0;for(const uid of Object.values(S.gear)){const it=getItem(uid);if(it&&ITEMS[it.key]&&ITEMS[it.key].fx===fx)t+=itemVal(it)/100}return t}
+function fxText(it){const d=ITEMS[it.key],v=itemVal(it);return `${EFX[d.fx]} ${d.fx==='heal'?'-':'+'}${v}${d.fx==='crit'?'%p':'%'}`}
+function raidTitle(){const c=S.raidStats.clears;return c>=20?['💎','전설의 공략가']:c>=8?['👑','레이드 마스터']:c>=3?['🏅','레이드 베테랑']:c>=1?['⚔️','보스 사냥꾼']:null}
+function estParts(){const p={endure:0,body:0,mindlife:0};
+ for(const q of S.today.quests){const v=questBase(q)*questMult(q.cat);p[q.cat==='endure'?'endure':q.cat==='body'?'body':'mindlife']+=v}
+ p.endure+=BATTLE_XP[S.battleMin]*urgeMult();const b=bonusCalc().xp*1.5/3;p.endure+=b;p.body+=b;p.mindlife+=b;p.total=p.endure+p.body+p.mindlife;return p}
+function setRaidHp(R){const e=estParts(),left=7-dayIdx(S.today.date);const total=Math.max(60*left,Math.round(e.total*DIFF[R.diff].f*left/7/10)*10);
+ if(R.boss==='hydra'){R.heads={};R.headMax={};for(const g of Object.keys(HEADS)){const v=Math.round(total*e[g]/e.total);R.heads[g]=v;R.headMax[g]=v}R.maxHp=Object.values(R.headMax).reduce((a,b)=>a+b,0)}
+ else{delete R.heads;delete R.headMax;R.maxHp=total}R.hp=R.maxHp}
+function ensureRaid(){const wk=weekKey(S.today.date);if(S.raid&&S.raid.week===wk&&BOSSES[S.raid.boss])return;if(S.raid&&BOSSES[S.raid.boss])finalizeRaid();
+ let diff=S.raidDiffNext;if(!DIFF[diff]||S.cls.tier<DIFF[diff].tier)diff='normal';
+ const boss=BOSS_ORDER[S.raidStats.n%BOSS_ORDER.length];S.raidStats.n++;
+ const R={week:wk,boss,diff,status:'active',enraged:false,dealt:0,days:{},heals:{}};setRaidHp(R);S.raid=R;pendingIntro=true}
+function finalizeRaid(){const R=S.raid;if(R.status==='active'){R.status='failed';S.raidStats.streak=0;pendingEscape=R.boss;addLog('💨',`${BOSSES[R.boss].name}이(가) 도망쳤어요`)}
+ S.raidHist.unshift({week:R.week,boss:R.boss,diff:R.diff,result:R.status,dealt:R.dealt,max:R.maxHp});if(S.raidHist.length>20)S.raidHist.length=20}
+function isWeak(src){const B=BOSSES[S.raid.boss];
+ if(src.kind==='quest')return (B.weakQ||[]).includes(src.q.id)||(B.weakCat||[]).includes(src.q.cat);
+ if(src.kind==='urge')return (B.weakM||[]).includes(src.mon);
+ if(src.kind==='steps')return !!B.weakSteps;if(src.kind==='bonus')return !!B.weakBonus;return false}
+function headOf(src){if(src.kind==='bonus')return'split';if(src.kind==='urge')return'endure';if(src.kind==='steps')return'body';const c=src.q.cat;return c==='endure'?'endure':c==='body'?'body':'mindlife'}
+function raidHit(base,src){if(!raidOn()||!(base>0))return null;const R=S.raid;
+ let dmg=base*(1+gearB('raid')),weak=false;if(R.enraged&&isWeak(src)){dmg*=2;weak=true}dmg=Math.max(1,Math.round(dmg));
+ const map={};
+ if(R.heads){const ap=(k,a)=>{const x=Math.min(R.heads[k],a);if(x>0){R.heads[k]-=x;map[k]=(map[k]||0)+x}};const g=headOf(src);
+  if(g==='split'){const alive=Object.keys(R.heads).filter(k=>R.heads[k]>0);const per=Math.ceil(dmg/Math.max(1,alive.length));alive.forEach(k=>ap(k,per))}else ap(g,dmg);
+  R.hp=Object.values(R.heads).reduce((a,b)=>a+b,0)}
+ else{const x=Math.min(R.hp,dmg);R.hp-=x;map.hp=x}
+ const total=Object.values(map).reduce((a,b)=>a+b,0);if(!total)return{dmg:0,map:null,weak};
+ R.dealt+=total;R.days[S.today.date]=(R.days[S.today.date]||0)+total;
+ if(!R.enraged&&R.hp>0&&R.hp<=R.maxHp/2){R.enraged=true;pendingRage=true}
+ if(R.hp<=0)raidClear();
+ return{dmg:total,map,weak}}
+function raidUnhit(map){if(!map||!raidOn())return;const R=S.raid;let t=0;
+ for(const k in map){if(k==='hp')R.hp=Math.min(R.maxHp,R.hp+map[k]);else if(R.heads)R.heads[k]=Math.min(R.headMax[k],R.heads[k]+map[k]);t+=map[k]}
+ if(R.heads)R.hp=Object.values(R.heads).reduce((a,b)=>a+b,0);
+ R.dealt=Math.max(0,R.dealt-t);R.days[S.today.date]=Math.max(0,(R.days[S.today.date]||0)-t)}
+function raidHeal(p,date){if(!raidOn())return 0;const R=S.raid;let amt=Math.round(R.maxHp*p*(1-Math.min(.6,gearB('heal'))));if(amt<=0)return 0;
+ if(R.heads){const alive=Object.keys(R.heads).filter(k=>R.heads[k]>0);let got=0;alive.forEach(k=>{const a=Math.min(R.headMax[k]-R.heads[k],Math.round(amt/alive.length));R.heads[k]+=a;got+=a});amt=got;R.hp=Object.values(R.heads).reduce((a,b)=>a+b,0)}
+ else{amt=Math.min(R.maxHp-R.hp,amt);R.hp+=amt}
+ if(amt>0)R.heals[date]=(R.heals[date]||0)+amt;return amt}
+function dropItem(boss,r){const slot=['weapon','armor','acc'][Math.floor(Math.random()*3)],key=`${boss}_${slot}`;let it=S.inv.find(i=>i.key===key&&i.r===r),up=false,conv=0;
+ if(it){if(it.plus<5){it.plus++;up=true}else{conv=300;S.gold+=conv}}
+ else{it={uid:'i'+Date.now().toString(36)+Math.floor(Math.random()*1e5).toString(36),key,r,plus:0};S.inv.push(it);if(!S.gear[slot])S.gear[slot]=it.uid}
+ return{it,up,conv}}
+function raidClear(){const R=S.raid,B=BOSSES[R.boss],D=DIFF[R.diff],st=S.raidStats;R.status='cleared';R.hp=0;R.clearedOn=S.today.date;
+ st.clears++;st.byDiff[R.diff]=(st.byDiff[R.diff]||0)+1;st.streak=st.lastClearWeek===addDays(R.week,-7)?st.streak+1:1;st.lastClearWeek=R.week;st.best=Math.max(st.best,st.streak);
+ const xp=Math.round(R.maxHp*D.xp),gold=Math.round(D.gold*(1+.1*tierOf(S.level))*goldMult());S.gold+=gold;
+ const drop=dropItem(R.boss,D.r);addLog('👑',`레이드 클리어: ${B.name} (${D.name})`);pendingClear={xp,gold,drop};gainXP(xp)}
+function flushRaid(){
+ if(pendingEscape){const B=BOSSES[pendingEscape];pendingEscape=null;showModal(`<div class="wm">💨</div><h2>${B.name}이(가) 도망쳤어요</h2><p class="sub">이번엔 놓쳤지만 잃은 건 없어요. 새 보스가 기다리고 있어요!</p><button class="btn primary wide" data-act="close">다음엔 잡는다</button>`,{cls:'fx'})}
+ if(pendingRage&&S.raid){pendingRage=false;const B=BOSSES[S.raid.boss];vib([100,50,100]);showModal(`<div class="wm rg">${B.icon}</div><div class="burst">ENRAGED!</div><h2>${B.name} 분노!</h2><p>HP가 절반 아래로 떨어지자 약점이 드러났어요.</p><div class="weak">약점: <b>${B.weakLabel}</b><br>→ 피해 2배</div><button class="btn primary wide" data-act="close">약점을 노린다</button>`,{cls:'fx'})}
+ if(pendingClear&&S.raid){const c=pendingClear,R=S.raid,B=BOSSES[R.boss],D=DIFF[R.diff],it=c.drop.it,d=ITEMS[it.key];pendingClear=null;vib([80,40,80,40,200]);
+  showModal(`<div class="wm">${B.icon}</div><div class="burst">RAID CLEAR!</div><h2>${B.name} 처치!</h2><p class="sub">${D.name} 난이도</p><p>+${fmt(c.xp)} XP · +${fmt(c.gold)}G</p>
+  <div class="loot" style="--rc:${RAR[it.r].col}"><span>${d.icon}</span><div><small style="color:${RAR[it.r].col};font-weight:800">${RAR[it.r].name} ${SLOTS[d.slot].name}${c.drop.up?' · 강화 성공!':''}</small><b>${d.name}${it.plus?` +${it.plus}`:''}</b><small>${fxText(it)}</small></div></div>
+  ${c.drop.conv?`<p class="sub">이미 +5라서 ${c.drop.conv}G로 바꿨어요</p>`:''}<p class="sub">🔥 레이드 연속 ${S.raidStats.streak}주 · 다음 보스는 월요일에 등장해요</p><button class="btn primary wide" data-act="close">전리품 챙기기</button>`,{cls:'fx'})}
+ if(pendingIntro&&S.raid&&S.onboarded){pendingIntro=false;const R=S.raid,B=BOSSES[R.boss],D=DIFF[R.diff];
+  showModal(`<div class="wm">${B.icon}</div><div class="burst">RAID BOSS!</div><h2>${B.name}</h2><p class="sub">${B.lore}</p><p><span class="dbadge" style="--dc:${D.col}">${D.name}</span> HP ${fmt(R.maxHp)} · 일요일 밤까지</p><p class="sub">퀘스트·올클리어·유혹 격퇴로 피해를 주세요.<br>힌트: ${B.hint}</p><div class="row"><button class="btn ghost" data-act="close">닫기</button><button class="btn primary" data-act="goto" data-arg="raid">레이드 보기</button></div>`,{cls:'fx'})}}
+function raidMini(){const R=S.raid;if(!R||!BOSSES[R.boss])return'';const B=BOSSES[R.boss],D=DIFF[R.diff];
+ if(R.status==='cleared')return `<section class="card tap raidmini clr" data-act="tab" data-arg="raid"><div class="rm-ic">🏆</div><div class="rm-b"><b>이번 주 레이드 클리어!</b><div class="sub">${B.name} 처치 · 다음 보스는 월요일에 등장해요</div></div></section>`;
+ const td=R.days[S.today.date]||0;
+ return `<section class="card tap raidmini ${R.enraged?'rage':''}" data-act="tab" data-arg="raid"><div class="rm-ic">${B.icon}</div><div class="rm-b"><b>${B.name} <span class="dbadge" style="--dc:${D.col}">${D.name}</span></b><div class="hpbar sm"><i style="width:${R.hp/R.maxHp*100}%"></i></div><div class="sub">HP ${fmt(R.hp)}/${fmt(R.maxHp)} · 남은 ${7-dayIdx(S.today.date)}일${R.enraged?' · 🔥 분노':''}${td?` · 오늘 ⚔️${fmt(td)}`:''}</div></div></section>`}
+function vRaid(){const R=S.raid;if(!R||!BOSSES[R.boss])return'<div class="card sub">레이드 준비 중이에요.</div>';
+ const B=BOSSES[R.boss],D=DIFF[R.diff],td=S.today.date,st=R.status,left=7-dayIdx(td);
+ let h=`<section class="card boss ${R.enraged&&st==='active'?'rage':''} ${st}"><div class="bhead"><span class="dbadge" style="--dc:${D.col}">${D.name}</span><span class="sub">${st==='active'?`남은 기간 ${left}일 · 일요일 밤까지`:st==='cleared'?'🏆 처치 완료':'💨 도망침'}</span></div>
+  <div class="stage"><div class="bossic">${B.icon}</div><div class="mshadow"></div></div><h2>${B.name}</h2><p class="sub">${B.lore}</p>`;
+ if(R.heads)h+=Object.entries(HEADS).map(([k,hd])=>{const v=R.heads[k],m=R.headMax[k];return `<div class="head"><b>${v>0?'🐍':'✂️'} ${hd.name}</b> <small>${hd.sub}</small><div class="hpbar sm"><i style="width:${m?v/m*100:0}%"></i></div><small>${v>0?`HP ${fmt(v)} / ${fmt(m)}`:'잘린 머리 — 이쪽 공격은 더 안 통해요'}</small></div>`}).join('')+`<div class="hptext">전체 HP ${fmt(R.hp)} / ${fmt(R.maxHp)}</div>`;
+ else h+=`<div class="hpbar big"><i style="width:${R.hp/R.maxHp*100}%"></i></div><div class="hptext">HP ${fmt(R.hp)} / ${fmt(R.maxHp)}</div>`;
+ h+=`<div class="weak">${R.enraged?`🔥 분노 페이즈 · 약점 <b>${B.weakLabel}</b> 피해 2배`:'약점: ??? <span class="sub">— HP 50% 아래에서 드러나요</span>'}<div class="sub mt">힌트: ${B.hint}</div></div></section>`;
+ let cells='';for(let i=0;i<7;i++){const k=addDays(R.week,i),dm=R.days[k]||0,hl=R.heals[k]||0;cells+=`<div class="wkd ${k===td?'today':''}"><small>${'월화수목금토일'[i]}</small><b>${dm?fmt(dm):'-'}</b>${hl?`<em>+${fmt(hl)}</em>`:''}</div>`}
+ h+=`<section class="card"><h3>이번 주 공격 기록</h3><div class="wk">${cells}</div><p class="sub mt">흰 숫자는 내가 준 피해, 빨간 숫자는 보스가 회복한 양이에요.</p></section>`;
+ h+=`<section class="card"><h3>공격 방법</h3><div class="how">📜 퀘스트 완료 — 얻은 XP만큼 피해</div><div class="how">🏆 올클리어 — 필살기! 보너스 XP × 1.5 피해</div><div class="how">⚔️ 유혹 격퇴 — 얻은 XP만큼 피해</div><div class="how">🚶 목표보다 더 걸은 걸음 — 1,000보마다 추가 피해 (하루 5,000보까지만)</div><div class="how">💤 올클리어 못 한 날 — 보스가 HP ${pct(D.heal)}% 회복 (연속 보호막이 있으면 막아줘요)</div>${R.diff==='hell'?'<div class="how">☠️ 헬 — 유혹 전투에서 지면 보스가 5% 회복</div>':''}${gearB('raid')?`<div class="how">🗡️ 장비 효과 — 레이드 피해 +${pct(gearB('raid'))}%</div>`:''}</section>`;
+ const xp=Math.round(R.maxHp*D.xp),gold=Math.round(D.gold*(1+.1*tierOf(S.level))*goldMult());
+ h+=`<section class="card"><h3>클리어 보상</h3><p>+${fmt(xp)} XP · +${fmt(gold)}G · <b style="color:${RAR[D.r].col}">${RAR[D.r].name}</b> 장비 1개</p><div class="drops">${Object.keys(SLOTS).map(s=>{const d=ITEMS[`${R.boss}_${s}`];return `<div><span>${d.icon}</span>${d.name}<br><small class="sub">${EFX[d.fx]}</small></div>`}).join('')}</div><p class="sub mt">셋 중 하나가 나와요. 같은 장비가 또 나오면 +1 강화(최대 +5).</p></section>`;
+ const canNow=st==='active'&&R.dealt===0&&!Object.keys(R.heals).length,cur=canNow?R.diff:S.raidDiffNext;
+ h+=`<section class="card"><h3>난이도</h3><p class="sub">${canNow?'아직 공격 전이라 이번 주 난이도를 바꿀 수 있어요.':'여기서 고르면 다음 주 레이드부터 적용돼요.'}</p><div class="diffs">${Object.entries(DIFF).map(([k,d])=>{const lock=S.cls.tier<d.tier;return `<button class="dbtn ${cur===k?'on':''}" style="--dc:${d.col}" data-act="raid-diff" data-arg="${k}" ${lock?'disabled':''}><b>${d.name}</b><small>${lock?`🔒 ${d.tier}차 전직 후`:`HP ×${(d.f/4.5).toFixed(1)} · 회복 ${pct(d.heal)}%`}</small><small style="color:${RAR[d.r].col}">${RAR[d.r].name} 장비</small></button>`}).join('')}</div></section>`;
+ const t=raidTitle(),nb=BOSSES[BOSS_ORDER[S.raidStats.n%BOSS_ORDER.length]];
+ h+=`<section class="card"><h3>레이드 기록</h3><div class="grid3"><div class="sbox"><b>${S.raidStats.clears}회</b><small>클리어</small></div><div class="sbox"><b>${S.raidStats.streak}주</b><small>연속 클리어</small></div><div class="sbox"><b>${t?t[0]:'—'}</b><small>${t?t[1]:'칭호 없음'}</small></div></div>
+  ${S.raidHist.slice(0,8).map(x=>`<div class="hist"><span>${BOSSES[x.boss]?BOSSES[x.boss].icon+' '+BOSSES[x.boss].name:''} <small class="sub">${DIFF[x.diff]?DIFF[x.diff].name:''}</small></span><span>${x.result==='cleared'?'🏆 클리어':'💨 실패'}</span></div>`).join('')}
+  <p class="sub center mt">칭호: 1회 보스 사냥꾼 · 3회 베테랑 · 8회 마스터 · 20회 전설</p><p class="sub center">다음 주 보스: ${nb.icon} ${nb.name}</p></section>`;
+ return h}
+function vGear(){const inv=S.inv,eq=Object.values(S.gear);
+ let h=`<section class="card"><div class="sechead"><h3>장비</h3><span class="pts">${inv.length}개 보유</span></div><div class="slots">${Object.entries(SLOTS).map(([k,s])=>{const it=getItem(S.gear[k]);
+  if(!it)return `<div class="slot" style="--rc:var(--line)"><small>${s.name}</small><span class="sl-ic" style="opacity:.3">${s.icon}</span><small>비어 있음</small></div>`;
+  const d=ITEMS[it.key];return `<div class="slot" style="--rc:${RAR[it.r].col}"><small>${s.name}</small><span class="sl-ic">${d.icon}</span><b>${d.name}${it.plus?` +${it.plus}`:''}</b><small style="color:${RAR[it.r].col}">${RAR[it.r].name}</small><small>${fxText(it)}</small><button class="x" data-act="unequip" data-arg="${k}">해제</button></div>`}).join('')}</div>`;
+ const bag=inv.filter(it=>!eq.includes(it.uid));
+ if(bag.length)h+=`<div class="tree">가방</div>`+bag.map(it=>{const d=ITEMS[it.key];return `<div class="inv"><span class="ic">${d.icon}</span><div><b>${d.name}${it.plus?` +${it.plus}`:''}</b> <span class="rar" style="color:${RAR[it.r].col}">${RAR[it.r].name}</span><small>${SLOTS[d.slot].name} · ${fxText(it)}</small></div><button class="btn sm primary" data-act="equip" data-arg="${it.uid}">장착</button></div>`}).join('');
+ if(!inv.length)h+=`<p class="sub mt">주간 레이드 보스를 쓰러뜨리면 장비를 얻어요.</p>`;
+ return h+'</section>'}
+function migrateToday(){if(!S.today)return;for(const q of S.today.quests){const t=TPL.find(x=>x.id===q.id);if(!t)continue;const f=questFromTpl(t,S.today.tier);
+ if(q.type!==f.type){q.type=f.type;q.target=f.target;q.unit=f.unit;q.name=f.name;if(q.val===undefined)q.val=null}if(!q.icon)q.icon=f.icon}}
+
+/* ---------- 안드로이드 앱 연동 (헬스 커넥트) ---------- */
+let hc='unknown',hcBusy=false,hcTry=0,hcN=0;const hcCbs={};
+window.__hbResolve=(id,data)=>{const f=hcCbs[id];delete hcCbs[id];if(f)f(data||{})};
+window.__hbPerm=(ok,any)=>{if(any){toast(ok?'⌚ 갤럭시 핏 연결 완료!':'⌚ 일부 기록만 허용됐어요');syncHealth(true)}else{hc='noperm';toast('권한을 허용해야 자동으로 반영돼요');render()}};
+function hbCall(m,...a){return new Promise(res=>{const id='c'+(++hcN);hcCbs[id]=res;setTimeout(()=>{if(hcCbs[id]){delete hcCbs[id];res({error:'timeout'})}},15000);try{HB[m](...a,id)}catch(e){delete hcCbs[id];res({error:String(e)})}})}
+async function syncHealth(manual){
+ if(!inApp||hcBusy)return;if(!manual&&Date.now()-hcTry<60000)return;hcBusy=true;hcTry=Date.now();
+ try{
+  let st='';try{st=HB.getStatus()}catch(e){st='error'}
+  if(st!=='available'){hc='unavailable';if(manual)toast(st==='update_required'?'헬스 커넥트 업데이트가 필요해요':'헬스 커넥트를 쓸 수 없어요');render();return}
+  const p=await hbCall('checkPermissions');
+  if(!(p.steps||p.sleep||p.exercise)){hc='noperm';if(manual)HB.requestPermissions();render();return}
+  hc='ok';dayCheck();
+  const d=await hbCall('readDay',S.today.date);
+  if(d.error){if(manual)toast('기록을 불러오지 못했어요');render();return}
+  applyHealth(d,manual)
+ }finally{hcBusy=false}}
+function applyHealth(d,manual){const ch=[];
+ const w=findQ('walk');
+ if(w&&w.type==='num'&&typeof d.steps==='number'&&(w.val==null||w.src!=='manual'||d.steps>w.val)&&w.val!==d.steps){w.val=d.steps;w.src='hc';setInputDone(w,w.val>=w.target,null);applySteps(w);ch.push(`걸음 ${fmt(d.steps)}보`)}
+ const x=findQ('exercise');
+ if(x&&x.type==='num'&&typeof d.exerciseMin==='number'&&d.exerciseMin>0&&(x.val==null||x.src!=='manual'||d.exerciseMin>x.val)&&x.val!==d.exerciseMin){x.val=d.exerciseMin;x.src='hc';setInputDone(x,x.val>=x.target,null);ch.push(`운동 ${d.exerciseMin}분`)}
+ const sl=findQ('sleep');
+ if(sl&&sl.type==='sleep'&&d.bedtime&&(!sl.val||sl.src==='hc')&&sl.val!==d.bedtime){sl.val=d.bedtime;sl.src='hc';setInputDone(sl,toRel(sl.val)<=sl.target,null);ch.push(`잠든 시각 ${d.bedtime}`)}
+ S.hcLast=Date.now();
+ if(ch.length)toast('⌚ 갤럭시 핏 반영: '+ch.join(' · '));else if(manual)toast('⌚ 새로 반영할 기록이 없어요');
+ commit()}
+function hcCard(){if(!inApp)return'';
+ if(hc==='ok')return `<div class="card hc"><div><b>⌚ 갤럭시 핏 연동 중</b><div class="sub">${S.hcLast?`마지막 동기화 ${fmtTime(S.hcLast)}`:'곧 기록을 불러와요'}</div></div><button class="btn sm" data-act="hc-sync">지금 동기화</button></div>`;
+ if(hc==='noperm')return `<div class="card hc on"><div><b>⌚ 갤럭시 핏 자동 연동</b><div class="sub">걸음·수면·운동 기록을 읽어 퀘스트를 자동으로 체크해요</div></div><button class="btn sm primary" data-act="hc-perm">연결하기</button></div>`;
+ if(hc==='unavailable')return `<div class="card hc"><div><b>⌚ 헬스 커넥트를 쓸 수 없어요</b><div class="sub">설치하거나 업데이트한 뒤 다시 시도해 주세요</div></div><button class="btn sm" data-act="hc-open">열기</button></div>`;
+ return `<div class="card hc"><div class="sub">⌚ 헬스 커넥트 확인 중…</div></div>`}
+window.__onBack=()=>{if(modalOpen){nextModal();return true}if(!$('#battle').classList.contains('hidden')){hideBattle();return true}if(tab!=='quest'){H.tab('quest');return true}return false};
+
+/* ---------- 백업 ---------- */
+function backupCode(){return btoa(unescape(encodeURIComponent(JSON.stringify(S))))}
+function restoreFrom(txt){let o=null;txt=String(txt||'').trim();
+ try{o=JSON.parse(txt)}catch(e){try{o=JSON.parse(decodeURIComponent(escape(atob(txt))))}catch(_){o=null}}
+ if(!o||typeof o.level!=='number'||!o.totals){toast('올바른 백업 코드가 아니에요');return}
+ S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();clearInterval(btimer);$('#battle').classList.add('hidden');
+ rollover();commit();toast('복원 완료!');if(S.battle)showBattle()}
+async function copyText(t){if(inApp){try{HB.copyText(t);toast('복사했어요');return}catch(e){}}try{await navigator.clipboard.writeText(t);toast('복사했어요')}catch(e){const ta=$('#bkOut');if(ta){ta.focus();ta.select();try{document.execCommand('copy');toast('복사했어요');return}catch(_){}}toast('코드를 길게 눌러 직접 복사해 주세요')}}
+
+/* ---------- 이벤트 ---------- */
+function dayCheck(){const before=S.today.date,msgs=rollover();if(S.today.date!==before){commit();toast('새로운 하루가 시작됐어요!');msgs.forEach(m=>toast(m));return true}return false}
+const H={
+ tab:a=>{tab=a;if(a==='raid'&&S.raid){S.raidSeen=S.raid.week;save()}render();window.scrollTo(0,0)},
+ 'q-toggle':(id,el)=>{if(dayCheck())return;const q=findQ(id);if(!q||q.type!=='check')return;q.done?uncomplete(q):complete(q,el);commit()},
+ 'q-inc':(id,el)=>{if(dayCheck())return;const q=findQ(id);if(!q)return;q.prog=Math.min(q.prog+1,q.target*2);if(!q.done&&q.prog>=q.target)complete(q,el.closest('.quest'));else vib(10);commit()},
+ 'q-dec':id=>{if(dayCheck())return;const q=findQ(id);if(!q)return;q.prog=Math.max(0,q.prog-1);if(q.done&&q.prog<q.target)uncomplete(q);commit()},
+ 'q-num':(id,el)=>{if(dayCheck())return;const q=findQ(id);if(!q||q.type!=='num')return;const inp=$('#in_'+id),v=parseInt(inp?inp.value:'',10);if(!(v>=0)){toast('숫자를 입력해 주세요');return}
+  q.val=Math.min(v,q.unit==='보'?100000:1440);q.src='manual';setInputDone(q,q.val>=q.target,el.closest('.quest'));if(q.unit==='보')applySteps(q);if(!q.done)toast(`목표까지 ${fmt(q.target-q.val)}${q.unit} 남았어요`);commit()},
+ 'q-sleep':(id,el)=>{if(dayCheck())return;const q=findQ(id);if(!q||q.type!=='sleep')return;const inp=$('#in_'+id),v=inp?inp.value:'';if(!/^\d{1,2}:\d{2}$/.test(v)){toast('잠든 시각을 골라 주세요');return}
+  q.val=v;q.src='manual';setInputDone(q,toRel(v)<=q.target,el.closest('.quest'));if(!q.done)toast('아쉬워요! 오늘 밤에 다시 도전해요');commit()},
+ 'hc-perm':()=>{if(inApp)try{HB.requestPermissions()}catch(e){}},
+ 'hc-sync':()=>syncHealth(true),
+ 'hc-open':()=>{if(inApp)try{HB.openHealthConnect()}catch(e){}},
+ 'app-url':()=>{if(inApp)try{HB.changeGameUrl()}catch(e){}},
+ 'raid-diff':k=>{const d=DIFF[k];if(!d||S.cls.tier<d.tier)return;S.raidDiffNext=k;const R=S.raid;
+  if(raidOn()&&R.dealt===0&&!Object.keys(R.heals).length){R.diff=k;setRaidHp(R);toast(`이번 주 난이도: ${d.name}`)}else toast(`다음 주부터 ${d.name} 난이도로 도전해요`);commit()},
+ equip:uid=>{const it=getItem(uid);if(!it)return;S.gear[ITEMS[it.key].slot]=uid;vib(15);toast(`${ITEMS[it.key].name} 장착!`);commit()},
+ unequip:k=>{if(!(k in S.gear))return;S.gear[k]=null;commit()},
+ 'stat-up':k=>{if(S.statPts<1||!(k in S.stats))return;S.stats[k]++;S.statPts--;vib(10);commit()},
+ 'skill-up':id=>{const s=SK[id];if(!s)return;const r=sk(id);if(r>=s.max||S.level<s.lv||(s.req&&!sk(s.req))||S.skillPts<1)return;
+  S.skills[id]=r+1;S.skillPts--;if(id==='shield')S.shields++;addLog('📘',`스킬 「${s.name}」 ${r+1}단계`);toast(`📘 ${s.name} ${r+1}단계 습득!`);vib(20);commit()},
+ 'job-pick':k=>{const p=PATHS[k];if(p)confirmBox(`<b style="color:${p.color}">${p.icon} ${p.name}</b>(으)로 전직할까요?<br><span class="sub">계열은 나중에 바꿀 수 없어요.</span>`,()=>doJob(k))},
+ 'job-up':()=>{const p=PATHS[S.cls.path];confirmBox(`<b style="color:${p.color}">${p.tiers[S.cls.tier]}</b>(으)로 전직할까요?`,()=>doJob(S.cls.path))},
+ ult:()=>{const u=PATHS[S.cls.path].ult;confirmBox(`궁극기 「${u.name}」를 발동할까요?<br><span class="sub">${u.desc} · 이번 주에 한 번만 쓸 수 있어요.</span>`,useUlt)},
+ 'battle-open':()=>openBattle(),
+ 'battle-start':m=>startBattle(m),
+ 'battle-close':()=>hideBattle(),
+ 'battle-min':()=>hideBattle(),
+ 'battle-cancel':()=>confirmBox('전투를 취소할까요? (기록에 남지 않아요)',()=>{S.battle=null;hideBattle();commit()}),
+ 'battle-lose':()=>confirmBox('이번 전투는 졌다고 기록할까요?<br><span class="sub">경험치는 잃지 않아요.</span>',loseBattle),
+ subst:i=>{if(!S.battle)return;S.battle.subst=true;S.battle.si=+i;save();document.querySelectorAll('.subst button').forEach((b,j)=>b.classList.toggle('on',j===+i));toast('좋아요! 승리하면 XP +15')},
+ close:()=>nextModal(),
+ goto:t=>{nextModal();H.tab(t)},
+ 'cf-yes':()=>{const f=pendingCf;pendingCf=null;nextModal();f&&f()},
+ buy:id=>{const r=S.rewards.find(x=>x.id===id);if(!r||S.gold<r.price)return;confirmBox(`「${esc(r.name)}」를 ${fmt(r.price)}G에 구매할까요?`,()=>{if(S.gold<r.price)return;S.gold-=r.price;addLog('🎁',`보상: ${r.name} (-${fmt(r.price)}G)`);vib([30,30,60]);
+  showModal(`<div class="wm">🎁</div><div class="burst">REWARD!</div><h2>${esc(r.name)}</h2><p class="sub">당당하게 즐기세요. 참아서 얻은 보상이에요.</p><button class="btn primary wide" data-act="close">즐기러 간다</button>`,{cls:'fx'});commit()})},
+ 'rw-del':id=>confirmBox('이 보상을 목록에서 지울까요?',()=>{S.rewards=S.rewards.filter(x=>x.id!==id);commit()}),
+ 'rw-add':()=>{const n=$('#rwName').value.trim(),p=parseInt($('#rwPrice').value,10);if(!n){toast('보상 이름을 적어 주세요');return}if(!(p>0)){toast('가격을 1G 이상으로 적어 주세요');return}
+  S.rewards.push({id:'r'+Date.now().toString(36),name:n,price:Math.min(p,9999999)});toast('보상을 추가했어요');commit()},
+ 'name-save':()=>{const n=$('#nmIn').value.trim();if(!n)return;S.name=n;toast('저장했어요');commit()},
+ 'cq-add':()=>{const n=$('#cqName').value.trim(),c=$('#cqCat').value;if(!n){toast('퀘스트 이름을 적어 주세요');return}if(!CATS[c])return;
+  const cq={id:Date.now().toString(36),name:n,cat:c};S.custom.push(cq);S.today.quests.push(questFromCustom(cq));recheckClear();toast('오늘부터 퀘스트에 추가했어요');commit()},
+ 'cq-del':id=>confirmBox('이 퀘스트를 지울까요?',()=>{S.custom=S.custom.filter(c=>c.id!==id);removeQuest('c_'+id);commit()}),
+ 'bk-make':()=>{$('#bkOut').value=backupCode();$('#bkBox').classList.remove('hidden')},
+ 'bk-copy':()=>copyText($('#bkOut').value),
+ 'bk-file':()=>{try{const b=new Blob([JSON.stringify(S)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`health-rpg-backup-${S.today.date}.json`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('백업 파일을 저장했어요')}catch(e){toast('파일 저장이 안 돼요. 백업 코드를 써 주세요')}},
+ 'bk-restore':()=>{const v=$('#bkIn').value;if(!v.trim()){toast('백업 코드를 붙여넣어 주세요');return}confirmBox('지금 기록을 백업 내용으로 덮어쓸까요?',()=>restoreFrom(v))},
+ howto:()=>howto(false),
+ respec:()=>{if(S.gold<500){toast('골드가 500G 필요해요');return}confirmBox('500G를 내고 스탯과 스킬 포인트를 모두 돌려받을까요?',()=>{if(S.gold<500)return;S.gold-=500;S.stats={wil:0,tem:0,vit:0,wis:0,luk:0};S.skills={};S.statPts=S.grantStat;S.skillPts=S.grantSkill;S.shields=Math.min(S.shields,0);addLog('🔄','스탯·스킬 초기화');toast('포인트를 돌려받았어요');commit()})},
+ 'reset-all':()=>showModal(`<h3>모든 데이터 초기화</h3><p class="sub">레벨, 기록, 골드가 전부 사라져요. 계속하려면 아래에 <b>초기화</b>라고 입력하세요.</p><input id="rsIn" style="width:100%" placeholder="초기화"><div class="row"><button class="btn ghost" data-act="close">취소</button><button class="btn danger" data-act="reset-yes">초기화</button></div>`),
+ 'reset-yes':()=>{if($('#rsIn').value.trim()!=='초기화'){toast('“초기화”라고 입력해 주세요');return}
+  clearInterval(btimer);$('#battle').classList.add('hidden');S=defaults();S.created=todayKey();S.today=null;rollover();nextModal();tab='quest';howto(true);commit()},
+ 'onb-done':()=>{const el=$('#onbName');const n=el?el.value.trim():'';if(n)S.name=n;S.onboarded=true;nextModal();commit()},
+ install:async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;render()}};
+const C={
+ tpl:el=>{if(dayCheck())return;toggleTpl(el.dataset.arg,el.checked);commit()},
+ daystart:el=>{S.dayStart=+el.value;const m=rollover();commit();m.forEach(x=>toast(x))},
+ bmin:el=>{S.battleMin=+el.value;commit()},
+ bkfile:el=>{const f=el.files&&el.files[0];if(!f)return;f.text().then(t=>confirmBox('지금 기록을 백업 파일 내용으로 덮어쓸까요?',()=>restoreFrom(t)))}};
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const f=H[el.dataset.act];if(f){e.preventDefault();f(el.dataset.arg,el,e)}});
+document.addEventListener('change',e=>{const el=e.target,f=el.dataset&&C[el.dataset.chg];if(f)f(el)});
+document.addEventListener('keydown',e=>{const t=e.target;if(e.key!=='Enter')return;if(t.id==='onbName')H['onb-done']();else if(t.id&&t.id.startsWith('in_')){const q=findQ(t.id.slice(3));if(q){e.preventDefault();H[q.type==='sleep'?'q-sleep':'q-num'](q.id,t)}}});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;render()});
+window.addEventListener('appinstalled',()=>{deferredPrompt=null;toast('설치 완료! 홈 화면에서 실행하세요');render()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){dayCheck();if(inApp)syncHealth(false);if(S.battle&&!$('#battle').classList.contains('hidden'))battleTick();else if(S.battle)render()}});
+setInterval(()=>{dayCheck();if(S.battle&&$('#battle').classList.contains('hidden')&&Date.now()-S.battle.start>=S.battle.min*60e3)showBattle()},5000);
+
+/* ---------- 시작 ---------- */
+(function init(){
+ S=merge(defaults(),load());if(!S.created)S.created=todayKey();
+ migrateToday();
+ const msgs=rollover();save();render();
+ if(S.battle)showBattle();
+ if(!S.onboarded)howto(true);
+ flushRaid();
+ msgs.forEach(m=>toast(m));
+ if(inApp)setTimeout(()=>syncHealth(false),700);
+ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+ try{if('serviceWorker' in navigator&&!inFrame&&(location.protocol==='https:'||location.hostname==='localhost')){
+  const had=!!navigator.serviceWorker.controller;let reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!reloaded){reloaded=true;save();location.reload()}});
+  navigator.serviceWorker.register('sw.js').catch(()=>{})}}catch(e){}
+})();
+</script>
+</body>
+</html>
