@@ -1,6 +1,6 @@
 // 건강 RPG 서비스 워커: 처음 한 번 열면 모든 파일을 저장해 두고, 이후에는 인터넷 없이 실행됩니다.
-const CACHE = 'health-rpg-v5';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
+const CACHE = 'health-rpg-v6';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './costumes.js'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', e => {
@@ -38,6 +38,15 @@ self.addEventListener('fetch', e => {
       }).catch(() => cached);
       return cached || net;
     }));
+    return;
+  }
+
+  // 코스튬 목록: 매주 새 옷이 추가되니 인터넷이 되면 새 파일, 안 되면 저장본
+  if (url.origin === self.location.origin && url.pathname.endsWith('/costumes.js')) {
+    e.respondWith(fetch(req).then(res => {
+      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./costumes.js', copy)); }
+      return res;
+    }).catch(() => caches.match('./costumes.js')));
     return;
   }
 
