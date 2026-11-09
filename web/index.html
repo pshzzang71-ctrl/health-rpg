@@ -798,7 +798,7 @@ function howto(first){
  <div>🧙 <b>전직</b> — Lv.5부터 수도승·전사·현자·성기사 중 하나로 전직. 4차까지 강해지고 궁극기도 생겨요.</div>
  <div>👹 <b>주간 레이드</b> — 매주 월요일 새 보스 등장. 퀘스트·올클리어·유혹 격퇴로 피해를 주고 일요일까지 쓰러뜨리면 장비 획득!</div>
  <div>🚶 <b>걸음·수면 입력</b> — 걷기·운동·수면은 삼성 헬스(갤럭시 핏) 숫자를 넣으면 자동으로 판정돼요.</div>
- <div>🛍️ <b>상점</b> — 골드로 캐릭터 코스튬을 사거나(매주 목요일 신상 2벌), 내가 정한 진짜 보상을 사세요.</div>
+ <div>🛍️ <b>상점</b> — 골드로 캐릭터 코스튬을 사거나(매주 화요일 신상 2벌), 내가 정한 진짜 보상을 사세요.</div>
  <div>🏆 <b>업적</b> — 60가지 업적을 달성하면 골드를 받고, 마음에 드는 업적을 칭호로 달 수 있어요.</div>
  <div>🛡️ <b>백업</b> — 기록은 이 휴대폰에만 저장돼요. 설정에서 가끔 백업해 두세요.</div></div></div>
  <button class="btn primary wide" data-act="${first?'onb-done':'close'}">모험 시작!</button>`,{cls:'fx'})}
@@ -915,7 +915,7 @@ function vBook(){const met=new Set(S.raidHist.map(x=>x.boss));if(S.raid)met.add(
 function vShop(){const n=cosUnseen();
  return segBar('shop-seg',shopSeg,[['cos','👗 코스튬',shopSeg!=='cos'&&n?'N':''],['real','🎁 진짜 보상']])+(shopSeg==='cos'?vCos():vReal())}
 function vCos(){markCosSeen();const cur=S.costume&&COS_MAP[S.costume];
- let h=`<section class="card cosh"><div class="ava t${S.cls.tier}" style="--aura:${AURA[S.cls.tier]}">${avatar()}</div><div><div class="goldbig">💰 ${fmt(S.gold)} G</div><div class="sub">지금 입은 옷 <b>${cur?esc(cur.name):'기본 옷'}</b></div><div class="sub">보유 ${COS.filter(c=>S.costumes.includes(c.id)).length}/${COS.length}벌 · 매주 목요일 새 코스튬 2벌</div></div></section>`;
+ let h=`<section class="card cosh"><div class="ava t${S.cls.tier}" style="--aura:${AURA[S.cls.tier]}">${avatar()}</div><div><div class="goldbig">💰 ${fmt(S.gold)} G</div><div class="sub">지금 입은 옷 <b>${cur?esc(cur.name):'기본 옷'}</b></div><div class="sub">보유 ${COS.filter(c=>S.costumes.includes(c.id)).length}/${COS.length}벌 · 매주 화요일 새 코스튬 2벌</div></div></section>`;
  if(!COS.length)return h+`<div class="card sub">코스튬 목록을 불러오지 못했어요. 인터넷에 연결된 상태로 앱을 한 번 다시 열어 주세요.</div>`;
  const list=COS.map((c,i)=>({c,i})).sort((x,y)=>(y.c.added||'').localeCompare(x.c.added||'')||x.i-y.i).map(x=>x.c);
  h+=`<div class="cosgrid">${cosCard(null)}${list.map(cosCard).join('')}</div><p class="sub center">코스튬은 겉모습만 바꿔요. 능력치는 그대로예요.</p>`;
