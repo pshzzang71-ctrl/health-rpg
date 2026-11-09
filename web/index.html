@@ -292,7 +292,7 @@ h2{margin:6px 0;font-size:24px}h3{margin:0 0 10px;font-size:18px;color:#7a4b22}
 <div id="toasts"></div>
 <script>
 'use strict';
-const VERSION='1.3.0', KEY='healthRPG.v1';
+const VERSION='1.3.1', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -760,7 +760,7 @@ function vRec(){const t=S.today.date,w=S.totals.urgeWins,l=S.totals.urgeLosses;
 function vSet(){const tier=tierOf(S.level);
  let h=inFrame?`<div class="card pvnote">지금은 미리보기 화면이에요. 홈 화면 앱으로 설치하면 기록이 앱 안에 따로 저장돼요. 여기 기록을 옮기려면 아래 백업 코드를 쓰세요.</div>`:'';
  h+=installCard();
- if(inApp)h+=`<section class="card"><h3>⌚ 갤럭시 핏 · 헬스 커넥트</h3><p class="sub">삼성 헬스 → 설정 → 헬스 커넥트에서 걸음·수면·운동 공유를 켜 두면, 앱을 열 때마다 자동으로 퀘스트에 반영돼요.</p><div class="row"><button class="btn" data-act="hc-perm">권한 설정</button><button class="btn" data-act="hc-open">헬스 커넥트 열기</button></div><button class="btn wide" data-act="app-url">게임 주소 바꾸기</button><p class="sub center mt">앱 버전 ${esc(HB.appVersion())}</p></section>`;
+ if(inApp)h+=`<section class="card"><h3>⌚ 갤럭시 핏 · 헬스 커넥트</h3><p class="sub">삼성 헬스 → 설정 → 헬스 커넥트에서 걸음·수면·운동 공유를 켜 두면, 앱을 열 때마다 자동으로 퀘스트에 반영돼요.</p><div class="row"><button class="btn" data-act="hc-perm">권한 설정</button><button class="btn" data-act="hc-open">헬스 커넥트 열기</button></div><button class="btn wide" data-act="hc-diag">🔍 연동 점검</button><button class="btn wide" data-act="app-url">게임 주소 바꾸기</button><p class="sub center mt">앱 버전 ${esc(HB.appVersion())}</p></section>`;
  h+=`<section class="card"><h3>모험가 이름</h3><div class="form"><input id="nmIn" value="${esc(S.name)}" maxlength="12"><button class="btn primary" data-act="name-save">저장</button></div></section>`;
  h+=`<section class="card"><h3>기본 설정</h3>
   <label class="setrow"><span>하루가 바뀌는 시간<small>이 시간 전까지는 전날로 기록돼요</small></span><select data-chg="daystart">${[0,2,3,4,5,6].map(v=>`<option value="${v}" ${S.dayStart===v?'selected':''}>${v?'새벽 '+v+'시':'자정'}</option>`).join('')}</select></label>
@@ -892,19 +892,38 @@ async function syncHealth(manual){
  }finally{hcBusy=false}}
 function applyHealth(d,manual){const ch=[];
  const w=findQ('walk');
- if(w&&w.type==='num'&&typeof d.steps==='number'&&(w.val==null||w.src!=='manual'||d.steps>w.val)&&w.val!==d.steps){w.val=d.steps;w.src='hc';setInputDone(w,w.val>=w.target,null);applySteps(w);ch.push(`걸음 ${fmt(d.steps)}보`)}
+ if(w&&w.type==='num'&&typeof d.steps==='number'&&d.steps>0&&(w.val==null||w.src!=='manual'||d.steps>w.val)&&w.val!==d.steps){w.val=d.steps;w.src='hc';setInputDone(w,w.val>=w.target,null);applySteps(w);ch.push(`걸음 ${fmt(d.steps)}보`)}
  const x=findQ('exercise');
  if(x&&x.type==='num'&&typeof d.exerciseMin==='number'&&d.exerciseMin>0&&(x.val==null||x.src!=='manual'||d.exerciseMin>x.val)&&x.val!==d.exerciseMin){x.val=d.exerciseMin;x.src='hc';setInputDone(x,x.val>=x.target,null);ch.push(`운동 ${d.exerciseMin}분`)}
  const sl=findQ('sleep');
  if(sl&&sl.type==='sleep'&&d.bedtime&&(!sl.val||sl.src==='hc')&&sl.val!==d.bedtime){sl.val=d.bedtime;sl.src='hc';setInputDone(sl,toRel(sl.val)<=sl.target,null);ch.push(`잠든 시각 ${d.bedtime}`)}
  S.hcLast=Date.now();
- if(ch.length)toast('⌚ 갤럭시 핏 반영: '+ch.join(' · '));else if(manual)toast('⌚ 새로 반영할 기록이 없어요');
+ if(ch.length)toast('⌚ 갤럭시 핏 반영: '+ch.join(' · '));
+ else if(manual){let m='⌚ 새로 반영할 기록이 없어요';
+  if(typeof d.steps!=='number')m='⌚ 걸음 수를 읽을 권한이 없어요. 설정 탭 → 연동 점검을 눌러 보세요';
+  else if(d.steps===0)m='⌚ 헬스 커넥트에 오늘 걸음 기록이 없어요. 삼성 헬스 → 설정 → 헬스 커넥트 공유를 확인해 주세요';
+  else if(w&&w.src==='manual'&&w.val>=d.steps)m=`⌚ 직접 입력한 ${fmt(w.val)}보가 더 커서 그대로 뒀어요`;
+  toast(m)}
  commit()}
 function hcCard(){if(!inApp)return'';
- if(hc==='ok')return `<div class="card hc"><div><b>⌚ 갤럭시 핏 연동 중</b><div class="sub">${S.hcLast?`마지막 동기화 ${fmtTime(S.hcLast)}`:'곧 기록을 불러와요'}</div></div><button class="btn sm" data-act="hc-sync">지금 동기화</button></div>`;
+ if(hc==='ok')return `<div class="card hc"><div><b>⌚ 갤럭시 핏 연동 중</b><div class="sub">${S.hcLast?`마지막 동기화 ${fmtTime(S.hcLast)}`:'곧 기록을 불러와요'}</div></div><div class="row" style="margin:0;flex-wrap:nowrap"><button class="btn sm" data-act="hc-diag">점검</button><button class="btn sm" data-act="hc-sync">동기화</button></div></div>`;
  if(hc==='noperm')return `<div class="card hc on"><div><b>⌚ 갤럭시 핏 자동 연동</b><div class="sub">걸음·수면·운동 기록을 읽어 퀘스트를 자동으로 체크해요</div></div><button class="btn sm primary" data-act="hc-perm">연결하기</button></div>`;
  if(hc==='unavailable')return `<div class="card hc"><div><b>⌚ 헬스 커넥트를 쓸 수 없어요</b><div class="sub">설치하거나 업데이트한 뒤 다시 시도해 주세요</div></div><button class="btn sm" data-act="hc-open">열기</button></div>`;
  return `<div class="card hc"><div class="sub">⌚ 헬스 커넥트 확인 중…</div></div>`}
+async function hcDiag(){if(!inApp){toast('앱에서만 쓸 수 있어요');return}
+ let st='';try{st=HB.getStatus()}catch(e){st='error'}
+ const ok=st==='available',p=ok?await hbCall('checkPermissions'):{},d=ok?await hbCall('readDay',S.today.date):{};
+ const L=[`헬스 커넥트: ${ok?'✅ 사용 가능':st==='update_required'?'⚠️ 업데이트 필요':'❌ 사용할 수 없음 ('+st+')'}`,
+  `건강 RPG 읽기 권한: 걸음 ${p.steps?'✅':'❌'} · 수면 ${p.sleep?'✅':'❌'} · 운동 ${p.exercise?'✅':'❌'}`,
+  `오늘(${S.today.date}) 걸음: ${typeof d.steps==='number'?fmt(d.steps)+'보':'읽지 못함'}`,
+  `오늘 운동: ${typeof d.exerciseMin==='number'?d.exerciseMin+'분':'읽지 못함'} · 어젯밤 잠든 시각: ${d.bedtime||'기록 없음'}`];
+ if(d.error||p.error)L.push(`오류: ${d.error||p.error}`);
+ let tip;
+ if(!ok)tip='헬스 커넥트를 설치하거나 업데이트한 뒤 다시 눌러 주세요.';
+ else if(!(p.steps||p.sleep||p.exercise))tip='건강 RPG에 읽기 권한이 없어요. 아래 \'권한 설정\'을 눌러 걸음 수·수면·운동을 허용해 주세요.';
+ else if(d.steps===0)tip='권한은 있는데 헬스 커넥트에 오늘 걸음 기록이 없어요. 삼성 헬스가 헬스 커넥트로 데이터를 보내도록 켜 주세요 (삼성 헬스 → 설정 → 헬스 커넥트). 켠 뒤 몇 분 지나서 다시 눌러 보세요.';
+ else tip='정상이에요. 숫자가 삼성 헬스와 다르면 삼성 헬스를 한 번 열어 동기화한 뒤 다시 눌러 보세요.';
+ showModal(`<h3>🔍 연동 점검</h3><div class="howl">${L.map(x=>`<div>${esc(x)}</div>`).join('')}</div><p class="sub">${tip}</p><div class="row"><button class="btn ghost" data-act="close">닫기</button><button class="btn primary" data-act="hc-perm">권한 설정</button></div>`)}
 window.__onBack=()=>{if(modalOpen){nextModal();return true}if(!$('#battle').classList.contains('hidden')){hideBattle();return true}if(tab!=='quest'){H.tab('quest');return true}return false};
 
 /* ---------- 백업 ---------- */
@@ -927,7 +946,8 @@ const H={
   q.val=Math.min(v,q.unit==='보'?100000:1440);q.src='manual';setInputDone(q,q.val>=q.target,el.closest('.quest'));if(q.unit==='보')applySteps(q);if(!q.done)toast(`목표까지 ${fmt(q.target-q.val)}${q.unit} 남았어요`);commit()},
  'q-sleep':(id,el)=>{if(dayCheck())return;const q=findQ(id);if(!q||q.type!=='sleep')return;const inp=$('#in_'+id),v=inp?inp.value:'';if(!/^\d{1,2}:\d{2}$/.test(v)){toast('잠든 시각을 골라 주세요');return}
   q.val=v;q.src='manual';setInputDone(q,toRel(v)<=q.target,el.closest('.quest'));if(!q.done)toast('아쉬워요! 오늘 밤에 다시 도전해요');commit()},
- 'hc-perm':()=>{if(inApp)try{HB.requestPermissions()}catch(e){}},
+ 'hc-perm':()=>{if(modalOpen)nextModal();if(inApp)try{HB.requestPermissions()}catch(e){}},
+ 'hc-diag':()=>hcDiag(),
  'hc-sync':()=>syncHealth(true),
  'hc-open':()=>{if(inApp)try{HB.openHealthConnect()}catch(e){}},
  'app-url':()=>{if(inApp)try{HB.changeGameUrl()}catch(e){}},
