@@ -39,6 +39,7 @@ h2{margin:6px 0;font-size:24px}h3{margin:0 0 10px;font-size:18px;color:#7a4b22}
 .hero{display:flex;gap:14px;align-items:center;background:linear-gradient(180deg,#fff6df,#ffe3a8);border:3px solid var(--wood2);border-radius:22px;padding:12px 14px;margin-bottom:12px;box-shadow:0 5px 0 #a86a2f,inset 0 2px 0 #fff}
 .ava{width:72px;height:72px;border-radius:50%;flex:none;position:relative;background:radial-gradient(circle at 50% 30%,#fff,#d4eeff 72%);box-shadow:0 0 0 4px #fff,0 0 0 7px var(--aura),0 4px 10px rgba(0,0,0,.15);display:grid;place-items:center}
 .ava svg{width:94%;height:94%;margin-top:2px}
+svg.ci{width:100%!important;height:100%!important;margin:0!important;display:block}
 .ava.t4{animation:glow 1.6s ease-in-out infinite alternate}
 @keyframes glow{from{box-shadow:0 0 0 4px #fff,0 0 0 7px #ffd34d,0 0 16px 6px rgba(255,190,80,.7)}to{box-shadow:0 0 0 4px #fff,0 0 0 7px #ff9bd2,0 0 26px 10px rgba(255,150,210,.7)}}
 .rbadge{position:absolute;right:-8px;bottom:-6px;font-size:15px;background:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;border:2px solid var(--wood);box-shadow:0 2px 0 var(--wood2)}
@@ -445,7 +446,7 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.8.0', KEY='healthRPG.v1';
+const VERSION='1.9.0', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -656,6 +657,12 @@ const LOOK_EC={blue:['파랑','#2a5fc2','#8cc2ff'],amber:['호박','#b5651d','#f
 function shade(hex,t){const n=parseInt(String(hex).slice(1),16);if(isNaN(n))return hex;const f=c=>Math.round(t>=0?c+(255-c)*t:c*(1+t));
  const r=f(n>>16&255),g=f(n>>8&255),b=f(n&255);return '#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1)}
 let _au=0;
+/* 기본 옷일 때 보이는 일러스트 캐릭터 (직업은 오른쪽 아래 배지로 표시) */
+const CHAR_IMG='char.webp';
+function charImg(path,tier,bust,u){const P=path&&tier&&typeof PATHS!=='undefined'&&PATHS[path];
+ const[x,y,w]=bust?[18,0,64]:[0,0,100],r=w/2,bs=w*.21,b=bs*.62;
+ const badge=P?`<circle cx="${x+w-b}" cy="${y+w-b}" r="${bs/2}" fill="#fff" stroke="${P.color}" stroke-width="${w*.025}"/><text x="${x+w-b}" y="${y+w-b+bs*.04}" font-size="${bs*.52}" text-anchor="middle" dominant-baseline="central">${P.icon}</text>`:'';
+ return `<svg class="ci" viewBox="${x} ${y} ${w} ${w}" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="cc${u}"><circle cx="${x+r}" cy="${y+r}" r="${r}"/></clipPath></defs><image href="${CHAR_IMG}" x="0" y="0" width="100" height="100" clip-path="url(#cc${u})"/>${badge}</svg>`}
 function avatarSVG(path,tier,cosId,look,bust){const u=++_au;
  const C={none:['#7ccf6a','#4f9e3f'],monk:['#ffa24a','#d9534f'],warrior:['#ff6b6b','#b83232'],sage:['#9b7bf5','#5a3dc4'],paladin:['#f2c04a','#d49b1a']}[path||'none']||['#7ccf6a','#4f9e3f'];
  let [body,belt]=C;const acc=body,skin='#fff0e6',sk2='#f0c9b3',ink='#3d2a33';
@@ -666,6 +673,7 @@ function avatarSVG(path,tier,cosId,look,bust){const u=++_au;
  if(path==='sage'){hat=`<path d="M50 -9 C56 2 66 16 75.5 29 L24.5 29 C34 16 44 2 50 -9Z" fill="#8b6cf0"/><ellipse cx="50" cy="29" rx="30" ry="6.2" fill="#6d4fe0"/><path d="M51 4 l2.3 4.7 5.1.7-3.7 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.7-3.6 5.1-.7z" fill="#ffd34d"/>`;side=`<rect x="81" y="50" width="3.4" height="36" rx="1.7" fill="#a0522d"/><circle cx="82.7" cy="47" r="6" fill="#9be7ff" stroke="#4fb3d9" stroke-width="1.5"/><circle cx="80.8" cy="45" r="1.8" fill="#fff"/>`}
  if(path==='paladin'){hat=`<path d="M31 22 L33.5 9.5 L41.5 17 L50 5.5 L58.5 17 L66.5 9.5 L69 22 Z" fill="#ffcf3f" stroke="#d4a017" stroke-width="1.5" stroke-linejoin="round"/><circle cx="50" cy="15.2" r="2.5" fill="#ff6b9a"/>`;side=`<path d="M73 60 h15 v9 c0 8 -7.5 12 -7.5 12 c0 0 -7.5 -4 -7.5 -12z" fill="#5aaeff" stroke="#2f6fb0" stroke-width="1.5"/><path d="M80.5 63 v14 M75.5 69 h10" stroke="#fff" stroke-width="2"/>`}
  const cs=(cosId&&typeof COS_MAP!=='undefined'&&COS_MAP[cosId])||null,X=k=>(cs&&typeof cs[k]==='string')?cs[k]:'';
+ if(!cs&&!look)return charImg(path,tier,bust,u);
  if(cs){if(cs.body)body=cs.body;if(cs.belt)belt=cs.belt;if(cs.hat)hat=cs.hat;if(cs.side)side=cs.side}
  const L=look||(typeof S!=='undefined'&&S&&S.look)||{},HC=LOOK_HC[L.hc]||LOOK_HC.choco,EC=LOOK_EC[L.ec]||LOOK_EC.blue,hs=LOOK_HS[L.hs]?L.hs:'long';
  let h0=HC[1],h1=HC[2],h2=HC[3];if(cs&&cs.hair){h0=cs.hair;h1=shade(cs.hair,.45);h2=shade(cs.hair,-.35)}
@@ -737,15 +745,15 @@ function lookInner(){const L=S.look;
  <div class="lkh">머리 모양</div><div class="lkrow">${Object.entries(LOOK_HS).map(([k,n])=>`<button class="lkb ${L.hs===k?'on':''}" data-act="look-set" data-arg="hs:${k}"><span class="lkmini">${lookAva({...L,hs:k})}</span><small>${n}</small></button>`).join('')}</div>
  <div class="lkh">머리 색</div><div class="lkrow sw6">${Object.entries(LOOK_HC).map(([k,v])=>`<button class="lsw ${L.hc===k?'on':''}" data-act="look-set" data-arg="hc:${k}"><i style="background:linear-gradient(${v[2]},${v[1]} 55%,${v[3]})"></i><small>${v[0]}</small></button>`).join('')}</div>
  <div class="lkh">눈 색</div><div class="lkrow sw6">${Object.entries(LOOK_EC).map(([k,v])=>`<button class="lsw ${L.ec===k?'on':''}" data-act="look-set" data-arg="ec:${k}"><i style="background:linear-gradient(${v[1]},${v[2]})"></i><small>${v[0]}</small></button>`).join('')}</div>`}
-function lookModal(first){showModal(`<h2>${first?'캐릭터가 새로워졌어요!':'💇 외모 바꾸기'}</h2><p class="sub">${first?'마음에 드는 머리 모양과 색을 골라 주세요. 캐릭터 탭에서 언제든 바꿀 수 있어요.':'코스튬과 직업 장비는 그대로 입을 수 있어요.'}</p><div id="lookBox">${lookInner()}</div><button class="btn primary wide mt" data-act="look-done">이걸로 할래요</button>`,{cls:'fx'})}
+function lookModal(){showModal(`<h2>💇 코스튬 외모</h2><p class="sub">기본 옷일 때는 일러스트 캐릭터로 보여요. 코스튬을 입으면 여기서 고른 머리 모양과 색으로 바뀌어요.</p><div id="lookBox">${lookInner()}</div><button class="btn primary wide mt" data-act="look-done">이걸로 할래요</button>`,{cls:'fx'})}
 
 /* ---------- 상태 ---------- */
 function defaults(){return{
- v:5,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
+ v:6,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
  level:1,xp:0,gold:0,statPts:3,skillPts:1,grantStat:3,grantSkill:1,
  stats:{wil:0,tem:0,vit:0,wis:0,luk:0},skills:{},cls:{path:null,tier:0},
  streak:0,bestStreak:0,shields:0,shieldWeek:'',ultWeek:'',ultDay:'',buffDay:'',
- totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,look:{hs:'long',hc:'choco',ec:'blue',set:false},pet:{sp:'',name:'',xp:0,born:'',seen:0,td:'',tx:0,pat:0,treat:0,pats:0,welc:''},cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
+ totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,look:{hs:'long',hc:'sky',ec:'blue',set:true},pet:{sp:'',name:'',xp:0,born:'',seen:0,td:'',tx:0,pat:0,treat:0,pats:0,welc:''},cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
  enabled:Object.fromEntries(TPL.map(t=>[t.id,t.def&&t.unlock<=1])),autoUnlocked:{},
  custom:[],rewards:[{id:'r1',name:'보고 싶던 영화·드라마 보기',price:300},{id:'r2',name:'카페에서 여유 즐기기',price:200},{id:'r3',name:'좋아하는 음식 한 끼',price:600},{id:'r4',name:'갖고 싶던 물건 사기',price:3000}],
  today:null,history:{},battle:null,log:[],
@@ -1238,6 +1246,7 @@ function petFlush(){if(!S.pet.sp)return;const st=petStageRaw();if(st<=(S.pet.see
 function petWelcome(){const P=S.pet;if(!P.sp||P.welc===S.today.date||S.today.quests.some(q=>q.done))return;const m=petMissed();if(m<2)return;
  P.welc=S.today.date;addGold(20);addLog('🐾',`${P.name}${jo(P.name,'이','가')} 반겨 줬어요 (+20G)`);save();
  showModal(`<div class="pkbig">${petSVG(P.sp,petStage(),'joy',0)}</div><h2>돌아왔군요! 🥹</h2><p><b>${esc(P.name)}</b>${jo(P.name,'이','가')} ${m}일 동안 기다렸어요.</p><p>괜찮아요, 오늘 하나만 같이 해 봐요.</p><p class="sub">다시 온 기념 선물 +20G</p><button class="btn primary wide" data-act="close">다시 시작!</button>`,{cls:'fx'})}
+function migrate17(){if((S.v||1)>=6)return;S.v=6;S.look={hs:'long',hc:'sky',ec:'blue',set:true}}
 function migrate16(){if((S.v||1)>=4)return;S.v=4;let sum=0;for(const k in S.history){const r=S.history[k];if(r)sum+=(r.q||0)+(r.c?5:0)+(r.u||0)*3}S.pet.xp=Math.min(99,sum)}
 
 /* ---------- 유혹 패턴 분석 · 방어전 ---------- */
@@ -1329,7 +1338,7 @@ function snapTake(pre){if(!S||!S.onboarded||!S.today)return;const L=snapLoad(),d
  L.unshift({d,at:Date.now(),lv:S.level,g:S.gold,s:JSON.stringify(S),pre:pre?1:0});
  for(let n=Math.min(L.length,7);n>=1;n--){try{L.length=n;localStorage.setItem(SNAP,JSON.stringify(L));return}catch(e){}}}
 function restoreObj(o,msg){if(!o||typeof o.level!=='number'||!o.totals){toast('올바른 백업이 아니에요');return false}
- snapTake(true);S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();migrate14();migrate15();migrate16();clearInterval(btimer);$('#battle').classList.add('hidden');
+ snapTake(true);S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();migrate14();migrate15();migrate16();migrate17();clearInterval(btimer);$('#battle').classList.add('hidden');
  rollover();defSync();commit();toast(msg||'복원 완료!');if(S.battle)showBattle();return true}
 
 const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -1749,7 +1758,7 @@ const H={
  'battle-lose':()=>confirmBox('이번 전투는 졌다고 기록할까요?<br><span class="sub">경험치는 잃지 않아요.</span>',loseBattle),
  subst:i=>{if(!S.battle)return;S.battle.subst=true;S.battle.si=+i;save();document.querySelectorAll('.subst button').forEach((b,j)=>b.classList.toggle('on',j===+i));toast('좋아요! 승리하면 XP +15')},
  close:()=>nextModal(),
- 'look-open':()=>lookModal(false),
+ 'look-open':()=>lookModal(),
  'look-set':a=>{const[k,v]=String(a).split(':');const ok={hs:LOOK_HS,hc:LOOK_HC,ec:LOOK_EC}[k];if(!ok||!ok[v])return;S.look[k]=v;vib(10);save();const b=$('#lookBox');if(b)b.innerHTML=lookInner();render()},
  'look-done':()=>{S.look.set=true;save();nextModal();render();toast('💇 새 모습이 마음에 들어요!')},
  'ver-check':()=>verCheck(true),
@@ -1800,7 +1809,7 @@ const H={
  'reset-all':()=>showModal(`<h3>모든 데이터 초기화</h3><p class="sub">레벨, 기록, 골드가 전부 사라져요. 계속하려면 아래에 <b>초기화</b>라고 입력하세요.</p><input id="rsIn" style="width:100%" placeholder="초기화"><div class="row"><button class="btn ghost" data-act="close">취소</button><button class="btn danger" data-act="reset-yes">초기화</button></div>`),
  'reset-yes':()=>{if($('#rsIn').value.trim()!=='초기화'){toast('“초기화”라고 입력해 주세요');return}
   clearInterval(btimer);$('#battle').classList.add('hidden');S=defaults();S.created=todayKey();S.today=null;rollover();nextModal();tab='quest';howto(true);commit()},
- 'onb-done':()=>{const el=$('#onbName');const n=el?el.value.trim():'';if(n)S.name=n;S.onboarded=true;nextModal();commit();if(!S.look.set)lookModal(true)},
+ 'onb-done':()=>{const el=$('#onbName');const n=el?el.value.trim():'';if(n)S.name=n;S.onboarded=true;nextModal();commit()},
  install:async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;render()}};
 const C={
  tpl:el=>{if(dayCheck())return;toggleTpl(el.dataset.arg,el.checked);commit()},
@@ -1818,12 +1827,12 @@ setInterval(()=>{dayCheck();cloudAuto();if(S.battle&&$('#battle').classList.cont
 /* ---------- 시작 ---------- */
 (function init(){
  S=merge(defaults(),load());if(!S.created)S.created=todayKey();
- migrateToday();migrate14();migrate15();migrate16();
+ migrateToday();migrate14();migrate15();migrate16();migrate17();
  const msgs=rollover();defSync();checkAch(true);save();snapTake();render();cosNotify();
  setTimeout(()=>verCheck(false),3000);
  setTimeout(()=>{if(S.cloud.on)cloudAuto();else cloudPing().then(r=>{if(r&&cloudAskOn()&&tab==='quest'&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))render()})},2000);
  if(S.battle)showBattle();
- if(!S.onboarded)howto(true);else if(!S.look.set)lookModal(true);
+ if(!S.onboarded)howto(true);
  flushRaid();petWelcome();
  msgs.forEach(m=>toast(m));
  if(inApp)setTimeout(()=>syncHealth(false),700);
