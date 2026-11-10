@@ -349,6 +349,46 @@ h3+.ach{border-top:0;padding-top:2px}
 .rgm{position:absolute;right:15%;top:8px;font-size:32px;z-index:2;animation:rgm .6s ease-in-out infinite alternate;pointer-events:none}
 @keyframes rgm{to{transform:scale(1.25) rotate(12deg)}}
 
+/* v1.5 · 방어전 */
+.defc{background:linear-gradient(180deg,#f3f0ff,#e6defe);border-color:#cbbcff;box-shadow:0 4px 0 #a891f2}
+.defc.on{background:linear-gradient(180deg,#fff1f1,#ffdede);border-color:#ffb3b3;box-shadow:0 4px 0 #f08a8a;animation:defpulse 2.4s ease-in-out infinite}
+@keyframes defpulse{50%{box-shadow:0 4px 0 #f08a8a,0 0 0 5px rgba(255,120,120,.18)}}
+.dfh{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.dfi{font-size:30px;width:50px;height:50px;flex:none;border-radius:50%;display:grid;place-items:center;background:#fff;box-shadow:0 0 0 3px #fff,0 0 0 5px #cbbcff}
+.defc.on .dfi{box-shadow:0 0 0 3px #fff,0 0 0 5px #ff9b9b}
+.dfh b{font-family:var(--jua);font-weight:400;font-size:17px}
+.defc .btn small{font-weight:400;opacity:.85;margin-left:4px}
+.dfok{background:#e9fbe9;border:2px solid #9fe0a6;color:#2e7d3a;font-weight:700;border-radius:14px;padding:9px 12px;text-align:center}
+
+/* 유혹 패턴 */
+.ins div{padding:7px 0;border-top:2px dashed var(--line);font-size:14px;line-height:1.45}.ins div:first-child{border-top:0;padding-top:0}
+.ubars{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;align-items:end;height:150px;margin-top:4px}
+.ubars.d7{grid-template-columns:repeat(7,1fr);height:110px}
+.ub{display:flex;flex-direction:column;align-items:center;height:100%;gap:2px}
+.ub b{font-size:11px;color:var(--sub);min-height:14px;font-weight:700}
+.ub small{font-size:10px;color:var(--sub)}
+.ub.pk small{color:#e0546a;font-weight:800}
+.ubc{flex:1;width:100%;max-width:30px;background:#f5ecdc;border-radius:8px;display:flex;flex-direction:column-reverse;overflow:hidden}
+.ubc i{display:block;width:100%}.ubc i.w{background:linear-gradient(180deg,#7fe08f,#3fbf55)}.ubc i.l{background:linear-gradient(180deg,#ffb3b3,#f07a7a)}
+.ub.pk .ubc{box-shadow:0 0 0 2px #ffb3b3}
+.legend i.uw{background:#3fbf55}.legend i.ul{background:#f07a7a}
+.mrow{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:2px dashed var(--line)}h3+.mrow{border-top:0}
+.mi{font-size:24px;width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;background:#f6efe3}
+.mb{flex:1;min-width:0}.mb b{font-size:14px}.mb small{display:block;font-size:12px;color:var(--sub)}
+.mw{font-family:var(--jua);font-size:20px;color:#2e9a42;text-align:center;line-height:1}.mw small{display:block;font-family:inherit;font-size:10px;color:var(--sub)}
+.dgr{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-top:6px;background:#fff4f4;border:2px solid #ffd0d0;border-radius:12px;font-size:14px}
+.dgr span{flex:1}.dgr b{color:#d9485f}.dgr small{color:var(--sub)}
+
+/* 자동 백업 */
+.clst{background:#f4f9ff;border:2px solid #cfe6ff;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.5;margin-bottom:8px}
+.clst.ok{background:#effbf0;border-color:#b5e8bc}.clst.warn{background:#fff6ec;border-color:#ffd7a8}
+.clask{background:linear-gradient(180deg,#eef7ff,#dcefff);border-color:#b9dcff;box-shadow:0 4px 0 #8cc0ef}
+.clask .row{justify-content:flex-start;margin-top:8px}
+.codebox{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:21px;font-weight:800;letter-spacing:1px;background:#fff;border:3px dashed #ffb84d;border-radius:14px;padding:12px 8px;margin:10px 0;color:#7a3d00;user-select:all;word-break:break-all}
+details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
+.snaprow{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:2px dashed var(--line)}
+.snaprow span{flex:1;font-size:14px}.snaprow small{display:block;color:var(--sub);font-size:12px}
+
 </style>
 </head>
 <body>
@@ -361,7 +401,7 @@ h3+.ach{border-top:0;padding-top:2px}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.4.0', KEY='healthRPG.v1';
+const VERSION='1.5.0', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -523,6 +563,8 @@ const ACH=[
  A('night10','urge','🍗','고블린 퇴치반','야식 고블린 10회 격퇴',200,()=>[S.book.night||0,10]),
  A('sweet10','urge','🍩','슬라임 청소부','설탕 슬라임 10회 격퇴',200,()=>[S.book.sweet||0,10]),
  A('phone10','urge','📱','디지털 디톡스','도파민 마귀 10회 격퇴',200,()=>[S.book.phone||0,10]),
+ A('def1','urge','🛡️','첫 방어 성공','위험 시간 방어전 1회 성공',100,()=>[S.totals.defOk||0,1]),
+ A('def10','urge','🏰','난공불락','위험 시간 방어전 10회 성공',600,()=>[S.totals.defOk||0,10]),
  A('r1','raid','⚔️','보스 사냥꾼','첫 레이드 클리어',100,()=>[S.raidStats.clears,1]),
  A('r5','raid','🗡️','레이드 단골','레이드 5회 클리어',400,()=>[S.raidStats.clears,5]),
  A('r10','raid','🛡️','레이드 마스터','레이드 10회 클리어',1000,()=>[S.raidStats.clears,10]),
@@ -584,11 +626,11 @@ function avatarSVG(path,tier,cosId){
 
 /* ---------- 상태 ---------- */
 function defaults(){return{
- v:2,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
+ v:3,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
  level:1,xp:0,gold:0,statPts:3,skillPts:1,grantStat:3,grantSkill:1,
  stats:{wil:0,tem:0,vit:0,wis:0,luk:0},skills:{},cls:{path:null,tier:0},
  streak:0,bestStreak:0,shields:0,shieldWeek:'',ultWeek:'',ultDay:'',buffDay:'',
- totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
+ totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
  enabled:Object.fromEntries(TPL.map(t=>[t.id,t.def&&t.unlock<=1])),autoUnlocked:{},
  custom:[],rewards:[{id:'r1',name:'보고 싶던 영화·드라마 보기',price:300},{id:'r2',name:'카페에서 여유 즐기기',price:200},{id:'r3',name:'좋아하는 음식 한 끼',price:600},{id:'r4',name:'갖고 싶던 물건 사기',price:3000}],
  today:null,history:{},battle:null,log:[],
@@ -729,7 +771,7 @@ let btimer=null,lastMsg=-1;
 function battleMsgs(){const m=MSGS.slice();if(S.totals.urgeWins>0)m.splice(2,0,`지금까지 ${S.totals.urgeWins}번 이겼어요. 이번에도 이길 수 있어요.`);return m}
 function openBattle(){if(S.battle){showBattle();return}
  $('#battle').innerHTML=`<div class="bwrap"><div class="btop"><span>⚔️ 유혹 전투</span><button data-act="battle-close">닫기</button></div>
- <h2 style="margin-top:18px">어떤 유혹이 찾아왔나요?</h2><p class="sub">${S.battleMin}분 동안 버티면 승리! 시간이 지날수록 몬스터가 약해져요.</p>
+ <h2 style="margin-top:18px">어떤 유혹이 찾아왔나요?</h2><p class="sub">${S.battleMin}분 동안 버티면 승리! 시간이 지날수록 몬스터가 약해져요.</p>${slotLine()}
  <div class="mgrid">${Object.entries(MONS).map(([k,m])=>`<button class="mpick" data-act="battle-start" data-arg="${k}"><span>${m.icon}</span><b>${m.label}</b><small>${m.name}</small></button>`).join('')}</div>
  <p class="sub">승리 보상 약 +${Math.round(BATTLE_XP[S.battleMin]*urgeMult())} XP · 지더라도 잃는 건 없어요</p></div>`;
  $('#battle').classList.remove('hidden');$('#fab').classList.add('hidden')}
@@ -761,17 +803,19 @@ function winBattle(){const b=S.battle;if(!b)return;S.battle=null;const m=MONS[b.
  const over=S.today.urgeWins>=5;let xp=(BATTLE_XP[b.min]||35)*urgeMult();if(over)xp*=.5;
  const crit=Math.random()<critChance();if(crit)xp*=2;xp=Math.round(xp)+(b.subst?15:0);
  const gold=Math.round(10*goldMult()*(1+sk('hunter')*.1)*(ultOn()&&S.cls.path==='monk'?3:1)*(over?.5:1));
- S.today.urgeWins++;S.totals.urgeWins++;S.best.urgeDay=Math.max(S.best.urgeDay||0,S.today.urgeWins);S.book[b.mon]=(S.book[b.mon]||0)+1;addGold(gold);
+ S.today.urgeWins++;S.totals.urgeWins++;recUrge(b.mon,b.start,1);S.best.urgeDay=Math.max(S.best.urgeDay||0,S.today.urgeWins);S.book[b.mon]=(S.book[b.mon]||0)+1;addGold(gold);
  let iron=false;if(sk('ironwall')&&S.today.urgeWins===3){S.buffDay=addDays(S.today.date,1);iron=true}
  const hit=raidHit(xp,{kind:'urge',mon:b.mon});
  addLog('⚔️',`${m.name} 격퇴 +${xp} XP`);vib([50,50,120]);
  clearInterval(btimer);btimer=null;$('#battle').classList.add('hidden');$('#battle').innerHTML='';
  showModal(`<div class="wm">${m.icon}</div><div class="burst">VICTORY!</div><h2>${m.name} 격퇴!</h2><p>+${xp} XP${crit?' (크리티컬!)':''} · +${gold}G</p>${hit&&hit.dmg?`<p class="gold">⚔️ ${BOSSES[S.raid.boss].name}에게 ${fmt(hit.dmg)} 피해${hit.weak?' (약점 2배!)':''}</p>`:''}${b.subst?'<p class="sub">대체 행동 보너스 +15 XP 포함</p>':''}${over?'<p class="sub">하루 6번째 전투부터는 보상이 절반이에요</p>':''}${iron?'<p class="gold">🧱 철벽 발동! 내일 모든 XP +20%</p>':''}<p class="sub">오늘 ${S.today.urgeWins}회 · 누적 ${S.totals.urgeWins}회 격퇴</p><button class="btn primary wide" data-act="close">해냈다!</button>`,{cls:'fx'});
  gainXP(xp);commit()}
-function loseBattle(){if(!S.battle)return;const m=MONS[S.battle.mon]||MONS.etc;S.battle=null;S.totals.urgeLosses++;addLog('🏳️',`${m.name}에게 패배`);
+function loseBattle(){if(!S.battle)return;const m=MONS[S.battle.mon]||MONS.etc,bm=S.battle.mon,now=Date.now();recUrge(bm,S.battle.start,0);
+ const df=S.def&&!S.def.res&&S.def.m===bm&&now>=S.def.from-1800e3&&now<S.def.to;if(df){S.def.res='fail';addLog('🌧️',`방어 실패: ${m.name} (${USLOT[S.def.s][2]})`)}
+ S.battle=null;S.totals.urgeLosses++;addLog('🏳️',`${m.name}에게 패배`);
  const heal=(raidOn()&&S.raid.diff==='hell')?raidHeal(.05,S.today.date):0;
  clearInterval(btimer);btimer=null;$('#battle').classList.add('hidden');$('#battle').innerHTML='';
- showModal(`<div class="wm">🌧️</div><h2>괜찮아요</h2><p>한 번 졌다고 모험이 끝나지 않아요. 잃은 경험치도 없어요.</p>${heal?`<p class="sub">☠️ 헬 난이도라 보스가 HP를 ${fmt(heal)} 회복했어요.</p>`:''}<p class="sub">다음에 같은 유혹이 오면 물 한 잔 마시고, 자리에서 일어난 다음 전투를 시작해 보세요.</p><button class="btn primary wide" data-act="close">다시 일어선다</button>`,{cls:'fx'});commit()}
+ showModal(`<div class="wm">🌧️</div><h2>괜찮아요</h2><p>한 번 졌다고 모험이 끝나지 않아요. 잃은 경험치도 없어요.</p>${heal?`<p class="sub">☠️ 헬 난이도라 보스가 HP를 ${fmt(heal)} 회복했어요.</p>`:''}${df?'<p class="sub">🛡️ 이번 방어전은 놓쳤어요. 다음 위험 시간에 다시 도전해요.</p>':''}<p class="sub">다음에 같은 유혹이 오면 물 한 잔 마시고, 자리에서 일어난 다음 전투를 시작해 보세요.</p><button class="btn primary wide" data-act="close">다시 일어선다</button>`,{cls:'fx'});commit()}
 
 /* ---------- UI 공통 ---------- */
 const mq=[];let modalOpen=false,pendingCf=null;
@@ -799,8 +843,9 @@ function howto(first){
  <div>👹 <b>주간 레이드</b> — 매주 월요일 새 보스 등장. 퀘스트·올클리어·유혹 격퇴로 피해를 주고 일요일까지 쓰러뜨리면 장비 획득!</div>
  <div>🚶 <b>걸음·수면 입력</b> — 걷기·운동·수면은 삼성 헬스(갤럭시 핏) 숫자를 넣으면 자동으로 판정돼요.</div>
  <div>🛍️ <b>상점</b> — 골드로 캐릭터 코스튬을 사거나(매주 화요일 신상 2벌), 내가 정한 진짜 보상을 사세요.</div>
- <div>🏆 <b>업적</b> — 60가지 업적을 달성하면 골드를 받고, 마음에 드는 업적을 칭호로 달 수 있어요.</div>
- <div>🛡️ <b>백업</b> — 기록은 이 휴대폰에만 저장돼요. 설정에서 가끔 백업해 두세요.</div></div></div>
+ <div>🏆 <b>업적</b> — 60가지가 넘는 업적을 달성하면 골드를 받고, 마음에 드는 업적을 칭호로 달 수 있어요.</div>
+ <div>🔍 <b>유혹 패턴·방어전</b> — 전투 기록이 쌓이면 업적 탭 → 기록에서 위험한 시간을 알려 줘요. 그 시간 전에 퀘스트 탭에 🛡️ 방어전이 열려요.</div>
+ <div>☁️ <b>자동 백업</b> — 설정에서 켜면 하루 한 번 암호화해서 저장해요. 복구 코드만 있으면 새 폰에서도 그대로!</div></div></div>
  <button class="btn primary wide" data-act="${first?'onb-done':'close'}">모험 시작!</button>`,{cls:'fx'})}
 
 /* ---------- 렌더링 ---------- */
@@ -827,7 +872,7 @@ function vQuest(){const d=S.today,qs=d.quests,done=qs.filter(q=>q.done).length,t
   <div class="pbar"><i style="width:${tot?done/tot*100:0}%"></i></div>
   ${d.bonus?`<div class="clear">🏆 올클리어! 보너스 +${d.bonus} XP · +${d.bonusGold}G</div>`:`<div class="sub mt">전부 완료하면 올클리어 보너스 <b class="gold">+${bonusCalc().xp} XP</b></div>`}
   ${chips.length?`<div class="buffs">${chips.map(x=>`<span>${x}</span>`).join('')}</div>`:''}</section>`;
- h+=raidMini();h+=hcCard();h+=`<div class="qlist">${qs.map(qHTML).join('')}</div>`;
+ h+=defCard()+cloudAskCard();h+=raidMini();h+=hcCard();h+=`<div class="qlist">${qs.map(qHTML).join('')}</div>`;
  if(!tot)h+=`<div class="card sub">진행할 퀘스트가 없어요. 설정에서 퀘스트를 켜 주세요.</div>`;
  if(S.cls.tier){const p=PATHS[S.cls.path],u=p.ult,av=ultAvail();
   h+=`<section class="card ult" style="--pc:${p.color}"><div><b>💥 궁극기 「${u.name}」</b><div class="sub">${u.desc}</div><div class="sub">${ultOn()?'🔥 오늘 발동 중!':av?'이번 주 1회 사용 가능':'다음 주 월요일에 다시 사용 가능'}</div></div>${av?`<button class="btn primary sm" data-act="ult">발동</button>`:''}</section>`}
@@ -879,7 +924,7 @@ const titleOf=()=>S.title&&S.ach[S.title]&&ACH_MAP[S.title]||null;
 
 function vRec(){const n=achNew();
  const h=segBar('rec-seg',recSeg,[['ach','🏅 업적',recSeg!=='ach'&&n?n:''],['rec','📊 기록'],['book','📖 도감']]);
- return h+(recSeg==='ach'?vAch():recSeg==='book'?vBook():vStats())}
+ return h+(recSeg==='ach'?vAch():recSeg==='book'?vBook():vPattern()+vStats())}
 function vAch(){markAchSeen();
  const tot=ACH.length,gotL=ACH.filter(a=>S.ach[a.id]),got=gotL.length,gG=gotL.reduce((s,a)=>s+a.gold,0),T=titleOf();
  let h=`<section class="card achtop"><div class="achring" style="--p:${Math.round(got/tot*100)}"><div><b>${got}</b><small>/${tot}</small></div></div><div class="achsum"><h3>나의 업적</h3><div class="sub">업적 보상으로 받은 골드 <b class="gold">${fmt(gG)}G</b></div><div class="ttlnow">${T?`칭호 <span class="ttl">${T.icon} ${esc(T.name)}</span>`:'<span class="sub">달성한 업적은 칭호로 달 수 있어요</span>'}</div></div></section>`;
@@ -952,6 +997,7 @@ function vSet(){const tier=tierOf(S.level);
  let h=inFrame?`<div class="card pvnote">지금은 미리보기 화면이에요. 홈 화면 앱으로 설치하면 기록이 앱 안에 따로 저장돼요. 여기 기록을 옮기려면 아래 백업 코드를 쓰세요.</div>`:'';
  h+=installCard();
  if(inApp)h+=`<section class="card"><h3>⌚ 갤럭시 핏 · 헬스 커넥트</h3><p class="sub">삼성 헬스 → 설정 → 헬스 커넥트에서 걸음·수면·운동 공유를 켜 두면, 앱을 열 때마다 자동으로 퀘스트에 반영돼요.</p><div class="row"><button class="btn" data-act="hc-perm">권한 설정</button><button class="btn" data-act="hc-open">헬스 커넥트 열기</button></div><button class="btn wide" data-act="hc-diag">🔍 연동 점검</button><button class="btn wide" data-act="app-url">게임 주소 바꾸기</button><p class="sub center mt">앱 버전 ${esc(HB.appVersion())}</p></section>`;
+ h+=backupCardHTML();
  h+=`<section class="card"><h3>모험가 이름</h3><div class="form"><input id="nmIn" value="${esc(S.name)}" maxlength="12"><button class="btn primary" data-act="name-save">저장</button></div></section>`;
  h+=`<section class="card"><h3>기본 설정</h3>
   <label class="setrow"><span>하루가 바뀌는 시간<small>이 시간 전까지는 전날로 기록돼요</small></span><select data-chg="daystart">${[0,2,3,4,5,6].map(v=>`<option value="${v}" ${S.dayStart===v?'selected':''}>${v?'새벽 '+v+'시':'자정'}</option>`).join('')}</select></label>
@@ -959,12 +1005,150 @@ function vSet(){const tier=tierOf(S.level);
  h+=`<section class="card"><h3>기본 퀘스트</h3><p class="sub">목표 수치는 레벨에 따라 자동으로 올라가요. 켜고 끄면 오늘 퀘스트에 바로 반영돼요.</p>${TPL.map(t=>{const lock=S.level<t.unlock;return `<label class="setrow ${lock?'lock':''}"><span>${t.icon} ${t.name(tval(t,tier))}${lock?`<small>🔒 Lv.${t.unlock}에 해금 (자동 추가)</small>`:''}</span><input type="checkbox" class="sw" data-chg="tpl" data-arg="${t.id}" ${S.enabled[t.id]?'checked':''} ${lock?'disabled':''}></label>`}).join('')}</section>`;
  h+=`<section class="card"><h3>나만의 퀘스트</h3>${S.custom.map(c=>`<div class="setrow"><span>${CATS[c.cat].icon} ${esc(c.name)}<small>${CATS[c.cat].name} · 난이도 고정</small></span><button class="x" data-act="cq-del" data-arg="${esc(c.id)}">✕</button></div>`).join('')||'<p class="sub">예: 영양제 챙겨 먹기, 계단으로 다니기</p>'}
   <div class="form mt"><input id="cqName" placeholder="퀘스트 이름" maxlength="30"><select id="cqCat">${Object.entries(CATS).map(([k,c])=>`<option value="${k}">${c.icon} ${c.name}</option>`).join('')}</select><button class="btn primary" data-act="cq-add">추가</button></div></section>`;
- h+=`<section class="card"><h3>데이터 백업</h3><p class="sub">기록은 이 휴대폰 안에만 저장돼요. 브라우저 데이터를 지우거나 앱을 삭제하면 사라지니 가끔 백업해 두세요.</p>
+ h+=`<section class="card"><h3>✍️ 직접 백업 (코드·파일)</h3><p class="sub">자동 백업과 별개로, 백업 코드를 만들어 따로 보관하거나 다른 기기로 옮길 수 있어요.</p>
   <div class="row"><button class="btn" data-act="bk-make">백업 코드 만들기</button>${inFrame||inApp?'':'<button class="btn" data-act="bk-file">파일로 저장</button>'}</div>
   <div id="bkBox" class="hidden mt"><textarea id="bkOut" readonly></textarea><button class="btn primary wide" data-act="bk-copy">복사하기</button></div>
   <div class="mt"><textarea id="bkIn" placeholder="백업 코드를 여기에 붙여넣으세요"></textarea><div class="row"><button class="btn" data-act="bk-restore">코드로 복원</button><label class="btn">파일로 복원<input type="file" data-chg="bkfile" accept=".json,.txt,application/json,text/plain" hidden></label></div></div></section>`;
  h+=`<section class="card"><h3>기타</h3><button class="btn wide" data-act="howto">게임 방법 다시 보기</button><button class="btn wide" data-act="respec">스탯·스킬 초기화 (500G)</button><button class="btn wide danger" data-act="reset-all">모든 데이터 초기화</button>
   <p class="sub center mt">건강 RPG v${VERSION} · 저장 ${storageOK?'정상':'<b style="color:#e0546a">불가 — 화면을 닫으면 기록이 사라져요</b>'} · ${isStandalone()?'앱 모드':'브라우저 모드'}</p></section>`;
+ return h}
+
+/* ---------- 유혹 패턴 분석 · 방어전 ---------- */
+const USLOT=[[0,3,'새벽 0~3시','0시'],[3,6,'새벽 3~6시','3시'],[6,9,'아침 6~9시','6시'],[9,12,'오전 9~12시','9시'],[12,15,'낮 12~3시','12시'],[15,18,'오후 3~6시','15시'],[18,21,'저녁 6~9시','18시'],[21,24,'밤 9~12시','21시']];
+const DOW='일월화수목금토';
+const PREP={night:'🪥 미리 양치하고 주방 불 끄기',sweet:'🍎 과일·견과류를 손 닿는 곳에 두기',drink:'🥤 탄산수나 차를 미리 준비하기',smoke:'🫧 껌과 물을 챙기고 흡연 장소 피하기',phone:'🔌 폰 충전기를 침대에서 먼 곳에 두기',lazy:'👟 운동복으로 미리 갈아입기',etc:'💧 물 한 잔 마시고 5분 걷기'};
+const slotOf=ts=>Math.floor(new Date(ts).getHours()/3);
+const dowOf=ts=>new Date(ts-S.dayStart*3600e3).getDay();
+const pctOf=(a,b)=>b?Math.round(a/b*100):0;
+function hourLabel(h){h=((h%24)+24)%24;return h===0?'자정':h<6?`새벽 ${h}시`:h<12?`오전 ${h}시`:h===12?'정오':h<18?`오후 ${h-12}시`:h<21?`저녁 ${h-12}시`:`밤 ${h-12}시`}
+function recUrge(mon,start,win){S.urges.push({t:start||Date.now(),m:mon,w:win?1:0});if(S.urges.length>500)S.urges.splice(0,S.urges.length-500)}
+function urgeRecent(days){const from=Date.now()-days*864e5;return S.urges.filter(u=>u.t>=from)}
+function urgeStats(){const R=urgeRecent(60),slot=USLOT.map(()=>({n:0,w:0})),dow=[...Array(7)].map(()=>({n:0,w:0})),mon={};
+ for(const u of R){const si=slotOf(u.t),s=slot[si];s.n++;s.w+=u.w;const d=dow[dowOf(u.t)];d.n++;d.w+=u.w;
+  const m=mon[u.m]||(mon[u.m]={n:0,w:0,sl:Array(8).fill(0)});m.n++;m.w+=u.w;m.sl[si]++}
+ return{R,n:R.length,w:R.filter(u=>u.w).length,slot,dow,mon}}
+function dangerList(){const c={};for(const u of urgeRecent(28)){if(!MONS[u.m])continue;const k=u.m+'|'+slotOf(u.t);c[k]=(c[k]||0)+1}
+ return Object.entries(c).filter(([,v])=>v>=3).map(([k,v])=>{const[m,s]=k.split('|');return{m,s:+s,n:v}}).sort((a,b)=>b.n-a.n)}
+function nextDanger(now){now=now||Date.now();let best=null;
+ for(const x of dangerList()){const[h0,h1]=USLOT[x.s];
+  for(const dd of [-1,0,1]){const b=new Date(now);b.setHours(0,0,0,0);b.setDate(b.getDate()+dd);
+   const from=b.getTime()+h0*3600e3,to=b.getTime()+h1*3600e3;
+   if(to<=now||from-3*3600e3>now)continue;
+   if(!best||from<best.from||(from===best.from&&x.n>best.n))best={...x,from,to}}}
+ return best}
+function defSync(){let ch=false;const now=Date.now(),D=S.def;
+ if(D&&!D.res&&now>=D.to){const lost=S.urges.some(u=>u.m===D.m&&!u.w&&u.t>=D.from-1800e3&&u.t<D.to);D.res=lost?'fail':'ok';ch=true;const m=MONS[D.m]||MONS.etc;
+  if(!lost){const xp=Math.round(25*(1+.1*S.today.tier)*urgeMult()*(D.prep?1.5:1)),g=Math.round(15*goldMult()*(D.prep?1.5:1));
+   gainXP(xp);addGold(g);S.totals.defOk=(S.totals.defOk||0)+1;addLog('🛡️',`방어 성공: ${m.name} (${USLOT[D.s][2]}) +${xp} XP`);vib([40,40,80]);
+   showModal(`<div class="wm">🛡️</div><div class="burst">DEFENSE!</div><h2>방어 성공</h2><p>${USLOT[D.s][2]}, ${m.icon} ${m.name}에게 한 번도 지지 않았어요.</p><p>+${xp} XP · +${g}G${D.prep?' (준비 보너스 ×1.5)':''}</p><p class="sub">누적 방어 성공 ${S.totals.defOk}회</p><button class="btn primary wide" data-act="close">지켜냈다!</button>`,{cls:'fx'})}
+  else addLog('🌧️',`방어 실패: ${m.name} (${USLOT[D.s][2]})`)}
+ const nd=nextDanger(now);
+ if(nd&&(!S.def||S.def.res)&&(!S.def||S.def.key!==nd.m+'|'+nd.from)){S.def={key:nd.m+'|'+nd.from,m:nd.m,s:nd.s,n:nd.n,from:nd.from,to:nd.to,prep:false,res:null};ch=true}
+ return ch}
+function defCard(){const D=S.def,now=Date.now();if(!D||D.res||now>=D.to||!MONS[D.m])return'';const m=MONS[D.m],on=now>=D.from;
+ return `<section class="card defc ${on?'on':''}"><div class="dfh"><span class="dfi">${m.icon}</span><div><b>🛡️ 방어전 ${on?'진행 중':'예고'}</b><div class="sub">${on?'지금':hourLabel(new Date(D.from).getHours())} ~ ${hourLabel(new Date(D.to).getHours())} · ${m.name}이(가) 자주 오는 시간 (최근 4주 ${D.n}번)</div></div></div>
+ ${D.prep?`<div class="dfok">✅ 준비 완료! 이제 이 시간만 넘기면 돼요</div>`:`<button class="btn primary wide" data-act="def-prep">${PREP[D.m]||PREP.etc} <small>+XP</small></button>`}
+ <div class="sub mt">${hourLabel(new Date(D.to).getHours())}까지 ${m.name}에게 지지 않으면 방어 성공 보상을 받아요. 유혹이 오면 ⚔️ 버튼으로 맞서세요.</div></section>`}
+function slotLine(){const s=slotOf(Date.now()),R=urgeRecent(60).filter(u=>slotOf(u.t)===s);if(R.length<2)return'';const w=R.filter(u=>u.w).length;
+ return `<p class="sub">🕘 ${USLOT[s][2]} 전적: ${R.length}번 중 ${w}번 승리${w/R.length>=.6?' — 이 시간에 강해요!':' — 이번엔 꼭 이겨 봐요!'}</p>`}
+function vPattern(){const st=urgeStats(),n=st.n;
+ if(n<5)return `<section class="card"><h3>🔍 유혹 패턴</h3><p class="sub">유혹 전투 기록이 5번 쌓이면 언제, 어떤 유혹이 자주 오는지 분석해 드려요. 이기든 지든 전투를 기록해 주세요.</p><div class="abar"><i style="width:${n/5*100}%"></i></div><small class="sub">${n} / 5</small></section>`;
+ const ins=[];
+ const ps=st.slot.map((s,i)=>({i,...s})).sort((a,b)=>b.n-a.n)[0];
+ ins.push(`🕘 가장 위험한 시간은 <b>${USLOT[ps.i][2]}</b> — 전체 유혹의 ${pctOf(ps.n,n)}%`);
+ const ms=Object.entries(st.mon).filter(([k])=>MONS[k]).sort((a,b)=>b[1].n-a[1].n);
+ if(ms.length){const[tm,tv]=ms[0];ins.push(`${MONS[tm].icon} 가장 자주 오는 유혹은 <b>${MONS[tm].name}</b> ${tv.n}번 · 승률 ${pctOf(tv.w,tv.n)}%`)}
+ const losses=st.R.filter(u=>!u.w);
+ if(losses.length>=2){const ls=Array(8).fill(0);losses.forEach(u=>ls[slotOf(u.t)]++);const li=ls.indexOf(Math.max(...ls));ins.push(`⚠️ 진 전투의 ${pctOf(ls[li],losses.length)}%가 <b>${USLOT[li][2]}</b>에 몰려 있어요`)}
+ const wd=st.dow.map((d,i)=>({i,...d})).filter(d=>d.n>=3&&d.w<d.n).sort((a,b)=>a.w/a.n-b.w/b.n)[0];
+ if(wd)ins.push(`📅 가장 약한 요일은 <b>${DOW[wd.i]}요일</b> — 승률 ${pctOf(wd.w,wd.n)}%`);
+ const now=Date.now(),a=S.urges.filter(u=>u.t>=now-14*864e5),b=S.urges.filter(u=>u.t>=now-28*864e5&&u.t<now-14*864e5);
+ if(a.length>=3&&b.length>=3){const ra=pctOf(a.filter(u=>u.w).length,a.length),rb=pctOf(b.filter(u=>u.w).length,b.length);
+  ins.push(ra>=rb?`💪 최근 2주 승률 ${ra}% (그 전 2주 ${rb}%)${ra>rb?' — 점점 강해지고 있어요!':''}`:`📉 최근 2주 승률 ${ra}% (그 전 2주 ${rb}%) — 위험한 시간에 미리 준비해 봐요`)}
+ const mx=Math.max(...st.slot.map(s=>s.n),1),dmx=Math.max(...st.dow.map(d=>d.n),1);
+ const bars=`<div class="ubars">${st.slot.map((s,i)=>`<div class="ub ${i===ps.i?'pk':''}"><b>${s.n||''}</b><div class="ubc"><i class="w" style="height:${s.w/mx*100}%"></i><i class="l" style="height:${(s.n-s.w)/mx*100}%"></i></div><small>${USLOT[i][3]}</small></div>`).join('')}</div>`;
+ const days=[1,2,3,4,5,6,0].map(i=>{const d=st.dow[i];return `<div class="ub"><b>${d.n||''}</b><div class="ubc sm"><i class="w" style="height:${d.w/dmx*100}%"></i><i class="l" style="height:${(d.n-d.w)/dmx*100}%"></i></div><small>${DOW[i]}</small></div>`}).join('');
+ const mons=ms.map(([k,v])=>{const pk=v.sl.indexOf(Math.max(...v.sl));return `<div class="mrow"><span class="mi">${MONS[k].icon}</span><div class="mb"><b>${MONS[k].name}</b><small>${v.n}번 · 주로 ${USLOT[pk][2]}</small><div class="abar"><i style="width:${pctOf(v.w,v.n)}%;background:linear-gradient(90deg,#5fd37a,#2e9a42)"></i></div></div><span class="mw">${pctOf(v.w,v.n)}%<small>승률</small></span></div>`}).join('');
+ const dl=dangerList();
+ return `<section class="card"><h3>🔍 유혹 패턴 <small class="sub">최근 60일 · ${n}번 · 승률 ${pctOf(st.w,n)}%</small></h3><div class="ins">${ins.map(x=>`<div>${x}</div>`).join('')}</div></section>
+ <section class="card"><h3>🕘 시간대별</h3>${bars}<div class="legend"><span><i class="uw"></i>이김</span><span><i class="ul"></i>짐</span></div></section>
+ <section class="card"><h3>📅 요일별</h3><div class="ubars d7">${days}</div></section>
+ <section class="card"><h3>⚔️ 유혹 종류별 승률</h3>${mons}</section>
+ <section class="card"><h3>⚠️ 주의 시간표</h3>${dl.length?`<p class="sub">최근 4주 동안 같은 시간에 3번 이상 온 유혹이에요. 이 시간 3시간 전부터 퀘스트 탭에 🛡️ 방어전이 열려요.</p>${dl.map(x=>`<div class="dgr"><span>${MONS[x.m].icon} ${MONS[x.m].name}</span><b>${USLOT[x.s][2]}</b><small>${x.n}번</small></div>`).join('')}`:'<p class="sub">아직 같은 시간에 반복되는 유혹은 없어요. 최근 4주 동안 같은 시간대에 3번 오면 방어전이 열려요.</p>'}${S.totals.defOk?`<p class="sub mt">🛡️ 지금까지 방어 성공 ${S.totals.defOk}회</p>`:''}</section>`}
+function migrate15(){if((S.v||1)>=3)return;S.v=3;
+ if(!S.urges.length){const by=Object.fromEntries(Object.entries(MONS).map(([k,m])=>[m.name,k])),out=[];
+  for(const l of S.log){let m=/^⚔️ (.+?) 격퇴/.exec(l.t),w=1;if(!m){m=/^🏳️ (.+?)에게 패배/.exec(l.t);w=0}
+   if(m&&by[m[1]])out.push({t:w?l.d-S.battleMin*60e3:l.d-5*60e3,m:by[m[1]],w})}
+  S.urges=out.sort((a,b)=>a.t-b.t)}}
+
+/* ---------- 자동 백업 ---------- */
+/* 1) 폰 안 자동 저장본: 하루 한 번, 최근 7일치
+   2) 클라우드 백업: 복구 코드로 암호화해서 /api/backup 에 저장 (서버는 암호문만 봐요) */
+const SNAP='healthRPG.snap',API='/api/backup',CODE_CH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function snapLoad(){try{const v=JSON.parse(localStorage.getItem(SNAP)||'[]');return Array.isArray(v)?v:[]}catch(e){return[]}}
+function snapTake(pre){if(!S||!S.onboarded||!S.today)return;const L=snapLoad(),d=S.today.date;if(!pre&&L.length&&L.some(x=>x.d===d&&!x.pre))return;
+ L.unshift({d,at:Date.now(),lv:S.level,g:S.gold,s:JSON.stringify(S),pre:pre?1:0});
+ for(let n=Math.min(L.length,7);n>=1;n--){try{L.length=n;localStorage.setItem(SNAP,JSON.stringify(L));return}catch(e){}}}
+function restoreObj(o,msg){if(!o||typeof o.level!=='number'||!o.totals){toast('올바른 백업이 아니에요');return false}
+ snapTake(true);S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();migrate14();migrate15();clearInterval(btimer);$('#battle').classList.add('hidden');
+ rollover();defSync();commit();toast(msg||'복원 완료!');if(S.battle)showBattle();return true}
+
+const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const fmtCode=c=>normCode(c).replace(/(.{4})(?=.)/g,'$1-');
+const codeOK=c=>{c=normCode(c);return c.length===16&&[...c].every(ch=>CODE_CH.includes(ch))};
+function newCode(){const a=new Uint8Array(16);crypto.getRandomValues(a);return fmtCode([...a].map(x=>CODE_CH[x&31]).join(''))}
+const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)};
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const hex=u8=>[...u8].map(b=>b.toString(16).padStart(2,'0')).join('');
+async function sha(s){return new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))}
+async function cloudKeys(code){const c=normCode(code);return{id:hex(await sha('hrpg-backup-id:'+c)),key:await crypto.subtle.importKey('raw',await sha('hrpg-backup-key:'+c),'AES-GCM',false,['encrypt','decrypt'])}}
+async function gzip(u8,on){const S2=on?window.CompressionStream:window.DecompressionStream;if(!S2)throw new Error('nogzip');return new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(new S2('gzip'))).arrayBuffer())}
+async function sealState(code){const{id,key}=await cloudKeys(code);let raw=new TextEncoder().encode(JSON.stringify(S)),z=0;
+ try{raw=await gzip(raw,true);z=1}catch(e){}
+ const iv=crypto.getRandomValues(new Uint8Array(12)),ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,raw));
+ return{id,data:{v:1,z,iv:b64(iv),ct:b64(ct),at:Date.now()}}}
+async function openState(code,d){const{key}=await cloudKeys(code);let raw=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(d.iv)},key,unb64(d.ct)));
+ if(d.z)raw=await gzip(raw,false);return JSON.parse(new TextDecoder().decode(raw))}
+
+let cloudReady=null,cloudBusy=false,cloudWhy='';
+const cloudCan=()=>!!(window.crypto&&crypto.subtle&&window.fetch);
+async function cloudPing(){if(!cloudCan()){cloudReady=false;return false}
+ try{const r=await fetch(API+'?ping=1',{cache:'no-store'});const j=await r.json().catch(()=>({}));cloudReady=!!(r.ok&&j.ready);cloudWhy=r.status===404?'nofn':j.error==='not configured'?'notcfg':cloudReady?'':'err'}catch(e){cloudReady=null;cloudWhy='offline'}
+ cloudPaint();return cloudReady}
+function cloudErrMsg(e){e=String(e||'');return /offline|Failed to fetch|NetworkError|network/i.test(e)?'인터넷 연결이 없어요':/not configured/.test(e)?'서버 저장소가 아직 연결되지 않았어요':/too large/.test(e)?'기록이 너무 커요':'서버 오류'}
+async function cloudBackup(manual){if(cloudBusy||!S.cloud.on||!codeOK(S.cloud.code)||!cloudCan())return false;cloudBusy=true;S.cloud.lastTry=Date.now();cloudPaint();
+ try{const{id,data}=await sealState(S.cloud.code);
+  const r=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id,data}),cache:'no-store'});
+  const j=await r.json().catch(()=>({}));if(!r.ok||!j.ok)throw new Error(j.error||('HTTP '+r.status));
+  S.cloud.last=data.at;S.cloud.err='';cloudReady=true;save();if(manual)toast('☁️ 백업했어요');return true}
+ catch(e){S.cloud.err=String(e&&e.message||e).slice(0,80);save();if(manual)toast('백업하지 못했어요 — '+cloudErrMsg(S.cloud.err));return false}
+ finally{cloudBusy=false;cloudPaint()}}
+function cloudAuto(){if(!S.cloud.on||navigator.onLine===false)return;const now=Date.now();
+ if(now-S.cloud.last<12*3600e3||now-S.cloud.lastTry<15*60e3)return;cloudBackup(false)}
+async function cloudFetch(code){if(!codeOK(code))throw new Error('code');if(!cloudCan())throw new Error('nocrypto');
+ const{id}=await cloudKeys(code);const r=await fetch(API+'?id='+id,{cache:'no-store'});
+ if(r.status===404)throw new Error('notfound');const j=await r.json().catch(()=>({}));if(!r.ok||!j.data)throw new Error(j.error||('HTTP '+r.status));
+ return{o:await openState(code,j.data),at:j.data.at}}
+function ago(ts){const m=Math.round((Date.now()-ts)/60e3);return m<1?'방금':m<60?`${m}분 전`:m<60*24?`${Math.round(m/60)}시간 전`:fmtTime(ts)}
+function cloudStatus(){const c=S.cloud;
+ if(c.on)return `<div class="clst ok">✅ 자동 백업 켜짐 · 마지막 백업 <b>${c.last?ago(c.last):'아직 없음'}</b>${cloudBusy?' · 백업 중…':''}</div>${c.err&&(!c.last||c.lastTry>c.last)?`<div class="clst warn">⚠️ 최근 시도 실패: ${cloudErrMsg(c.err)} (다음에 앱을 열 때 다시 시도해요)</div>`:''}
+  <div class="row"><button class="btn" data-act="cl-now" ${cloudBusy?'disabled':''}>지금 백업</button><button class="btn" data-act="cl-show">복구 코드 보기</button></div>`;
+ if(!cloudCan())return `<div class="clst warn">이 화면에서는 암호화 기능을 쓸 수 없어 클라우드 백업이 안 돼요. 앱이나 크롬으로 열어 주세요.</div>`;
+ if(cloudReady===null)return `<div class="clst">${cloudWhy==='offline'?'📡 인터넷에 연결되면 백업 서버를 확인해요.':'서버 확인 중…'}</div>`;
+ if(cloudReady===false)return `<div class="clst">⏳ ${cloudWhy==='nofn'?'백업 서버가 아직 배포되지 않았어요 (코드 A).':cloudWhy==='err'?'백업 서버에 문제가 있어요 (코드 C).':'서버 저장소가 아직 연결되지 않았어요 (코드 B).'} 연결되면 여기서 바로 켤 수 있어요. 그동안은 아래 '폰 안 자동 저장본'이 매일 만들어져요.</div>`;
+ return `<p class="sub">하루 한 번 기록을 <b>암호화</b>해서 서버에 저장해요. 폰을 바꾸거나 앱을 지워도 <b>복구 코드</b>만 있으면 그대로 되살릴 수 있어요.</p><button class="btn primary wide" data-act="cl-on">☁️ 자동 백업 켜기</button>`}
+function cloudPaint(){const el=document.getElementById('cloudSt');if(el)el.innerHTML=cloudStatus();const q=document.getElementById('cloudAsk');if(q&&!cloudAskOn())q.remove()}
+const cloudAskOn=()=>cloudReady===true&&!S.cloud.on&&S.onboarded&&Date.now()-(S.cloud.ask||0)>7*864e5;
+function cloudAskCard(){return cloudAskOn()?`<section class="card clask" id="cloudAsk"><b>☁️ 자동 백업을 켜 두세요</b><div class="sub">폰을 바꾸거나 앱을 지워도 레벨·코스튬·기록이 그대로 남아요.</div><div class="row"><button class="btn primary sm" data-act="cl-on">☁️ 켜기</button><button class="btn ghost sm" data-act="cl-later">나중에</button></div></section>`:''}
+function codeModal(first){const c=S.cloud.code;
+ showModal(`<div class="wm">🔑</div><h2>${first?'자동 백업을 켰어요':'복구 코드'}</h2><p class="sub">새 폰이나 앱을 다시 깔았을 때 이 코드로 기록을 불러와요. <b>코드가 없으면 저도 찾아 드릴 수 없어요.</b></p>
+ <div class="codebox">${esc(c)}</div><button class="btn wide" data-act="cl-copy">📋 코드 복사</button>
+ <p class="sub">카카오톡 '나와의 채팅'이나 메모 앱에 붙여넣어 두세요.</p><button class="btn primary wide" data-act="close">저장해 뒀어요</button>`,{cls:'fx'})}
+function backupCardHTML(){const L=snapLoad();
+ let h=`<section class="card"><h3>☁️ 자동 백업</h3><div id="cloudSt">${cloudStatus()}</div>
+  <details class="mt"${!S.cloud.on&&cloudReady?' open':''}><summary>다른 폰의 기록 불러오기</summary><p class="sub">예전 폰에서 쓰던 복구 코드를 넣으면 그 기록으로 바뀌어요.</p><div class="form"><input id="clIn" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="24" autocapitalize="characters" autocomplete="off"><button class="btn primary" data-act="cl-restore">불러오기</button></div></details></section>`;
+ h+=`<section class="card"><h3>📦 폰 안 자동 저장본</h3><p class="sub">하루에 한 번 이 폰 안에 자동으로 저장해 두는 사본이에요 (최근 7일). 실수로 초기화했거나 잘못 복원했을 때 되돌릴 수 있어요. 앱을 지우면 함께 지워져요.</p>
+  ${L.length?L.map((x,i)=>`<div class="snaprow"><span>${fmtDate(x.d)}${x.pre?' <small style="display:inline">· 복원 직전</small>':''}<small>Lv.${x.lv} · ${fmt(x.g)}G · ${fmtTime(x.at)}</small></span><button class="btn sm" data-act="snap-restore" data-arg="${i}">되돌리기</button></div>`).join(''):'<p class="sub">아직 없어요. 내일부터 하루 하나씩 쌓여요.</p>'}</section>`;
  return h}
 
 /* ---------- 레이드 보스 일러스트 (직접 그린 SVG) ---------- */
@@ -1275,14 +1459,15 @@ function backupCode(){return btoa(unescape(encodeURIComponent(JSON.stringify(S))
 function restoreFrom(txt){let o=null;txt=String(txt||'').trim();
  try{o=JSON.parse(txt)}catch(e){try{o=JSON.parse(decodeURIComponent(escape(atob(txt))))}catch(_){o=null}}
  if(!o||typeof o.level!=='number'||!o.totals){toast('올바른 백업 코드가 아니에요');return}
- S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();migrate14();clearInterval(btimer);$('#battle').classList.add('hidden');
- rollover();commit();toast('복원 완료!');if(S.battle)showBattle()}
+ restoreObj(o)}
 async function copyText(t){if(inApp){try{HB.copyText(t);toast('복사했어요');return}catch(e){}}try{await navigator.clipboard.writeText(t);toast('복사했어요')}catch(e){const ta=$('#bkOut');if(ta){ta.focus();ta.select();try{document.execCommand('copy');toast('복사했어요');return}catch(_){}}toast('코드를 길게 눌러 직접 복사해 주세요')}}
 
 /* ---------- 이벤트 ---------- */
-function dayCheck(){const before=S.today.date,msgs=rollover();if(S.today.date!==before){commit();toast('새로운 하루가 시작됐어요!');msgs.forEach(m=>toast(m));return true}return false}
+function dayCheck(){const before=S.today.date,msgs=rollover(),dch=defSync();
+ if(S.today.date!==before){snapTake();commit();toast('새로운 하루가 시작됐어요!');msgs.forEach(m=>toast(m));return true}
+ if(dch)commit();return false}
 const H={
- tab:a=>{tab=a;if(a==='raid'&&S.raid){S.raidSeen=S.raid.week;save()}if(a==='shop'&&cosUnseen())shopSeg='cos';if(a==='rec'&&achNew())recSeg='ach';render();window.scrollTo(0,0)},
+ tab:a=>{tab=a;if(a==='set'&&cloudReady!==true&&!S.cloud.on)cloudPing();if(a==='raid'&&S.raid){S.raidSeen=S.raid.week;save()}if(a==='shop'&&cosUnseen())shopSeg='cos';if(a==='rec'&&achNew())recSeg='ach';render();window.scrollTo(0,0)},
  'rec-seg':k=>{recSeg=k;render();window.scrollTo(0,0)},
  'shop-seg':k=>{shopSeg=k;render();window.scrollTo(0,0)},
  'ach-cat':k=>{achCat=ACH_CATS[k]?k:'all';render()},
@@ -1325,6 +1510,19 @@ const H={
  'battle-lose':()=>confirmBox('이번 전투는 졌다고 기록할까요?<br><span class="sub">경험치는 잃지 않아요.</span>',loseBattle),
  subst:i=>{if(!S.battle)return;S.battle.subst=true;S.battle.si=+i;save();document.querySelectorAll('.subst button').forEach((b,j)=>b.classList.toggle('on',j===+i));toast('좋아요! 승리하면 XP +15')},
  close:()=>nextModal(),
+ 'def-prep':()=>{const D=S.def,now=Date.now();if(!D||D.prep||D.res||now>=D.to||now<D.from-3*3600e3)return;D.prep=true;const xp=Math.round(10*(1+.1*S.today.tier)),g=5;gainXP(xp);addGold(g);addLog('🛡️',`방어 준비: ${PREP[D.m]||PREP.etc}`);vib(20);toast(`🛡️ 준비 완료! +${xp} XP · +${g}G`);commit()},
+ 'cl-on':async()=>{if(modalOpen)nextModal();if(!cloudCan()){toast('이 화면에서는 암호화 기능을 쓸 수 없어요');return}
+  if(cloudReady!==true){await cloudPing();if(cloudReady!==true){toast(cloudReady===false?'서버 저장소가 아직 연결되지 않았어요':'인터넷 연결을 확인해 주세요');return}}
+  if(!codeOK(S.cloud.code))S.cloud.code=newCode();S.cloud.on=true;S.cloud.err='';addLog('☁️','자동 백업 켜기');save();render();codeModal(true);
+  if(!(await cloudBackup(false)))toast('첫 백업은 실패했어요 — '+cloudErrMsg(S.cloud.err))},
+ 'cl-later':()=>{S.cloud.ask=Date.now();save();cloudPaint()},
+ 'cl-now':()=>{cloudBackup(true)},
+ 'cl-show':()=>codeModal(false),
+ 'cl-copy':()=>copyText(S.cloud.code),
+ 'cl-restore':async()=>{const v=$('#clIn')?$('#clIn').value:'';if(!codeOK(v)){toast('복구 코드 16자리를 확인해 주세요');return}toast('불러오는 중…');
+  try{const{o,at}=await cloudFetch(v);confirmBox(`<b>${esc(o.name||'모험가')}</b> · Lv.${o.level} · ${fmtTime(at)} 백업<br><span class="sub">지금 이 폰의 기록을 이 백업으로 바꿀까요?</span>`,()=>{if(restoreObj(o,'☁️ 클라우드 백업을 불러왔어요')){S.cloud.on=true;S.cloud.code=fmtCode(v);S.cloud.last=at;S.cloud.err='';save();render()}})}
+  catch(e){const m=String(e&&e.message);toast(m==='notfound'?'이 코드로 저장된 백업이 없어요':m==='code'?'복구 코드를 확인해 주세요':/OperationError|decrypt/i.test(m)?'코드가 맞지 않아요':'불러오지 못했어요 — '+cloudErrMsg(m))}},
+ 'snap-restore':i=>{const x=snapLoad()[+i];if(!x)return;confirmBox(`${fmtDate(x.d)} 저장본(Lv.${x.lv})으로 되돌릴까요?<br><span class="sub">그 뒤에 쌓인 기록은 사라져요.</span>`,()=>{try{restoreObj(JSON.parse(x.s),'저장본으로 되돌렸어요')}catch(e){toast('저장본을 읽지 못했어요')}})},
  goto:t=>{nextModal();H.tab(t)},
  'cf-yes':()=>{const f=pendingCf;pendingCf=null;nextModal();f&&f()},
  buy:id=>{const r=S.rewards.find(x=>x.id===id);if(!r||S.gold<r.price)return;confirmBox(`「${esc(r.name)}」를 ${fmt(r.price)}G에 구매할까요?`,()=>{if(S.gold<r.price)return;S.gold-=r.price;S.totals.buys=(S.totals.buys||0)+1;addLog('🎁',`보상: ${r.name} (-${fmt(r.price)}G)`);vib([30,30,60]);
@@ -1357,14 +1555,15 @@ document.addEventListener('change',e=>{const el=e.target,f=el.dataset&&C[el.data
 document.addEventListener('keydown',e=>{const t=e.target;if(e.key!=='Enter')return;if(t.id==='onbName')H['onb-done']();else if(t.id&&t.id.startsWith('in_')){const q=findQ(t.id.slice(3));if(q){e.preventDefault();H[q.type==='sleep'?'q-sleep':'q-num'](q.id,t)}}});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;render()});
 window.addEventListener('appinstalled',()=>{deferredPrompt=null;toast('설치 완료! 홈 화면에서 실행하세요');render()});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){dayCheck();if(inApp)syncHealth(false);if(S.battle&&!$('#battle').classList.contains('hidden'))battleTick();else if(S.battle)render()}});
-setInterval(()=>{dayCheck();if(S.battle&&$('#battle').classList.contains('hidden')&&Date.now()-S.battle.start>=S.battle.min*60e3)showBattle()},5000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){dayCheck();cloudAuto();if(inApp)syncHealth(false);if(S.battle&&!$('#battle').classList.contains('hidden'))battleTick();else if(S.battle)render()}});
+setInterval(()=>{dayCheck();cloudAuto();if(S.battle&&$('#battle').classList.contains('hidden')&&Date.now()-S.battle.start>=S.battle.min*60e3)showBattle()},5000);
 
 /* ---------- 시작 ---------- */
 (function init(){
  S=merge(defaults(),load());if(!S.created)S.created=todayKey();
- migrateToday();migrate14();
- const msgs=rollover();checkAch(true);save();render();cosNotify();
+ migrateToday();migrate14();migrate15();
+ const msgs=rollover();defSync();checkAch(true);save();snapTake();render();cosNotify();
+ setTimeout(()=>{if(S.cloud.on)cloudAuto();else cloudPing().then(r=>{if(r&&cloudAskOn()&&tab==='quest'&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))render()})},2000);
  if(S.battle)showBattle();
  if(!S.onboarded)howto(true);
  flushRaid();

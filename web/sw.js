@@ -1,5 +1,5 @@
 // 건강 RPG 서비스 워커: 처음 한 번 열면 모든 파일을 저장해 두고, 이후에는 인터넷 없이 실행됩니다.
-const CACHE = 'health-rpg-v6';
+const CACHE = 'health-rpg-v7';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './costumes.js'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
@@ -19,6 +19,9 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+
+  // 백업 서버(/api/)는 저장하지 않고 항상 인터넷으로
+  if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) return;
 
   // 글꼴: 한 번 받으면 저장해 두고 계속 사용
   if (FONT_HOSTS.includes(url.hostname)) {

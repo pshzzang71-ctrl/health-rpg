@@ -1,0 +1,9 @@
+{
+  "name": "health-rpg-web",
+  "private": true,
+  "type": "module",
+  "description": "건강 RPG 웹 게임. api/backup.js 만 서버에서 실행되고 나머지는 정적 파일이에요.",
+  "dependencies": {
+    "@vercel/blob": "^2.3.0"
+  }
+}
