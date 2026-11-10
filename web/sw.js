@@ -1,6 +1,7 @@
 // 건강 RPG 서비스 워커: 처음 한 번 열면 모든 파일을 저장해 두고, 이후에는 인터넷 없이 실행됩니다.
-const CACHE = 'health-rpg-v10';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './costumes.js', './char.webp', './ill/front.webp', './ill/m-top.png', './ill/m-slv.png', './ill/m-skt.png', './ill/m-rib.png', './ill/m-ruf.png', './ill/m-hair.png'];
+const CACHE = 'health-rpg-v11';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './costumes.js', './char.webp', './ill/front.webp', './ill/m-top.png', './ill/m-slv.png', './ill/m-skt.png', './ill/m-rib.png', './ill/m-ruf.png', './ill/m-hair.png',
+  './cos/bear_hood.webp', './cos/bunny_pj.webp', './cos/cat_cape.webp', './cos/chef.webp', './cos/gorpcore.webp', './cos/hanbok_blossom.webp', './cos/hero_cape.webp', './cos/idol_stage.webp', './cos/knit_beanie.webp', './cos/mustang_snow.webp', './cos/preppy_check.webp', './cos/run_crew.webp', './cos/star_wizard.webp', './cos/summer_trip.webp', './cos/taekwondo.webp', './cos/y2k_street.webp'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', e => {

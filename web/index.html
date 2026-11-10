@@ -446,7 +446,7 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.10.0', KEY='healthRPG.v1';
+const VERSION='1.11.0', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -684,6 +684,10 @@ function charImg(path,tier,bust,u,cs){const P=path&&tier&&typeof PATHS!=='undefi
  const badge=P?`<circle cx="${x+w-b}" cy="${y+w-b}" r="${bs/2}" fill="#fff" stroke="${P.color}" stroke-width="${w*.025}"/><text x="${x+w-b}" y="${y+w-b+bs*.04}" font-size="${bs*.52}" text-anchor="middle" dominant-baseline="central">${P.icon}</text>`:'';
  const IM=(h,a)=>`<image href="${h}" x="0" y="0" width="100" height="100"${a||''}/>`;
  let defs=`<clipPath id="cc${u}"><circle cx="${x+r}" cy="${y+r}" r="${r}"/></clipPath>`,back='',paint='',front='',head='';
+ if(cs&&typeof cs.img==='string'&&/^cos\/[a-z0-9_]+\.(webp|png)$/.test(cs.img)){
+  // 코스튬 그림이 있으면 그 그림을 그대로 (모자·귀는 동그란 틀 위로 나와도 보이게)
+  defs=`<clipPath id="cc${u}"><circle cx="${x+r}" cy="${y+r}" r="${r}"/><rect x="${x+r-r*.56}" y="${y+r-r*1.7}" width="${r*1.12}" height="${r*1.7}"/></clipPath>`;
+  return `<svg class="ci" viewBox="${x} ${y} ${w} ${w}" overflow="visible" xmlns="http://www.w3.org/2000/svg"><defs>${defs}</defs><image href="${cs.img}" x="0" y="-30" width="100" height="135" clip-path="url(#cc${u})"/>${badge}</svg>`}
  if(cs){const I=illOf(cs),W=[],K=[],U=s=>String(s).replace(/\{u\}/g,u);
   const mk=(id,ns)=>`<mask id="${id}${u}" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">${ns.map(n=>IM(ILL+'m-'+n+'.png')).join('')}</mask>`;
   for(const n of ILL_RG){const c=I[n];if(!c)continue;(ILL_WH[n]?W:K).push(n);defs+=mk('m'+n,[n]);
