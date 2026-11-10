@@ -1,6 +1,6 @@
 // 건강 RPG 서비스 워커: 처음 한 번 열면 모든 파일을 저장해 두고, 이후에는 인터넷 없이 실행됩니다.
-const CACHE = 'health-rpg-v9';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './costumes.js', './char.webp'];
+const CACHE = 'health-rpg-v10';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './costumes.js', './char.webp', './ill/front.webp', './ill/m-top.png', './ill/m-slv.png', './ill/m-skt.png', './ill/m-rib.png', './ill/m-ruf.png', './ill/m-hair.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', e => {
