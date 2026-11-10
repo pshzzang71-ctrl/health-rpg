@@ -435,7 +435,7 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.6.0', KEY='healthRPG.v1';
+const VERSION='1.6.1', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -1050,7 +1050,7 @@ function vSet(){const tier=tierOf(S.level);
   <div id="bkBox" class="hidden mt"><textarea id="bkOut" readonly></textarea><button class="btn primary wide" data-act="bk-copy">복사하기</button></div>
   <div class="mt"><textarea id="bkIn" placeholder="백업 코드를 여기에 붙여넣으세요"></textarea><div class="row"><button class="btn" data-act="bk-restore">코드로 복원</button><label class="btn">파일로 복원<input type="file" data-chg="bkfile" accept=".json,.txt,application/json,text/plain" hidden></label></div></div></section>`;
  h+=`<section class="card"><h3>기타</h3><button class="btn wide" data-act="howto">게임 방법 다시 보기</button><button class="btn wide" data-act="respec">스탯·스킬 초기화 (500G)</button><button class="btn wide danger" data-act="reset-all">모든 데이터 초기화</button>
-  <p class="sub center mt">건강 RPG v${VERSION} · 저장 ${storageOK?'정상':'<b style="color:#e0546a">불가 — 화면을 닫으면 기록이 사라져요</b>'} · ${isStandalone()?'앱 모드':'브라우저 모드'}</p></section>`;
+  <p class="sub center mt">건강 RPG v${VERSION} · 저장 ${storageOK?'정상':'<b style="color:#e0546a">불가 — 화면을 닫으면 기록이 사라져요</b>'} · ${isStandalone()?'앱 모드':'브라우저 모드'}</p><div class="center"><button class="btn sm" data-act="ver-check">🔄 최신 버전 확인</button></div></section>`;
  return h}
 
 /* ---------- 펫 ---------- */
@@ -1230,6 +1230,18 @@ function migrate15(){if((S.v||1)>=3)return;S.v=3;
   for(const l of S.log){let m=/^⚔️ (.+?) 격퇴/.exec(l.t),w=1;if(!m){m=/^🏳️ (.+?)에게 패배/.exec(l.t);w=0}
    if(m&&by[m[1]])out.push({t:w?l.d-S.battleMin*60e3:l.d-5*60e3,m:by[m[1]],w})}
   S.urges=out.sort((a,b)=>a.t-b.t)}}
+
+/* ---------- 새 버전 확인 ---------- */
+let verAt=0;
+async function verCheck(manual){const now=Date.now();if(!manual&&now-verAt<20*60e3)return;verAt=now;
+ try{if('serviceWorker' in navigator){const r=await navigator.serviceWorker.getRegistration();if(r)r.update().catch(()=>{})}
+  const t=await (await fetch('./index.html?fresh=1&t='+now,{cache:'no-store'})).text(),m=/const VERSION='([0-9.]+)'/.exec(t);
+  if(!m){if(manual)toast('지금은 확인할 수 없어요');return}
+  if(m[1]===VERSION){if(manual)toast(`최신 버전이에요 (v${VERSION})`);return}
+  const busy=modalOpen||/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'');
+  if(manual||!busy){save();toast(`새 버전 v${m[1]}으로 바꾸는 중…`);setTimeout(()=>location.reload(),700)}
+  else toast(`새 버전 v${m[1]}이 있어요. 설정 맨 아래에서 업데이트할 수 있어요`)}
+ catch(e){if(manual)toast('인터넷 연결을 확인해 주세요')}}
 
 /* ---------- 자동 백업 ---------- */
 /* 1) 폰 안 자동 저장본: 하루 한 번, 최근 7일치
@@ -1660,6 +1672,7 @@ const H={
  'battle-lose':()=>confirmBox('이번 전투는 졌다고 기록할까요?<br><span class="sub">경험치는 잃지 않아요.</span>',loseBattle),
  subst:i=>{if(!S.battle)return;S.battle.subst=true;S.battle.si=+i;save();document.querySelectorAll('.subst button').forEach((b,j)=>b.classList.toggle('on',j===+i));toast('좋아요! 승리하면 XP +15')},
  close:()=>nextModal(),
+ 'ver-check':()=>verCheck(true),
  'pet-pat':()=>{if(!S.pet.sp)return;petDay();S.pet.pats=(S.pet.pats||0)+1;let t;if(S.pet.pat<3){S.pet.pat++;petAdd(1);t='헤헤, 좋아요! 💕 (+1 애정)'}else t=['간지러워요 ㅎㅎ','또 해 주세요!','기분 최고예요 ✨','같이 있어서 좋아요 🥰'][S.pet.pats%4];
   petSay={t,at:Date.now()};vib(12);commit();petJump()},
  'pet-treat':()=>{if(!S.pet.sp)return;petDay();if(S.pet.treat>=2){toast('오늘은 배불러요! 내일 또 주세요');return}if(S.gold<TREAT_G){toast(`골드가 ${TREAT_G-S.gold}G 부족해요`);return}
@@ -1719,7 +1732,7 @@ document.addEventListener('change',e=>{const el=e.target,f=el.dataset&&C[el.data
 document.addEventListener('keydown',e=>{const t=e.target;if(e.key!=='Enter')return;if(t.id==='onbName')H['onb-done']();else if(t.id&&t.id.startsWith('in_')){const q=findQ(t.id.slice(3));if(q){e.preventDefault();H[q.type==='sleep'?'q-sleep':'q-num'](q.id,t)}}});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;render()});
 window.addEventListener('appinstalled',()=>{deferredPrompt=null;toast('설치 완료! 홈 화면에서 실행하세요');render()});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){dayCheck();cloudAuto();if(inApp)syncHealth(false);if(S.battle&&!$('#battle').classList.contains('hidden'))battleTick();else if(S.battle)render()}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){dayCheck();cloudAuto();verCheck(false);if(inApp)syncHealth(false);if(S.battle&&!$('#battle').classList.contains('hidden'))battleTick();else if(S.battle)render()}});
 setInterval(()=>{dayCheck();cloudAuto();if(S.battle&&$('#battle').classList.contains('hidden')&&Date.now()-S.battle.start>=S.battle.min*60e3)showBattle()},5000);
 
 /* ---------- 시작 ---------- */
@@ -1727,6 +1740,7 @@ setInterval(()=>{dayCheck();cloudAuto();if(S.battle&&$('#battle').classList.cont
  S=merge(defaults(),load());if(!S.created)S.created=todayKey();
  migrateToday();migrate14();migrate15();migrate16();
  const msgs=rollover();defSync();checkAch(true);save();snapTake();render();cosNotify();
+ setTimeout(()=>verCheck(false),3000);
  setTimeout(()=>{if(S.cloud.on)cloudAuto();else cloudPing().then(r=>{if(r&&cloudAskOn()&&tab==='quest'&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))render()})},2000);
  if(S.battle)showBattle();
  if(!S.onboarded)howto(true);

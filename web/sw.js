@@ -1,5 +1,5 @@
 // 건강 RPG 서비스 워커: 처음 한 번 열면 모든 파일을 저장해 두고, 이후에는 인터넷 없이 실행됩니다.
-const CACHE = 'health-rpg-v7';
+const CACHE = 'health-rpg-v8';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './costumes.js'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
@@ -22,6 +22,8 @@ self.addEventListener('fetch', e => {
 
   // 백업 서버(/api/)는 저장하지 않고 항상 인터넷으로
   if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) return;
+  // 새 버전 확인 요청(?fresh)도 저장본을 쓰지 않음
+  if (url.origin === self.location.origin && url.searchParams.has('fresh')) return;
 
   // 글꼴: 한 번 받으면 저장해 두고 계속 사용
   if (FONT_HOSTS.includes(url.hostname)) {
@@ -32,15 +34,18 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // 앱 화면: 저장된 화면을 바로 띄우고, 온라인이면 뒤에서 새 버전으로 갱신
+  // 앱 화면: 인터넷이 되면 항상 최신 화면, 안 되거나 4초 넘게 걸리면 저장된 화면
   if (req.mode === 'navigate') {
-    e.respondWith(caches.match('./index.html').then(cached => {
-      const net = fetch(req).then(res => {
+    e.respondWith((async () => {
+      const cached = await caches.match('./index.html');
+      const net = fetch(req, { cache: 'no-store' }).then(res => {
         if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); }
         return res;
-      }).catch(() => cached);
-      return cached || net;
-    }));
+      });
+      if (!cached) return net;
+      const late = new Promise(r => setTimeout(() => r(cached), 4000));
+      return Promise.race([net.catch(() => cached), late]);
+    })());
     return;
   }
 
