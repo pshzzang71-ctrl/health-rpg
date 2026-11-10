@@ -11,7 +11,8 @@
  *  desc     한 줄 설명
  *  trend    (선택) 참고한 트렌드 한 줄
  *  body/belt/legs/hair  색상 (#rrggbb). 생략하면 직업 기본색
- *  back     몸 뒤 (망토·후드 뒤판·배경 반짝이)
+ *  back     몸 뒤 (망토·배낭·배경 반짝이) — 몸 좌표
+ *  backHead 머리 뒤 (후드 뒤판처럼 머리에 붙는 것) — 머리 좌표
  *  shoes    다리 위 (신발)
  *  over     몸통 위 (무늬·카라·주머니)
  *  side     손에 든 물건 (오른쪽 x≈80) — 넣으면 직업 무기 대신 보여요
@@ -24,12 +25,13 @@
  *  머리 원 (50,40) r26 · 앞머리 y13~41 · 눈 (41,44.5)(59,44.5) · 볼 (34,51.5)(66,51.5) · 입 y52~56
  *  몸통 x32.5~67.5 y59~85 (턱이 y66까지 가려요 → 가슴 무늬는 y66~82)
  *  허리띠 y72~76.5 · 손 (31,68)(69,68) r5.8 · 다리 x38~47.5, 52.5~62 y82~92 · 그림자 y95
+ *  화면에서는 머리 부분(hat·face·mask·backHead)은 작게, 몸 부분(back·over·shoes·side)은 늘씬하게 자동 조정돼요.
  *  SVG 안에 id 속성은 쓰지 마세요 (한 화면에 캐릭터가 여러 번 그려져요)
  */
 window.HRPG_COSTUMES = [
  {id:'bear_hood',name:'곰돌이 후드',price:500,rarity:0,added:'2026-11-09',desc:'곰 귀가 달린 포근한 후드. 쌀쌀한 날 산책 필수템',
   body:'#b07a4f',belt:'#b07a4f',
-  back:`<circle cx="50" cy="38" r="30.5" fill="#b07a4f"/><circle cx="26" cy="15" r="8.5" fill="#b07a4f"/><circle cx="74" cy="15" r="8.5" fill="#b07a4f"/><circle cx="26" cy="15" r="4.5" fill="#f2c9a0"/><circle cx="74" cy="15" r="4.5" fill="#f2c9a0"/>`,
+  backHead:`<circle cx="50" cy="38" r="30.5" fill="#b07a4f"/><circle cx="26" cy="15" r="8.5" fill="#b07a4f"/><circle cx="74" cy="15" r="8.5" fill="#b07a4f"/><circle cx="26" cy="15" r="4.5" fill="#f2c9a0"/><circle cx="74" cy="15" r="4.5" fill="#f2c9a0"/>`,
   over:`<rect x="40" y="74" width="20" height="8.5" rx="4" fill="#9a6a42"/><path d="M45.5 65 v6.5 M54.5 65 v6.5" stroke="#f6eadb" stroke-width="1.6" stroke-linecap="round"/><circle cx="45.5" cy="72" r="1.4" fill="#f6eadb"/><circle cx="54.5" cy="72" r="1.4" fill="#f6eadb"/>`,
   hat:`<path d="M24 34 C26 18 37 10 50 10 C63 10 74 18 76 34 C70 22 60 17 50 17 C40 17 30 22 24 34Z" fill="#c28a5c"/>`},
 
@@ -72,7 +74,8 @@ window.HRPG_COSTUMES = [
 
  {id:'cat_cape',name:'고양이 망토',price:1100,rarity:1,added:'2026-11-09',desc:'뾰족 귀 후드 망토와 방울 목걸이. 냥!',
   body:'#fff8e7',belt:'#fff8e7',
-  back:`<circle cx="50" cy="38" r="30.5" fill="#8d99ae"/><path d="M34 60 Q50 55 66 60 L75 91 Q50 96 25 91Z" fill="#8d99ae"/>`,
+  backHead:`<circle cx="50" cy="38" r="30.5" fill="#8d99ae"/>`,
+  back:`<path d="M34 60 Q50 55 66 60 L75 91 Q50 96 25 91Z" fill="#8d99ae"/>`,
   over:`<rect x="32.5" y="59" width="35" height="26" rx="12" fill="none" stroke="#e8dcc0" stroke-width="1"/><path d="M37 62 Q50 69 63 62" stroke="#e63946" stroke-width="2.8" fill="none" stroke-linecap="round"/><circle cx="50" cy="68.5" r="3" fill="#ffd34d" stroke="#e0a800" stroke-width=".8"/><path d="M48.5 69 h3" stroke="#a07800" stroke-width=".8"/>`,
   hat:`<path d="M24 34 C26 18 37 10 50 10 C63 10 74 18 76 34 C70 22 60 17 50 17 C40 17 30 22 24 34Z" fill="#9aa5b8"/><path d="M26 22 L28 3 L42 13Z" fill="#8d99ae" stroke="#76839b" stroke-width="1.2" stroke-linejoin="round"/><path d="M29 17 L30 8 L37.5 13Z" fill="#ffc8dd"/><path d="M74 22 L72 3 L58 13Z" fill="#8d99ae" stroke="#76839b" stroke-width="1.2" stroke-linejoin="round"/><path d="M71 17 L70 8 L62.5 13Z" fill="#ffc8dd"/>`,
   face:`<path d="M31 50 l-7 -1.5 M31 52.5 l-7 1.5 M69 50 l7 -1.5 M69 52.5 l7 1.5" stroke="#8d6e63" stroke-width="1" stroke-linecap="round"/>`,

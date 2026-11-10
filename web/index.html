@@ -445,7 +445,7 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.7.1', KEY='healthRPG.v1';
+const VERSION='1.8.0', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -656,7 +656,7 @@ const LOOK_EC={blue:['파랑','#2a5fc2','#8cc2ff'],amber:['호박','#b5651d','#f
 function shade(hex,t){const n=parseInt(String(hex).slice(1),16);if(isNaN(n))return hex;const f=c=>Math.round(t>=0?c+(255-c)*t:c*(1+t));
  const r=f(n>>16&255),g=f(n>>8&255),b=f(n&255);return '#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1)}
 let _au=0;
-function avatarSVG(path,tier,cosId,look){const u=++_au;
+function avatarSVG(path,tier,cosId,look,bust){const u=++_au;
  const C={none:['#7ccf6a','#4f9e3f'],monk:['#ffa24a','#d9534f'],warrior:['#ff6b6b','#b83232'],sage:['#9b7bf5','#5a3dc4'],paladin:['#f2c04a','#d49b1a']}[path||'none']||['#7ccf6a','#4f9e3f'];
  let [body,belt]=C;const acc=body,skin='#fff0e6',sk2='#f0c9b3',ink='#3d2a33';
  let back='',side='',hat='';
@@ -676,14 +676,17 @@ function avatarSVG(path,tier,cosId,look){const u=++_au;
   <linearGradient id="dr${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef1fa"/></linearGradient></defs>`;
  const sp=tier>=3?`<g fill="#ffd34d"><path d="M10 22 l1.6 3.6 3.6 1.6-3.6 1.6-1.6 3.6-1.6-3.6-3.6-1.6 3.6-1.6z"/><path d="M90 14 l1.2 2.7 2.7 1.2-2.7 1.2-1.2 2.7-1.2-2.7-2.7-1.2 2.7-1.2z"/></g>`:'';
  const strand=`stroke="${h2}" stroke-width=".75" fill="none" stroke-linecap="round" opacity=".32"`;
- // 뒷머리 (물결)
- const shortBack=`<path d="M24 36 C22 49 24 59 29.5 65 L70.5 65 C76 59 78 49 76 36 C70 19 30 19 24 36Z" fill="${hf}"/>`;
- const BACK={long:`<path d="M26 28 C17 42 19 56 22.5 64 C25.5 71 19.5 79 22 87 C23 90.5 26 92.5 29 92 C27.5 88.5 28.5 85.5 31.5 84 C32.5 88 35.5 90.5 39.5 90 C37.5 86.5 38.5 82.5 42 81 L58 81 C61.5 82.5 62.5 86.5 60.5 90 C64.5 90.5 67.5 88 68.5 84 C71.5 85.5 72.5 88.5 71 92 C74 92.5 77 90.5 78 87 C80.5 79 74.5 71 77.5 64 C81 56 83 42 74 28 C66 16 34 16 26 28Z" fill="${hf}"/><path d="M28 42 C24 55 28 67 25 80 M72 42 C76 55 72 67 75 80 M33 74 C31 80 34 85 32.5 89 M67 74 C69 80 66 85 67.5 89" ${strand}/>`,
-  twin:shortBack+`<path d="M30 21 C16 21 10 34 11.5 48 C12.5 58 17 63 15.5 72 C14.5 79 17 85 21.5 89 C21 84.5 22.5 81 25 79 C24 73 26.5 67 25.5 60 C24.5 51 26 40 33.5 27Z" fill="${hf}"/><path d="M70 21 C84 21 90 34 88.5 48 C87.5 58 83 63 84.5 72 C85.5 79 83 85 78.5 89 C79 84.5 77.5 81 75 79 C76 73 73.5 67 74.5 60 C75.5 51 74 40 66.5 27Z" fill="${hf}"/><path d="M17 40 C14 52 20 62 18 74 M83 40 C86 52 80 62 82 74" ${strand}/>`,
-  pony:shortBack+`<path d="M60 13 C80 9 92 26 88 44 C85.5 55 89 63 85 72 C82.5 78 84 83 82 88 C79 85 76.5 81 77.5 76 C79 70 75.5 64 76.5 56 C78 44 74 27 61 20Z" fill="${hf}"/><path d="M80 24 C86 36 82 50 84 62" ${strand}/>`,
-  bob:`<path d="M22.5 36 C20 50 22.5 60 26 66 C28.5 70 33 69 35 66.5 L65 66.5 C67 69 71.5 70 74 66 C77.5 60 80 50 77.5 36 C71 17 29 17 22.5 36Z" fill="${hf}"/>`}[hs];
+ // 새 비율: 머리는 원래 좌표를 줄여서(HT), 코스튬 몸은 늘씬하게 늘려서(BT) 배치
+ const HT='translate(50 51) scale(.72) translate(-50 -66)',BT='translate(50 54) scale(.8 1.1) translate(-50 -59)';
+ const G=(t,c)=>c?`<g transform="${t}">${c}</g>`:'';
+ // 뒷머리 (최종 좌표, 허리까지 흘러내림)
+ const sb=`<path d="M31.5 30 C30 38 31.5 43 34.5 46.5 Q50 50 65.5 46.5 C68.5 43 70 38 68.5 30 C64.5 17.5 35.5 17.5 31.5 30Z" fill="${hf}"/>`;
+ const BACK={long:`<path d="M31 24 C25 38 27 52 25 62 C23 72 21 80 24 88 C25.6 92 29 93 31.5 92 C30.4 89 31 86.5 33.4 85 C34.4 88.6 37.6 90.6 41 90 C39.6 87 40.4 83.6 43 82.4 L57 82.4 C59.6 83.6 60.4 87 59 90 C62.4 90.6 65.6 88.6 66.6 85 C69 86.5 69.6 89 68.5 92 C71 93 74.4 92 76 88 C79 80 77 72 75 62 C73 52 75 38 69 24 C64 12 36 12 31 24Z" fill="${hf}"/><path d="M29.5 36 C26.5 50 30 62 27 76 C26 82 27.5 86 27 89 M70.5 36 C73.5 50 70 62 73 76 C74 82 72.5 86 73 89 M37 70 C36 76 38 81 36.5 86 M63 70 C64 76 62 81 63.5 86" ${strand}/>`,
+  twin:sb+`<path d="M35 16 C24 15 18 26 19 38 C20 48 24 54 22.5 63 C21.4 70 23 78 26.5 84 C26.4 80 27.6 77 29.6 75.4 C28.6 70 30.6 64 30 58 C29.4 49 30.6 38 37.5 22Z" fill="${hf}"/><path d="M65 16 C76 15 82 26 81 38 C80 48 76 54 77.5 63 C78.6 70 77 78 73.5 84 C73.6 80 72.4 77 70.4 75.4 C71.4 70 69.4 64 70 58 C70.6 49 69.4 38 62.5 22Z" fill="${hf}"/><path d="M22.5 34 C21 46 26 54 24.6 66 M77.5 34 C79 46 74 54 75.4 66" ${strand}/>`,
+  pony:sb+`<path d="M57 13 C72 10 81 22 79 36 C77.5 46 80 53 77 61 C75 67 76.5 72 75 77 C72.6 74.6 70.8 71 71.6 67 C72.6 61 70 56 70.8 49 C71.8 39 69 26 58 19Z" fill="${hf}"/><path d="M73 22 C78 32 75 44 77 54" ${strand}/>`,
+  bob:`<path d="M31 30 C29.2 41 31 48.5 33.6 53 C35.4 56 39 55.4 40.4 53.4 L59.6 53.4 C61 55.4 64.6 56 66.4 53 C69 48.5 70.8 41 69 30 C64.4 16.5 35.6 16.5 31 30Z" fill="${hf}"/>`}[hs];
  // 앞머리·옆머리
- const Y={long:80,twin:62,pony:60,bob:64}[hs];
+ const Y={long:100,twin:70,pony:68,bob:70}[hs];
  const sideL=`<path d="M24.5 40 C21.5 50 23.5 ${Y-14} 22 ${Y-6} C21.5 ${Y-2} 23.5 ${Y+1} 26 ${Y+2} C25.4 ${Y-3} 26.6 ${Y-7} 28.4 ${Y-11} C30 ${Y-17} 29.6 50 31.6 42Z" fill="${hf}"/>`;
  const sideR=`<path d="M75.5 40 C78.5 50 76.5 ${Y-14} 78 ${Y-6} C78.5 ${Y-2} 76.5 ${Y+1} 74 ${Y+2} C74.6 ${Y-3} 73.4 ${Y-7} 71.6 ${Y-11} C70 ${Y-17} 70.4 50 68.4 42Z" fill="${hf}"/>`;
  const front=`<path d="M23.5 47 C21 23 34.5 11 50 11 C65.5 11 79 23 76.5 47 C75.5 42 73.5 38.5 70.5 35.5 C70.2 38.8 69.2 41.4 67.4 43.4 C67 39 65.4 35.6 62.8 33.4 C62.6 36.8 61.6 39.4 59.6 41.4 C59.4 37.2 57.8 34 55.2 32.2 C55 35.6 54 38.2 52.2 40 C51.8 36.2 50.4 33.4 48.2 31.8 C47.6 35.2 46.2 38 44 40.2 C43.8 36.4 42.6 33.6 40.4 32 C39.6 35.6 38.2 38.4 35.8 40.6 C35.6 37.6 34.6 35.4 32.8 34 C29.2 37.2 26.4 41.4 23.5 47Z" fill="${hf}"/>${sideL}${sideR}
@@ -704,24 +707,28 @@ function avatarSVG(path,tier,cosId,look){const u=++_au;
  const cheeks=`<ellipse cx="33.6" cy="52.6" rx="5.2" ry="3.1" fill="url(#bl${u})"/><ellipse cx="66.4" cy="52.6" rx="5.2" ry="3.1" fill="url(#bl${u})"/>`;
  const mouth=`<path d="M50.2 51.4 q-.5 .9 -.1 1.3" stroke="#e3a892" stroke-width=".7" fill="none" stroke-linecap="round"/><path d="M47.9 55.2 Q50 56.9 52.1 55.2" stroke="#c96a72" stroke-width=".95" fill="none" stroke-linecap="round"/>`;
  const FX=k=>{const v=X(k);return v?`<g transform="translate(50 45) scale(1.08 1.3) translate(-50 -45)">${v}</g>`:''};
- let outfit;
+ let outfit,arms='';
+ const neck=`<rect x="47.5" y="46" width="5" height="9" rx="2" fill="${skin}"/><path d="M47.5 50 Q50 52 52.5 50" stroke="${sk2}" stroke-width=".6" fill="none" opacity=".7"/>`;
  if(cs){const legs=cs.legs||'#6b4f3a';
-  outfit=`<rect x="38" y="82" width="9.5" height="10" rx="4.5" fill="${legs}"/><rect x="52.5" y="82" width="9.5" height="10" rx="4.5" fill="${legs}"/>${X('shoes')}
-  <rect x="32.5" y="59" width="35" height="26" rx="12" fill="${body}" stroke="rgba(0,0,0,.08)"/><rect x="32.5" y="72" width="35" height="4.5" fill="${belt}"/>${X('over')}
-  <circle cx="31" cy="68" r="4.6" fill="${skin}" stroke="${sk2}" stroke-width=".8"/><circle cx="69" cy="68" r="4.6" fill="${skin}" stroke="${sk2}" stroke-width=".8"/>`}
- else{const ln='#dfe4ef',arm='M33.8 66.4 C31.6 69.4 31 72.4 31.6 75.4 M66.2 66.4 C68.4 69.4 69 72.4 68.4 75.4';
-  outfit=`<rect x="42" y="80" width="5.2" height="11" rx="2.6" fill="${skin}"/><rect x="52.8" y="80" width="5.2" height="11" rx="2.6" fill="${skin}"/>
-  <rect x="41.6" y="85" width="6" height="6" rx="2" fill="#fff" stroke="${ln}" stroke-width=".5"/><rect x="52.4" y="85" width="6" height="6" rx="2" fill="#fff" stroke="${ln}" stroke-width=".5"/>
-  <path d="M40.6 89.8 h7.6 v2.4 q0 1.8 -1.8 1.8 h-4.2 q-1.6 0 -1.6 -1.8z M51.8 89.8 h7.6 v2.4 q0 1.8 -1.8 1.8 h-4.2 q-1.6 0 -1.6 -1.8z" fill="${shade(belt,.05)}"/>
-  <path d="M36.5 73.5 L63.5 73.5 L71 86.5 Q50 91 29 86.5Z" fill="url(#dr${u})" stroke="${ln}" stroke-width=".6"/><path d="M43 75 L40.5 86 M50 75 V88 M57 75 L59.5 86" stroke="#e3e7f1" stroke-width=".8"/>
-  <path d="M29 86.5 Q31.5 90 34 87.6 Q36.5 90.8 39 88.3 Q41.5 91.4 44 88.8 Q46.5 91.8 49 89.1 Q51.5 91.8 54 89 Q56.5 91.4 59 88.6 Q61.5 90.8 64 88.2 Q66.5 90.2 69 87.4 Q70.5 88.8 71 86.5 Q50 91 29 86.5Z" fill="#fff" stroke="${ln}" stroke-width=".5"/><path d="M30.6 85.2 Q50 89.4 69.4 85.2" stroke="${shade(acc,.35)}" stroke-width="1.4" fill="none"/>
-  <path d="${arm}" stroke="${sk2}" stroke-width="4.4" fill="none" stroke-linecap="round"/><path d="${arm}" stroke="${skin}" stroke-width="3.3" fill="none" stroke-linecap="round"/><circle cx="31.8" cy="76" r="2.8" fill="${skin}" stroke="${sk2}" stroke-width=".6"/><circle cx="68.2" cy="76" r="2.8" fill="${skin}" stroke="${sk2}" stroke-width=".6"/>
-  <path d="M36.2 61.5 Q50 57.8 63.8 61.5 L64.6 75 L35.4 75Z" fill="url(#dr${u})" stroke="${ln}" stroke-width=".6"/><path d="M38.5 61 Q50 68 61.5 61" stroke="#fff" stroke-width="2.4" fill="none"/>
-  <ellipse cx="35" cy="64.4" rx="5" ry="4.4" fill="#fff" stroke="${ln}" stroke-width=".6"/><ellipse cx="65" cy="64.4" rx="5" ry="4.4" fill="#fff" stroke="${ln}" stroke-width=".6"/><path d="M31.6 66.8 Q35 68.6 38.4 66.8 M61.6 66.8 Q65 68.6 68.4 66.8" stroke="${acc}" stroke-width="1.1" fill="none"/>
-  <path d="M50 68.6 l-3 -1.8 v3.6z M50 68.6 l3 -1.8 v3.6z" fill="${shade(acc,.1)}"/>
-  <rect x="35.4" y="72.2" width="29.2" height="3.4" rx="1.6" fill="${acc}"/><path d="M49 75 l-2.6 6 l1.8 .4z M51 75 l2.6 6 l-1.8 .4z" fill="${acc}"/><path d="M50 73.9 C48 70 43.6 69.8 43.6 73.9 C43.6 78 48 77.8 50 73.9Z M50 73.9 C52 70 56.4 69.8 56.4 73.9 C56.4 78 52 77.8 50 73.9Z" fill="${acc}" stroke="${shade(acc,-.25)}" stroke-width=".5"/><circle cx="50" cy="73.9" r="1.6" fill="${shade(acc,-.18)}"/>`}
- return `<svg viewBox="0 -10 100 110" xmlns="http://www.w3.org/2000/svg">${defs}${sp}<ellipse cx="50" cy="95" rx="21" ry="4" fill="rgba(0,0,0,.12)"/>${back}${X('back')}${noHair?'':BACK}
- ${outfit}${side}${face}${cheeks}${noHair?'':front+ties}${FX('mask')}${eyes}${noHair?'':brows}${mouth}${FX('face')}${hat}</svg>`}
+  outfit=G(BT,`<rect x="38" y="82" width="9.5" height="10" rx="4.5" fill="${legs}"/><rect x="52.5" y="82" width="9.5" height="10" rx="4.5" fill="${legs}"/>${X('shoes')}
+   <rect x="32.5" y="59" width="35" height="26" rx="12" fill="${body}" stroke="rgba(0,0,0,.08)"/><rect x="32.5" y="72" width="35" height="4.5" fill="${belt}"/>${X('over')}`);
+  const aL='M37.6 58.4 C35.8 61.6 35 64.6 35 67',fL='M35 66.6 C34.8 68.6 34.9 70 35.2 71',m=s=>s.replace(/(-?\d+\.?\d*) (-?\d+\.?\d*)/g,(q,x,y)=>`${(100-x).toFixed(1)} ${y}`);
+  arms=`<path d="${aL} ${m(aL)}" stroke="${shade(body,-.1)}" stroke-width="4.6" fill="none" stroke-linecap="round"/><path d="${aL} ${m(aL)}" stroke="${body}" stroke-width="3.8" fill="none" stroke-linecap="round"/><path d="${fL} ${m(fL)}" stroke="${skin}" stroke-width="2.8" fill="none" stroke-linecap="round"/><circle cx="35.3" cy="71.6" r="2.1" fill="${skin}" stroke="${sk2}" stroke-width=".5"/><circle cx="64.7" cy="71.6" r="2.1" fill="${skin}" stroke="${sk2}" stroke-width=".5"/>`}
+ else{const ln='#dfe4ef',tint=shade(acc,.86),arm='M40.8 58.6 C39 62 38.2 66 38.6 70 M59.2 58.6 C61 62 61.8 66 61.4 70';
+  outfit=`<rect x="45.2" y="80" width="3.8" height="13" rx="1.9" fill="${skin}"/><rect x="51" y="80" width="3.8" height="13" rx="1.9" fill="${skin}"/>
+  <rect x="44.9" y="87.4" width="4.4" height="5.8" rx="1.6" fill="#fff" stroke="${ln}" stroke-width=".4"/><rect x="50.7" y="87.4" width="4.4" height="5.8" rx="1.6" fill="#fff" stroke="${ln}" stroke-width=".4"/>
+  <path d="M44.2 92.2 h5.6 v1.8 q0 1.4 -1.4 1.4 h-3 q-1.2 0 -1.2 -1.4z M50.2 92.2 h5.6 v1.8 q0 1.4 -1.4 1.4 h-3 q-1.2 0 -1.2 -1.4z" fill="${shade(belt,.05)}"/>
+  <path d="M43 66 L57 66 C63 72 70 79 75.5 85.5 Q72.5 88.6 70 86.6 Q67.6 89.6 65 87.4 Q62.6 90.2 60 88 Q57.6 90.6 55 88.4 Q52.5 90.8 50 88.6 Q47.5 90.8 45 88.4 Q42.4 90.6 40 88 Q37.4 90.2 35 87.4 Q32.4 89.6 30 86.6 Q27.5 88.6 24.5 85.5 C30 79 37 72 43 66Z" fill="#fff" stroke="${ln}" stroke-width=".5"/>
+  <path d="M43 66 L57 66 C62 71 67.5 77 71.5 82.5 Q68.6 85 66 83.4 Q63.2 85.8 60.4 84 Q57.6 86.2 55 84.4 Q52.5 86.6 50 84.6 Q47.5 86.6 45 84.4 Q42.4 86.2 39.6 84 Q36.8 85.8 34 83.4 Q31.4 85 28.5 82.5 C32.5 77 38 71 43 66Z" fill="${tint}" stroke="${ln}" stroke-width=".5"/><path d="M46 68 L40.6 82.6 M50 68 V84 M54 68 L59.4 82.6" stroke="${shade(tint,-.08)}" stroke-width=".6"/>
+  <path d="M43 66 L57 66 C60 69.5 63 73 65.5 76.5 Q50 80.5 34.5 76.5 C37 73 40 69.5 43 66Z" fill="url(#dr${u})" stroke="${ln}" stroke-width=".5"/><path d="M34.5 76.5 Q50 80.5 65.5 76.5" stroke="${shade(acc,.3)}" stroke-width="1.2" fill="none"/>
+  <path d="${arm}" stroke="${sk2}" stroke-width="3.6" fill="none" stroke-linecap="round"/><path d="${arm}" stroke="${skin}" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="38.7" cy="70.8" r="2" fill="${skin}" stroke="${sk2}" stroke-width=".5"/><circle cx="61.3" cy="70.8" r="2" fill="${skin}" stroke="${sk2}" stroke-width=".5"/>
+  <path d="M42.6 55.4 Q50 53.4 57.4 55.4 L57.2 66.6 Q50 68 42.8 66.6Z" fill="url(#dr${u})" stroke="${ln}" stroke-width=".5"/><path d="M44 55.2 Q50 59.6 56 55.2" stroke="#fff" stroke-width="1.6" fill="none"/><path d="M50 60 V65.6" stroke="${shade(acc,.25)}" stroke-width=".6"/>
+  <ellipse cx="41.6" cy="56.6" rx="4.2" ry="3.6" fill="#fff" stroke="${ln}" stroke-width=".5"/><ellipse cx="58.4" cy="56.6" rx="4.2" ry="3.6" fill="#fff" stroke="${ln}" stroke-width=".5"/><path d="M38.8 58.6 Q41.6 60 44.4 58.6 M55.6 58.6 Q58.4 60 61.2 58.6" stroke="${acc}" stroke-width=".9" fill="none"/>
+  <path d="M50 57.8 l-2.4 -1.4 v2.8z M50 57.8 l2.4 -1.4 v2.8z" fill="${shade(acc,.1)}"/>
+  <rect x="42.4" y="65" width="15.2" height="2.6" rx="1.2" fill="${acc}"/><path d="M49.2 67.4 l-2 5.2 l1.4 .3z M50.8 67.4 l2 5.2 l-1.4 .3z" fill="${acc}"/><path d="M50 66.3 C48.4 63.3 44.8 63.1 44.8 66.3 C44.8 69.5 48.4 69.3 50 66.3Z M50 66.3 C51.6 63.3 55.2 63.1 55.2 66.3 C55.2 69.5 51.6 69.3 50 66.3Z" fill="${acc}" stroke="${shade(acc,-.25)}" stroke-width=".4"/><circle cx="50" cy="66.3" r="1.2" fill="${shade(acc,-.18)}"/>`}
+ const vb=bust?'15 -6 70 70':'0 -10 100 110';
+ return `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${defs}${sp}<ellipse cx="50" cy="95" rx="17" ry="3.4" fill="rgba(0,0,0,.12)"/>${G(BT,back+X('back'))}${G(HT,X('backHead'))}${noHair?'':BACK}
+ ${neck}${outfit}${arms}${G(BT,side)}<g transform="${HT}">${face}${cheeks}${noHair?'':front+ties}${FX('mask')}${eyes}${noHair?'':brows}${mouth}${FX('face')}${hat}</g></svg>`}
 
 /* 외모 고르기 */
 const lookAva=lk=>avatarSVG(S.cls.tier?S.cls.path:null,S.cls.tier,null,lk);
@@ -778,7 +785,7 @@ const todayCleared=()=>{const q=S.today.quests;return q.length>0&&q.every(x=>x.d
 const dispStreak=()=>S.streak+(todayCleared()?1:0);
 const liveBest=()=>Math.max(S.bestStreak,dispStreak());
 const clsTitle=()=>S.cls.tier?PATHS[S.cls.path].tiers[S.cls.tier-1]:'견습 모험가';
-const avatar=()=>avatarSVG(S.cls.tier?S.cls.path:null,S.cls.tier,S.costume);
+const avatar=b=>avatarSVG(S.cls.tier?S.cls.path:null,S.cls.tier,S.costume,null,b);
 const power=()=>Math.round(S.level*100+Object.values(S.stats).reduce((a,b)=>a+b,0)*30+Object.values(S.skills).reduce((a,b)=>a+b,0)*60+S.cls.tier*800+S.totals.urgeWins*5+S.inv.reduce((a,i)=>a+(i.r+1)*100*(1+i.plus*.2),0));
 function passiveLines(p){const L=[];
  if(p.urge)L.push(`유혹 격퇴 XP +${pct(p.urge)}%`);if(p.endure)L.push(`참기 퀘스트 XP +${pct(p.endure)}%`);
@@ -963,7 +970,7 @@ let tab='quest',deferredPrompt=null;
 const TABS=[['quest','📜','퀘스트'],['raid','👹','레이드'],['char','🧙','캐릭터'],['shop','🛍️','상점'],['rec','🏆','업적'],['set','⚙️','설정']];
 function render(){
  const c=S.cls,nd=need(S.level),rt=raidTitle();
- $('#hdr').innerHTML=`${inFrame?'<div class="pv">미리보기 화면 · 설치한 앱과 기록이 따로 저장돼요</div>':''}<div class="hero"><div class="ava t${c.tier}" style="--aura:${AURA[c.tier]}">${avatar()}${rt?`<span class="rbadge">${rt[0]}</span>`:''}${S.pet.sp?`<span class="hpet" data-act="pet-info">${petSVG(S.pet.sp,petStage(),petMood(),0)}</span>`:''}</div><div class="hinfo">${titleOf()?`<div class="ttl">${titleOf().icon} ${esc(titleOf().name)}</div>`:''}
+ $('#hdr').innerHTML=`${inFrame?'<div class="pv">미리보기 화면 · 설치한 앱과 기록이 따로 저장돼요</div>':''}<div class="hero"><div class="ava t${c.tier}" style="--aura:${AURA[c.tier]}">${avatar(true)}${rt?`<span class="rbadge">${rt[0]}</span>`:''}${S.pet.sp?`<span class="hpet" data-act="pet-info">${petSVG(S.pet.sp,petStage(),petMood(),0)}</span>`:''}</div><div class="hinfo">${titleOf()?`<div class="ttl">${titleOf().icon} ${esc(titleOf().name)}</div>`:''}
   <div class="hname"><b>${esc(S.name)}</b><span class="ctitle" style="color:${c.tier?PATHS[c.path].color:'var(--sub)'}">${clsTitle()}</span></div>
   <div class="lvrow"><span class="lv">Lv.${S.level}</span><div class="xpbar"><i style="width:${Math.min(100,S.xp/nd*100)}%"></i></div></div>
   <div class="xpt">${fmt(S.xp)} / ${fmt(nd)} XP</div>
