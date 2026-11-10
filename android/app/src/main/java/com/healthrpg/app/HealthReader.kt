@@ -70,12 +70,35 @@ class HealthReader(private val context: Context) {
             val end = if (dayEnd.isAfter(now)) now else dayEnd
             val granted = c.permissionController.getGrantedPermissions()
 
-            // 걸음 수: 그날 0시부터 지금(또는 그날 끝)까지 합계
+            // 걸음 수: 그날 0시부터 지금(또는 그날 끝)까지
+            // 헬스 커넥트 합계는 같은 앱(삼성 헬스)이 휴대폰·워치 기록을 따로 넣으면 겹친 걸음을 두 번 셉니다.
+            // 그래서 삼성 헬스 기록이 있으면 기기별로 1분 단위로 나눠 같은 시간에는 가장 큰 값만 더합니다.
             if (granted.contains(STEPS) && end.isAfter(start)) {
                 val agg = c.aggregate(
                     AggregateRequest(setOf(StepsRecord.COUNT_TOTAL), TimeRangeFilter.between(start, end))
                 )
-                out.put("steps", agg[StepsRecord.COUNT_TOTAL] ?: 0L)
+                val aggSteps = agg[StepsRecord.COUNT_TOTAL] ?: 0L
+                var steps = aggSteps
+                out.put("stepsAgg", aggSteps)
+                try {
+                    val recs = readSteps(c, start, end)
+                    val byApp = recs.groupBy { it.metadata.dataOrigin.packageName }
+                    val apps = JSONObject()
+                    for ((k, v) in byApp) apps.put(k, v.sumOf { it.count })
+                    out.put("stepsApps", apps)
+                    val sh = recs.filter { it.metadata.dataOrigin.packageName.contains("shealth") }
+                    if (sh.isNotEmpty()) {
+                        val (merged, devices) = mergeSteps(sh, start, end)
+                        val dj = JSONObject()
+                        for ((k, v) in devices) dj.put(k, v)
+                        out.put("stepsDevices", dj)
+                        out.put("stepsMerged", merged)
+                        if (merged > 0) steps = merged
+                    }
+                } catch (e: Exception) {
+                    out.put("stepsErr", e.message ?: e.javaClass.simpleName)
+                }
+                out.put("steps", steps)
             }
 
             // 운동 시간: 그날 기록된 운동 세션 시간 합계(분)
@@ -107,6 +130,67 @@ class HealthReader(private val context: Context) {
             out.put("error", e.message ?: e.javaClass.simpleName)
         }
         return out.toString()
+    }
+
+    private suspend fun readSteps(c: HealthConnectClient, start: Instant, end: Instant): List<StepsRecord> {
+        val all = ArrayList<StepsRecord>()
+        var token: String? = null
+        var pages = 0
+        do {
+            val res = c.readRecords(
+                ReadRecordsRequest(
+                    recordType = StepsRecord::class,
+                    timeRangeFilter = TimeRangeFilter.between(start, end),
+                    pageSize = 5000,
+                    pageToken = token
+                )
+            )
+            all.addAll(res.records)
+            token = res.pageToken
+            pages++
+        } while (!token.isNullOrEmpty() && pages < 20)
+        return all
+    }
+
+    /** 기기별로 1분 칸에 걸음을 나눠 담고, 칸마다 가장 큰 기기 값만 더합니다. (합계, 기기별 원래 합계) */
+    private fun mergeSteps(recs: List<StepsRecord>, start: Instant, end: Instant): Pair<Long, Map<String, Long>> {
+        val s0 = start.epochSecond
+        val e0 = end.epochSecond
+        val n = (((e0 - s0) + 59) / 60).toInt().coerceAtLeast(1)
+        val bins = HashMap<String, DoubleArray>()
+        val totals = LinkedHashMap<String, Long>()
+        for (r in recs) {
+            val d = r.metadata.device
+            val name = listOfNotNull(d?.manufacturer, d?.model).joinToString(" ").trim()
+            val key = if (name.isNotEmpty()) name else if (d != null) "기기 종류 ${d.type}" else "기기 정보 없음"
+            totals[key] = (totals[key] ?: 0L) + r.count
+            val arr = bins.getOrPut(key) { DoubleArray(n) }
+            val rs0 = r.startTime.epochSecond
+            val re0 = r.endTime.epochSecond
+            val len = (re0 - rs0).coerceAtLeast(1L)
+            val rs = maxOf(rs0, s0)
+            val re = minOf(re0, e0)
+            if (re <= rs) {
+                val idx = ((rs - s0) / 60).toInt().coerceIn(0, n - 1)
+                arr[idx] += r.count.toDouble()
+                continue
+            }
+            var t = rs
+            while (t < re) {
+                val idx = ((t - s0) / 60).toInt().coerceIn(0, n - 1)
+                val binEnd = minOf(re, s0 + (idx + 1).toLong() * 60L)
+                val next = if (binEnd > t) binEnd else t + 60L
+                arr[idx] += r.count.toDouble() * (minOf(next, re) - t).toDouble() / len.toDouble()
+                t = next
+            }
+        }
+        var sum = 0.0
+        for (i in 0 until n) {
+            var m = 0.0
+            for (a in bins.values) if (a[i] > m) m = a[i]
+            sum += m
+        }
+        return Pair(Math.round(sum), totals)
     }
 
     /** 헬스 커넥트 설정 화면 열기. 없으면 Play 스토어로 */

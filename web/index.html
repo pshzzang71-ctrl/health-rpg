@@ -446,7 +446,7 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.11.0', KEY='healthRPG.v1';
+const VERSION='1.11.1', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -903,7 +903,7 @@ function complete(q,el){
 function uncomplete(q,skip){q.done=false;loseXP(q.xp);subGold(q.gold);if(!q.custom&&S.qCount[q.id])S.qCount[q.id]--;S.totals.quests=Math.max(0,S.totals.quests-1);q.xp=0;q.gold=0;
  raidUnhit(q.map);q.map=null;q.dmg=0;if(q.smap){raidUnhit(q.smap);q.smap=null;q.sdmg=0}if(!skip)recheckClear()}
 function setInputDone(q,ok,el){if(ok&&!q.done)complete(q,el);else if(!ok&&q.done)uncomplete(q)}
-function applySteps(q){if((q.val||0)>S.best.steps)S.best.steps=q.val;const extra=Math.max(0,Math.min(q.val||0,q.target+5000)-q.target);const want=q.done?Math.floor(extra/1000)*Math.round(5*(1+.1*S.today.tier)):0;
+function applySteps(q){const td=S.today.date;if(S.best.sd!==td){S.best.sp=S.best.steps||0;S.best.sd=td}S.best.steps=Math.max(S.best.sp||0,q.val||0);const extra=Math.max(0,Math.min(q.val||0,q.target+5000)-q.target);const want=q.done?Math.floor(extra/1000)*Math.round(5*(1+.1*S.today.tier)):0;
  if(q.smap){raidUnhit(q.smap);q.smap=null;q.sdmg=0}
  if(want>0){const r=raidHit(want,{kind:'steps'});if(r&&r.dmg){q.smap=r.map;q.sdmg=r.dmg;toast(`🚶 초과 걸음 보너스! 보스에게 ⚔️${r.dmg}`)}}}
 function recheckClear(){const d=S.today,all=todayCleared();
@@ -1706,7 +1706,7 @@ async function syncHealth(manual){
  }finally{hcBusy=false}}
 function applyHealth(d,manual){const ch=[];
  const w=findQ('walk');
- if(w&&w.type==='num'&&typeof d.steps==='number'&&d.steps>0&&(w.val==null||w.src!=='manual'||d.steps>w.val)&&w.val!==d.steps){w.val=d.steps;w.src='hc';setInputDone(w,w.val>=w.target,null);applySteps(w);ch.push(`걸음 ${fmt(d.steps)}보`)}
+ if(w&&w.type==='num'&&typeof d.steps==='number'&&d.steps>0&&(w.val==null||w.src!=='manual'||d.steps>w.val)&&w.val!==d.steps){if(w.src==='hc'&&d.steps<w.val&&S.best.steps===w.val&&S.best.sd!==S.today.date)S.best.steps=0;w.val=d.steps;w.src='hc';setInputDone(w,w.val>=w.target,null);applySteps(w);ch.push(`걸음 ${fmt(d.steps)}보`)}
  const x=findQ('exercise');
  if(x&&x.type==='num'&&typeof d.exerciseMin==='number'&&d.exerciseMin>0&&(x.val==null||x.src!=='manual'||d.exerciseMin>x.val)&&x.val!==d.exerciseMin){x.val=d.exerciseMin;x.src='hc';setInputDone(x,x.val>=x.target,null);ch.push(`운동 ${d.exerciseMin}분`)}
  const sl=findQ('sleep');
@@ -1724,12 +1724,22 @@ function hcCard(){if(!inApp)return'';
  if(hc==='noperm')return `<div class="card hc on"><div><b>⌚ 갤럭시 핏 자동 연동</b><div class="sub">걸음·수면·운동 기록을 읽어 퀘스트를 자동으로 체크해요</div></div><button class="btn sm primary" data-act="hc-perm">연결하기</button></div>`;
  if(hc==='unavailable')return `<div class="card hc"><div><b>⌚ 헬스 커넥트를 쓸 수 없어요</b><div class="sub">설치하거나 업데이트한 뒤 다시 시도해 주세요</div></div><button class="btn sm" data-act="hc-open">열기</button></div>`;
  return `<div class="card hc"><div class="sub">⌚ 헬스 커넥트 확인 중…</div></div>`}
+const APPN={'com.sec.android.app.shealth':'삼성 헬스','com.google.android.apps.fitness':'Google 피트니스','com.samsung.android.wear.shealth':'삼성 헬스(워치)'};
+function stepLines(d){const L=[];if(typeof d.steps!=='number')return L;
+ if(typeof d.stepsAgg!=='number'){L.push('⚠️ 앱이 예전 버전이라 휴대폰·워치 걸음이 겹쳐서 더해질 수 있어요. GitHub Releases → latest에서 새 앱을 설치해 주세요');return L}
+ if(d.stepsDevices){const dv=Object.entries(d.stepsDevices);L.push(`삼성 헬스 기기별: ${dv.map(([k,v])=>k+' '+fmt(v)).join(' · ')}`);
+  if(dv.length>1)L.push(`→ 같은 시간에 겹친 걸음을 한 번만 세서 ${fmt(d.stepsMerged)}보`)}
+ if(d.stepsApps){const o=Object.entries(d.stepsApps).filter(([k])=>!k.includes('shealth'));if(o.length)L.push(`다른 앱 기록(반영 안 함): ${o.map(([k,v])=>(APPN[k]||k)+' '+fmt(v)).join(' · ')}`)}
+ if(d.stepsAgg!==d.steps)L.push(`(헬스 커넥트 단순 합계는 ${fmt(d.stepsAgg)}보)`);
+ if(d.stepsErr)L.push('기기별 계산 오류: '+d.stepsErr);
+ return L}
 async function hcDiag(){if(!inApp){toast('앱에서만 쓸 수 있어요');return}
  let st='';try{st=HB.getStatus()}catch(e){st='error'}
  const ok=st==='available',p=ok?await hbCall('checkPermissions'):{},d=ok?await hbCall('readDay',S.today.date):{};
  const L=[`헬스 커넥트: ${ok?'✅ 사용 가능':st==='update_required'?'⚠️ 업데이트 필요':'❌ 사용할 수 없음 ('+st+')'}`,
   `건강 RPG 읽기 권한: 걸음 ${p.steps?'✅':'❌'} · 수면 ${p.sleep?'✅':'❌'} · 운동 ${p.exercise?'✅':'❌'}`,
   `오늘(${S.today.date}) 걸음: ${typeof d.steps==='number'?fmt(d.steps)+'보':'읽지 못함'}`,
+  ...stepLines(d),
   `오늘 운동: ${typeof d.exerciseMin==='number'?d.exerciseMin+'분':'읽지 못함'} · 어젯밤 잠든 시각: ${d.bedtime||'기록 없음'}`];
  if(d.error||p.error)L.push(`오류: ${d.error||p.error}`);
  let tip;

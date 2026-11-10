@@ -10,8 +10,8 @@ android {
         applicationId = "com.healthrpg.app"
         minSdk = 28
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     // 프로젝트에 들어 있는 서명 키를 씁니다.
