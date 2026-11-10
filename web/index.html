@@ -389,6 +389,40 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 .snaprow{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:2px dashed var(--line)}
 .snaprow span{flex:1;font-size:14px}.snaprow small{display:block;color:var(--sub);font-size:12px}
 
+/* v1.6 · 펫 */
+.petc{background:linear-gradient(180deg,#fffaf0,#fff0d6);border-color:#f3d7a4;box-shadow:0 4px 0 #e5b866}
+.petrow{display:flex;gap:10px;align-items:center}
+.petfig{width:118px;flex:none;position:relative;cursor:pointer;animation:bob 2.2s ease-in-out infinite;-webkit-tap-highlight-color:transparent}
+.petfig svg{width:100%;height:auto;display:block}
+.petfig.jump{animation:pjump .5s ease-out}
+@keyframes pjump{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-14px) scale(1.06,.95)}60%{transform:translateY(0) scale(.96,1.05)}100%{transform:translateY(0) scale(1)}}
+.petfig.ready{animation:wob .9s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
+.pheart{position:absolute;left:50%;top:10%;font-size:24px;pointer-events:none;animation:phup 1.1s ease-out forwards}
+@keyframes phup{from{opacity:1;transform:translate(-50%,0) scale(.6)}to{opacity:0;transform:translate(-50%,-48px) scale(1.3)}}
+.petside{flex:1;min-width:0}
+.bub{position:relative;background:#fff;border:2px solid #f0d9ae;border-radius:14px;padding:8px 10px;font-size:13px;line-height:1.4;margin-bottom:8px;box-shadow:0 2px 0 #f0d9ae}
+.bub::before{content:"";position:absolute;left:-9px;top:16px;border:8px solid transparent;border-right-color:#f0d9ae;border-left:0}
+.bub::after{content:"";position:absolute;left:-6px;top:17px;border:7px solid transparent;border-right-color:#fff;border-left:0}
+.petnm{cursor:pointer;margin-bottom:2px}.petnm b{font-family:var(--jua);font-weight:400;font-size:17px}.petnm small{color:var(--sub);font-size:12px}
+.petc .abar{margin:4px 0 2px}
+.petbtn{margin-top:10px}.petbtn .btn{flex:1}.petbtn small{font-weight:400;opacity:.8}
+.pickgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+.pick{background:#fff;border:3px solid var(--line);border-radius:16px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 3px 0 #e2c391;font-family:inherit}
+.pick:active{transform:translateY(2px);box-shadow:0 1px 0 #e2c391}
+.pick b{font-family:var(--jua);font-weight:400;font-size:15px;color:#5a3a1a}.pick small{font-size:11px;color:var(--sub);line-height:1.35}
+.pkimg{width:84px}.pkimg svg,.pkbig svg{width:100%;height:auto;display:block}
+.pkbig{width:150px;margin:0 auto 4px;animation:bob 2s ease-in-out infinite}
+#petNm{width:100%;font-size:18px;text-align:center;padding:10px;border:2px solid var(--line);border-radius:12px;font-family:inherit}
+.stg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.stg>div{text-align:center}.stc{background:radial-gradient(circle at 50% 35%,#fff,#fff1d6 72%);border-radius:50%}.stg svg{width:100%;height:auto;display:block}
+.stg>div:not(.on) svg{filter:brightness(0);opacity:.15}.stg small{font-size:10px;color:var(--sub);line-height:1.2}
+.stg>div.on small{color:#c25e00;font-weight:800}
+.howpet{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;text-align:left;font-size:12px;background:#fffaf0;border:2px dashed #f0d9ae;border-radius:12px;padding:8px 10px;margin:8px 0}
+.howpet small{color:var(--sub)}
+.hpet{position:absolute;left:-14px;bottom:-10px;width:40px;height:40px;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
+.hpet svg{width:100%;height:100%;display:block}
+
 </style>
 </head>
 <body>
@@ -401,7 +435,7 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.5.0', KEY='healthRPG.v1';
+const VERSION='1.6.0', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -523,7 +557,7 @@ const BATTLE_XP={5:20,10:35,15:50,20:65};
 const MSGS=['유혹은 파도와 같아요. 정점을 지나면 반드시 가라앉아요.','버티기만 해도 몬스터의 체력이 줄어들어요.','지금 이 몇 분이 내일의 나를 만들어요.','물 한 잔 마시고 자리에서 잠깐 일어나 보세요.','이 욕구는 감정일 뿐, 명령이 아니에요.','끝나고도 원하면 그때 다시 생각해도 늦지 않아요.','숨을 천천히, 길게 내쉬어 보세요. 몸이 먼저 진정돼요.','몬스터가 흔들리고 있어요! 조금만 더!'];
 const SUBST=['💧 물 한 컵 마시기','🚶 5분 걷고 오기','🪥 양치하기','🧼 세수하기','🎵 노래 한 곡 듣기','📝 지금 기분 한 줄 적기','📞 친구에게 메시지','🙆 스트레칭 1분'];
 
-const ACH_CATS={grow:['🌱','성장'],streak:['🔥','꾸준함'],urge:['⚔️','유혹'],raid:['👹','레이드'],habit:['💧','습관'],fashion:['👗','패션'],wealth:['💰','재화']};
+const ACH_CATS={grow:['🌱','성장'],streak:['🔥','꾸준함'],urge:['⚔️','유혹'],raid:['👹','레이드'],habit:['💧','습관'],fashion:['👗','패션'],pet:['🐾','펫'],wealth:['💰','재화']};
 const qc=id=>(S.qCount&&S.qCount[id])||0;
 const skSum=()=>Object.values(S.skills).reduce((a,b)=>a+b,0);
 const bookN=()=>Object.keys(MONS).filter(k=>(S.book[k]||0)>0).length;
@@ -582,6 +616,11 @@ const ACH=[
  A('night30','habit','🌃','야식 끊기','야식 참기 퀘스트 30회 완료',400,()=>[qc('night'),30]),
  A('sweet30','habit','🍬','설탕 독립','단 것 참기 퀘스트 30회 완료',400,()=>[qc('sweets'),30]),
  A('sleep30','habit','😴','꿀잠 수호자','수면 퀘스트 30회 완료',400,()=>[qc('sleep'),30]),
+ A('pet1','pet','🐣','새 친구','펫 알 부화',100,()=>[S.pet.sp?1:0,1]),
+ A('pet2','pet','🐾','쑥쑥 자라요','펫이 꼬마로 성장',200,()=>[petStage(),2]),
+ A('pet3','pet','🦮','든든한 동료','펫이 어른으로 성장',600,()=>[petStage(),3]),
+ A('pet4','pet','👑','전설의 펫','펫이 전설로 성장',2000,()=>[petStage(),4]),
+ A('petpat','pet','🤚','쓰다듬기 장인','펫 100번 쓰다듬기',300,()=>[S.pet.pats||0,100]),
  A('cos1','fashion','👕','첫 코스튬','코스튬 1벌 구매',100,()=>[S.costumes.length,1]),
  A('cos5','fashion','👗','패셔니스타','코스튬 5벌 모으기',400,()=>[S.costumes.length,5]),
  A('cos10','fashion','👘','옷장 부자','코스튬 10벌 모으기',1000,()=>[S.costumes.length,10]),
@@ -626,11 +665,11 @@ function avatarSVG(path,tier,cosId){
 
 /* ---------- 상태 ---------- */
 function defaults(){return{
- v:3,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
+ v:4,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
  level:1,xp:0,gold:0,statPts:3,skillPts:1,grantStat:3,grantSkill:1,
  stats:{wil:0,tem:0,vit:0,wis:0,luk:0},skills:{},cls:{path:null,tier:0},
  streak:0,bestStreak:0,shields:0,shieldWeek:'',ultWeek:'',ultDay:'',buffDay:'',
- totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
+ totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,pet:{sp:'',name:'',xp:0,born:'',seen:0,td:'',tx:0,pat:0,treat:0,pats:0,welc:''},cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
  enabled:Object.fromEntries(TPL.map(t=>[t.id,t.def&&t.unlock<=1])),autoUnlocked:{},
  custom:[],rewards:[{id:'r1',name:'보고 싶던 영화·드라마 보기',price:300},{id:'r2',name:'카페에서 여유 즐기기',price:200},{id:'r3',name:'좋아하는 음식 한 끼',price:600},{id:'r4',name:'갖고 싶던 물건 사기',price:3000}],
  today:null,history:{},battle:null,log:[],
@@ -703,7 +742,7 @@ function rollover(){
  if(tk<=S.today.date){ensureRaid();return msgs}
  const d0=S.today,cleared=d0.quests.length>0&&d0.quests.every(q=>q.done);
  const rec={c:cleared,q:d0.quests.filter(q=>q.done).length,t:d0.quests.length,u:d0.urgeWins};
- S.history[d0.date]=rec;
+ S.history[d0.date]=rec;petBank(d0);
  if(cleared){S.streak++;S.bestStreak=Math.max(S.bestStreak,S.streak);msgs.push(`🔥 어제 올클리어! 연속 ${S.streak}일째`)}
  else missDay(d0.date,msgs,rec);
  let d=addDays(d0.date,1),n=0;
@@ -729,7 +768,7 @@ function checkAch(quiet){const got=[];
  if(got.length<=2&&!quiet)got.forEach(a=>toast(`🏅 업적 달성: ${a.icon} ${a.name} (+${fmt(a.gold)}G)`));
  else toast(`🏅 업적 ${got.length}개 달성! +${fmt(got.reduce((t,a)=>t+a.gold,0))}G · 업적 탭에서 확인하세요`);
  return got}
-function commit(){flushRaid();flushLv();checkAch();save();render()}
+function commit(){flushRaid();flushLv();petFlush();checkAch();save();render()}
 
 /* ---------- 퀘스트 ---------- */
 const findQ=id=>S.today.quests.find(q=>q.id===id);
@@ -844,6 +883,7 @@ function howto(first){
  <div>🚶 <b>걸음·수면 입력</b> — 걷기·운동·수면은 삼성 헬스(갤럭시 핏) 숫자를 넣으면 자동으로 판정돼요.</div>
  <div>🛍️ <b>상점</b> — 골드로 캐릭터 코스튬을 사거나(매주 화요일 신상 2벌), 내가 정한 진짜 보상을 사세요.</div>
  <div>🏆 <b>업적</b> — 60가지가 넘는 업적을 달성하면 골드를 받고, 마음에 드는 업적을 칭호로 달 수 있어요.</div>
+ <div>🐾 <b>펫</b> — 퀘스트·올클리어·유혹 격퇴로 애정이 쌓이면 알이 깨어나 아기 → 꼬마 → 어른 → 전설로 자라요. 쓰다듬고 건강 간식도 줄 수 있어요.</div>
  <div>🔍 <b>유혹 패턴·방어전</b> — 전투 기록이 쌓이면 업적 탭 → 기록에서 위험한 시간을 알려 줘요. 그 시간 전에 퀘스트 탭에 🛡️ 방어전이 열려요.</div>
  <div>☁️ <b>자동 백업</b> — 설정에서 켜면 하루 한 번 암호화해서 저장해요. 복구 코드만 있으면 새 폰에서도 그대로!</div></div></div>
  <button class="btn primary wide" data-act="${first?'onb-done':'close'}">모험 시작!</button>`,{cls:'fx'})}
@@ -853,7 +893,7 @@ let tab='quest',deferredPrompt=null;
 const TABS=[['quest','📜','퀘스트'],['raid','👹','레이드'],['char','🧙','캐릭터'],['shop','🛍️','상점'],['rec','🏆','업적'],['set','⚙️','설정']];
 function render(){
  const c=S.cls,nd=need(S.level),rt=raidTitle();
- $('#hdr').innerHTML=`${inFrame?'<div class="pv">미리보기 화면 · 설치한 앱과 기록이 따로 저장돼요</div>':''}<div class="hero"><div class="ava t${c.tier}" style="--aura:${AURA[c.tier]}">${avatar()}${rt?`<span class="rbadge">${rt[0]}</span>`:''}</div><div class="hinfo">${titleOf()?`<div class="ttl">${titleOf().icon} ${esc(titleOf().name)}</div>`:''}
+ $('#hdr').innerHTML=`${inFrame?'<div class="pv">미리보기 화면 · 설치한 앱과 기록이 따로 저장돼요</div>':''}<div class="hero"><div class="ava t${c.tier}" style="--aura:${AURA[c.tier]}">${avatar()}${rt?`<span class="rbadge">${rt[0]}</span>`:''}${S.pet.sp?`<span class="hpet" data-act="pet-info">${petSVG(S.pet.sp,petStage(),petMood(),0)}</span>`:''}</div><div class="hinfo">${titleOf()?`<div class="ttl">${titleOf().icon} ${esc(titleOf().name)}</div>`:''}
   <div class="hname"><b>${esc(S.name)}</b><span class="ctitle" style="color:${c.tier?PATHS[c.path].color:'var(--sub)'}">${clsTitle()}</span></div>
   <div class="lvrow"><span class="lv">Lv.${S.level}</span><div class="xpbar"><i style="width:${Math.min(100,S.xp/nd*100)}%"></i></div></div>
   <div class="xpt">${fmt(S.xp)} / ${fmt(nd)} XP</div>
@@ -872,7 +912,7 @@ function vQuest(){const d=S.today,qs=d.quests,done=qs.filter(q=>q.done).length,t
   <div class="pbar"><i style="width:${tot?done/tot*100:0}%"></i></div>
   ${d.bonus?`<div class="clear">🏆 올클리어! 보너스 +${d.bonus} XP · +${d.bonusGold}G</div>`:`<div class="sub mt">전부 완료하면 올클리어 보너스 <b class="gold">+${bonusCalc().xp} XP</b></div>`}
   ${chips.length?`<div class="buffs">${chips.map(x=>`<span>${x}</span>`).join('')}</div>`:''}</section>`;
- h+=defCard()+cloudAskCard();h+=raidMini();h+=hcCard();h+=`<div class="qlist">${qs.map(qHTML).join('')}</div>`;
+ h+=petCard()+defCard()+cloudAskCard();h+=raidMini();h+=hcCard();h+=`<div class="qlist">${qs.map(qHTML).join('')}</div>`;
  if(!tot)h+=`<div class="card sub">진행할 퀘스트가 없어요. 설정에서 퀘스트를 켜 주세요.</div>`;
  if(S.cls.tier){const p=PATHS[S.cls.path],u=p.ult,av=ultAvail();
   h+=`<section class="card ult" style="--pc:${p.color}"><div><b>💥 궁극기 「${u.name}」</b><div class="sub">${u.desc}</div><div class="sub">${ultOn()?'🔥 오늘 발동 중!':av?'이번 주 1회 사용 가능':'다음 주 월요일에 다시 사용 가능'}</div></div>${av?`<button class="btn primary sm" data-act="ult">발동</button>`:''}</section>`}
@@ -1013,6 +1053,116 @@ function vSet(){const tier=tierOf(S.level);
   <p class="sub center mt">건강 RPG v${VERSION} · 저장 ${storageOK?'정상':'<b style="color:#e0546a">불가 — 화면을 닫으면 기록이 사라져요</b>'} · ${isStandalone()?'앱 모드':'브라우저 모드'}</p></section>`;
  return h}
 
+/* ---------- 펫 ---------- */
+const PET_SP={
+ dog:{name:'구름 강아지',def:'몽실이',desc:'느긋하고 다정해요. 산책을 제일 좋아해요.'},
+ bunny:{name:'새싹 토끼',def:'새싹이',desc:'부지런해요. 물 마시는 걸 좋아해요.'},
+ fox:{name:'불꽃 여우',def:'불꽃이',desc:'열정적이에요. 유혹과 싸울 때 힘이 나요.'},
+ peng:{name:'별빛 펭귄',def:'별이',desc:'차분해요. 일찍 자는 걸 좋아해요.'}};
+const PET_ST=[0,15,100,300,800],PET_NM=['알','아기','꼬마','어른','전설'],TREAT_G=30;
+const TREATS=['🍎 사과','🥕 당근','🫐 블루베리','🍌 바나나','🥦 브로콜리','🍓 딸기','🥒 오이'];
+const jo=(w,a,b)=>{const c=String(w).charCodeAt(String(w).length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28?a:b};
+const treatToday=()=>TREATS[Math.floor(parseKey(S.today.date).getTime()/864e5)%TREATS.length];
+let petSay=null;
+
+const PART={
+ dog:{c1:'#fff7ec',c2:'#ffffff',ol:'#d9bf9c',
+  back:`<path d="M90 88 q12 -4 10 -18" stroke="#e8b98a" stroke-width="7" stroke-linecap="round" fill="none"/>`,
+  side:`<path d="M34 50 C18 48 14 70 23 80 C30 84 37 70 39 58Z" fill="#e8b98a" stroke="#c99a6a" stroke-width="2"/><path d="M86 50 C102 48 106 70 97 80 C90 84 83 70 81 58Z" fill="#e8b98a" stroke="#c99a6a" stroke-width="2"/>`,
+  face:`<ellipse cx="71.5" cy="69" rx="8.5" ry="7.5" fill="#f2d3b0"/>`,
+  nose:`<ellipse cx="60" cy="76.5" rx="3.4" ry="2.5" fill="#4a3a3a"/>`,
+  acc:`<path d="M30 86 Q60 99 90 86 L90 92 Q60 105 30 92Z" fill="#ff6b6b"/><path d="M75 95 l5 11 l6 -3 l-4 -10Z" fill="#ff6b6b"/>`},
+ bunny:{c1:'#ffffff',c2:'#fff1f6',ol:'#e3cfd9',
+  back:`<ellipse cx="46" cy="26" rx="8" ry="20" fill="#fff" stroke="#e3cfd9" stroke-width="2.5" transform="rotate(-10 46 26)"/><ellipse cx="46" cy="27" rx="4" ry="14" fill="#ffc2d8" transform="rotate(-10 46 27)"/><ellipse cx="74" cy="26" rx="8" ry="20" fill="#fff" stroke="#e3cfd9" stroke-width="2.5" transform="rotate(10 74 26)"/><ellipse cx="74" cy="27" rx="4" ry="14" fill="#ffc2d8" transform="rotate(10 74 27)"/>`,
+  top:`<path d="M60 41 q0 -6 0 -9" stroke="#4f9e3f" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="55" cy="31" rx="5.5" ry="3" fill="#7ccf6a" transform="rotate(-25 55 31)"/><ellipse cx="65" cy="31" rx="5.5" ry="3" fill="#94dd7f" transform="rotate(25 65 31)"/>`,
+  nose:`<path d="M57.3 75.5 h5.4 l-2.7 2.8z" fill="#ff8fb1"/>`,
+  acc:[[38,47,'#ffb3c7'],[48,42,'#ffe066'],[60,40,'#ff8fab'],[72,42,'#9ad0ff'],[82,47,'#ffb3c7']].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="4.2" fill="${c}"/><circle cx="${x}" cy="${y}" r="1.6" fill="#fff6c2"/>`).join('')},
+ fox:{c1:'#ff9a4d',c2:'#fff4e6',ol:'#d9732c',
+  back:`<path d="M86 94 C110 96 114 70 102 56 C104 72 98 80 84 82Z" fill="#ff9a4d" stroke="#d9732c" stroke-width="2.5" stroke-linejoin="round"/><path d="M102 56 C109 62 110 71 105 77 C102 70 101 63 102 56Z" fill="#ffd34d"/>`,
+  side:`<path d="M37 54 L33 26 L55 43Z" fill="#ff9a4d" stroke="#d9732c" stroke-width="2.5" stroke-linejoin="round"/><path d="M39 49 L36.5 33 L50 43Z" fill="#5a3a2a"/><path d="M83 54 L87 26 L65 43Z" fill="#ff9a4d" stroke="#d9732c" stroke-width="2.5" stroke-linejoin="round"/><path d="M81 49 L83.5 33 L70 43Z" fill="#5a3a2a"/>`,
+  face:`<path d="M37 76 C43 68 52 71 60 78 C68 71 77 68 83 76 C81 92 71 99 60 99 C49 99 39 92 37 76Z" fill="#fff4e6"/>`,
+  nose:`<ellipse cx="60" cy="77" rx="3" ry="2.3" fill="#3a2a2a"/>`,
+  acc:`<path d="M34 88 Q60 100 86 88" stroke="#5aa0ff" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="60" cy="96" r="4.5" fill="#ffd34d" stroke="#d9a400" stroke-width="1.5"/>`},
+ peng:{c1:'#3d4f86',c2:'#ffffff',ol:'#2a3866',feet:'#ffb03a',noBelly:1,my:5,
+  side:`<ellipse cx="25" cy="80" rx="6.5" ry="14" fill="#3d4f86" stroke="#2a3866" stroke-width="2.5" transform="rotate(25 25 80)"/><ellipse cx="95" cy="80" rx="6.5" ry="14" fill="#3d4f86" stroke="#2a3866" stroke-width="2.5" transform="rotate(-25 95 80)"/>`,
+  face:`<path d="M37 74 C37 58 48 52 60 57 C72 52 83 58 83 74 C83 93 73 101 60 101 C47 101 37 93 37 74Z" fill="#fff"/>`,
+  top:`<path d="M60 31 l2.4 5 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z" fill="#ffe066" stroke="#e0b400" stroke-width="1.2"/>`,
+  nose:`<path d="M55.5 76 h9 l-4.5 5z" fill="#ffb03a" stroke="#e08a1a" stroke-width="1"/>`,
+  acc:`<path d="M52 92 l8 4 l8 -4 v8 l-8 -4 l-8 4z" fill="#ff5d73"/><circle cx="60" cy="96" r="2.2" fill="#d63a52"/>`}};
+const heart=(x,y,s,c)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M0 4 C-6 -1 -5 -6 -2 -6 C-1 -6 0 -5 0 -4 C0 -5 1 -6 2 -6 C5 -6 6 -1 0 4Z" fill="${c||'#ff7aa8'}"/>`;
+const spark=(x,y,s)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5Z" fill="#ffe066"/>`;
+function petSVG(sp,st,mood,x){const W=b=>`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
+ if(!sp||!st){const p=Math.min(1,(x||0)/PET_ST[1]);
+  return W(`<ellipse cx="60" cy="108" rx="24" ry="4.5" fill="rgba(0,0,0,.12)"/>${p>=1?'<circle cx="60" cy="74" r="44" fill="#fff3b0" opacity=".6"/>'+spark(24,40,1)+spark(96,52,.8):''}<path d="M60 38 C78 38 88 66 88 80 C88 98 76 106 60 106 C44 106 32 98 32 80 C32 66 42 38 60 38Z" fill="#fff8e7" stroke="#e8d3a8" stroke-width="2.5"/><circle cx="48" cy="66" r="5" fill="#ffd6e7"/><circle cx="70" cy="57" r="4" fill="#cdeccf"/><circle cx="72" cy="88" r="6" fill="#d6e8ff"/><circle cx="46" cy="92" r="3.5" fill="#fff0b3"/><ellipse cx="51" cy="52" rx="4.5" ry="8" fill="#fff" opacity=".75" transform="rotate(25 51 52)"/>${p>=.4?'<path d="M36 76 l7 -5 l5 6 l7 -7 l6 6 l7 -6 l7 5 l7 -4" stroke="#c9a46a" stroke-width="2.2" fill="none" stroke-linejoin="round"/>':''}${p>=.8?'<path d="M60 39 l-3 8 l5 4 l-4 7" stroke="#c9a46a" stroke-width="2" fill="none" stroke-linejoin="round"/>':''}`)}
+ const s=PART[sp]||PART.dog,sc=[1,.72,.85,.95,1][st]||1,L=st>=4,ey=70,my=79+(s.my||0),k='#3a2a2a';let eyes,mouth,fx='';
+ if(mood==='joy'){eyes=[49,71].map(x=>`<path d="M${x-4.5} ${ey+1} q4.5 -6 9 0" stroke="${k}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`).join('');mouth=`<path d="M54.5 ${my} q5.5 8 11 0z" fill="#e0546a" stroke="${k}" stroke-width="1.6" stroke-linejoin="round"/>`;fx=heart(100,34,1.1)+heart(18,48,.8,'#ffa3c4')}
+ else if(mood==='sad'){eyes=[49,71].map(x=>`<path d="M${x-4.5} ${ey-1} q4.5 4 9 0" stroke="${k}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`).join('')+`<path d="M45 ${ey+4} q-2.2 4.5 0 6.5 q2.2 -2 0 -6.5z" fill="#7fc8ff"/>`;mouth=`<path d="M55 ${my+3} q5 -4 10 0" stroke="${k}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`}
+ else if(mood==='sleep'){eyes=[49,71].map(x=>`<path d="M${x-4.5} ${ey} q4.5 3 9 0" stroke="${k}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`).join('');mouth=`<ellipse cx="60" cy="${my+1.5}" rx="2" ry="1.6" fill="${k}"/>`;fx=`<text x="92" y="38" font-size="16" font-family="Jua,sans-serif" fill="#7aa7ff">z</text><text x="102" y="25" font-size="11" font-family="Jua,sans-serif" fill="#7aa7ff">z</text>`}
+ else{eyes=[49,71].map(x=>`<ellipse cx="${x}" cy="${ey}" rx="4.3" ry="5.2" fill="${k}"/><circle cx="${x+1.6}" cy="${ey-2}" r="1.7" fill="#fff"/>`).join('');
+  mouth=mood==='happy'?`<path d="M55 ${my} q5 5 10 0" stroke="${k}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`:`<path d="M55.5 ${my} q2.25 2.6 4.5 0 q2.25 2.6 4.5 0" stroke="${k}" stroke-width="2" fill="none" stroke-linecap="round"/>`}
+ const aura=L?`<circle cx="60" cy="72" r="54" fill="#fff3b0" opacity=".35"/><circle cx="60" cy="72" r="45" fill="#fff3b0" opacity=".4"/><path d="M30 66 C8 54 2 76 12 86 C16 78 24 80 30 78Z" fill="#fff" stroke="#e6d9b8" stroke-width="2"/><path d="M90 66 C112 54 118 76 108 86 C104 78 96 80 90 78Z" fill="#fff" stroke="#e6d9b8" stroke-width="2"/>`:'';
+ const top=L?`<path d="M47 41 L49 28 L54.5 34.5 L60 25 L65.5 34.5 L71 28 L73 41Z" fill="#ffcf3f" stroke="#d49b00" stroke-width="1.8" stroke-linejoin="round"/><circle cx="60" cy="36" r="2.2" fill="#ff5b7f"/>`:(s.top||'');
+ const body=`<path d="M26 78 C26 52 42 40 60 40 C78 40 94 52 94 78 C94 96 80 104 60 104 C40 104 26 96 26 78Z" fill="${s.c1}" stroke="${s.ol}" stroke-width="2.5"/>`;
+ const feet=[45,75].map(x=>`<ellipse cx="${x}" cy="103" rx="8.5" ry="5" fill="${s.feet||s.c1}" stroke="${s.ol}" stroke-width="2"/>`).join('');
+ const cheeks=[40,80].map(x=>`<ellipse cx="${x}" cy="${ey+9}" rx="4.6" ry="2.8" fill="#ff9aa8" opacity=".6"/>`).join('');
+ return W(`<ellipse cx="60" cy="108" rx="${30*sc}" ry="${5*sc}" fill="rgba(0,0,0,.12)"/><g transform="translate(60 106) scale(${sc}) translate(-60 -106)">${aura}${s.back||''}${feet}${body}${s.noBelly?'':`<ellipse cx="60" cy="90" rx="18" ry="12" fill="${s.c2}"/>`}${s.side||''}${s.face||''}${cheeks}${eyes}${s.nose||''}${mouth}${st>=3&&!(L&&sp==='bunny')?s.acc:''}${top}${fx}${L?spark(18,30,1)+spark(104,96,.8)+spark(98,20,.6):''}</g>`)}
+
+/* 애정도: 퀘스트 +1, 올클리어 +5, 유혹 격퇴 +3, 방어 성공 +5, 쓰다듬기 +1(하루 3번), 간식 +5(하루 2번) */
+function petDay(){if(S.pet.td!==S.today.date){S.pet.td=S.today.date;S.pet.tx=0;S.pet.pat=0;S.pet.treat=0}}
+function petAdd(n){petDay();S.pet.tx+=n}
+const petToday=()=>S.pet.td===S.today.date?S.pet.tx:0;
+function petDayPts(d,extra){const q=d.quests.filter(x=>x.done).length,c=d.quests.length>0&&d.quests.every(x=>x.done);return q+(c?5:0)+(d.urgeWins||0)*3+(extra||0)}
+const petXP=()=>S.pet.xp+petDayPts(S.today,petToday());
+function petBank(d0){S.pet.xp+=petDayPts(d0,S.pet.td===d0.date?S.pet.tx:0);if(S.pet.td===d0.date){S.pet.td='';S.pet.tx=0}}
+function petStageRaw(){if(!S.pet.sp)return 0;const x=petXP();let s=1;for(let i=2;i<PET_ST.length;i++)if(x>=PET_ST[i])s=i;return s}
+const petStage=()=>S.pet.sp?Math.max(petStageRaw(),S.pet.seen||1):0;
+function petMissed(){let n=0,d=addDays(S.today.date,-1);while(n<60&&d>=S.created){const r=S.history[d];if(r&&r.q>0)break;n++;d=addDays(d,-1)}return n}
+function petMood(){const h=new Date().getHours(),done=S.today.quests.some(q=>q.done);
+ if(todayCleared())return'joy';if(h<5)return'sleep';if(petSay&&Date.now()-petSay.at<6000)return'joy';const m=petMissed();
+ if(done)return'happy';return m>=1?'sad':'normal'}
+function petMsg(){const P=S.pet,d=S.today,done=d.quests.filter(q=>q.done).length,tot=d.quests.length,h=new Date().getHours(),m=petMissed();
+ if(!P.sp){const p=petXP()/PET_ST[1];return p>=1?'알이 흔들려요! 눌러서 깨워 주세요 ✨':p>=.4?'톡톡… 안에서 무언가 움직여요':'따뜻하게 품는 중… 퀘스트를 할수록 알이 자라요'}
+ if(petSay&&Date.now()-petSay.at<6000)return petSay.t;
+ if(todayCleared())return'오늘 정말 멋졌어요! 최고의 하루 💕';
+ if(h<5)return'늦었어요… 이제 같이 자요 😴';
+ if(S.battle)return'할 수 있어요! 조금만 버텨요 💪';
+ const D=S.def,now=Date.now();if(D&&!D.res&&now>=D.from-3*3600e3&&now<D.to&&MONS[D.m])return`${MONS[D.m].name} 시간이 다가와요. 제가 옆에 있을게요! 🛡️`;
+ if(m>=2&&!done)return`${m}일 동안 기다렸어요… 오늘은 하나만 같이 해요 🥺`;
+ if(done)return tot-done===1?'하나만 더 하면 올클리어예요! 🔥':`벌써 ${done}개! ${tot-done}개 남았어요`;
+ if(m===1)return'어제 조금 쓸쓸했어요. 오늘은 같이 해요!';
+ return h<11?'좋은 아침! 물 한 잔으로 시작해요 💧':h<17?'오늘 걸음 수 어때요? 같이 걸어요 🚶':h<21?'저녁이에요. 야식 고블린 조심! 🍗':'잘 준비할 시간이에요. 폰은 멀리 📵'}
+function petCard(){const P=S.pet,st=petStage(),x=petXP(),ready=!P.sp&&x>=PET_ST[1];let bar,lab;
+ if(!P.sp){bar=Math.min(1,x/PET_ST[1])*100;lab=ready?'부화 준비 완료!':`부화까지 애정 ${PET_ST[1]-x}`}
+ else if(st>=4){bar=100;lab=`애정도 ${fmt(x)} · 최고 단계`}
+ else{const a=PET_ST[st],b=PET_ST[st+1];bar=Math.max(0,Math.min(100,(x-a)/(b-a)*100));lab=`애정도 ${fmt(x)} / ${fmt(b)} · 다음: ${PET_NM[st+1]}`}
+ petDay();const tr=treatToday();
+ return `<section class="card petc"><div class="petrow"><div class="petfig ${ready?'ready':''}" data-act="${ready?'pet-hatch':P.sp?'pet-pat':'pet-info'}">${petSVG(P.sp,st,P.sp?petMood():'normal',x)}</div>
+ <div class="petside"><div class="bub">${esc(petMsg())}</div><div class="petnm" data-act="pet-info"><b>${P.sp?esc(P.name):'신비한 알'}</b> <small>${P.sp?`${PET_NM[st]} ${PET_SP[P.sp].name}`:'정보'} ›</small></div><div class="abar"><i style="width:${bar}%"></i></div><small class="sub">${lab}</small></div></div>
+ ${ready?'<button class="btn primary wide" data-act="pet-hatch">🥚 알 깨우기!</button>':P.sp?`<div class="row petbtn"><button class="btn sm" data-act="pet-pat">🤚 쓰다듬기${P.pat<3?' <small>+1</small>':''}</button><button class="btn sm ${P.treat>=2?'':'primary'}" data-act="pet-treat">${P.treat>=2?'😋 배불러요':`${tr.split(' ')[0]} 간식 ${TREAT_G}G`}</button></div>`:''}</section>`}
+function petJump(){const el=document.querySelector('.petfig');if(!el)return;el.classList.remove('jump');void el.offsetWidth;el.classList.add('jump');
+ const h=document.createElement('span');h.className='pheart';h.textContent='💕';el.appendChild(h);setTimeout(()=>h.remove(),1100)}
+function hatchModal(){if(S.pet.sp||petXP()<PET_ST[1])return;
+ showModal(`<div class="burst">HATCH!</div><h2>알이 깨어나요!</h2><p class="sub">누가 나올지 골라 주세요. 한 번 고르면 바꿀 수 없어요.</p><div class="pickgrid">${Object.entries(PET_SP).map(([k,v])=>`<button class="pick" data-act="pet-pick" data-arg="${k}"><div class="pkimg">${petSVG(k,1,'joy',0)}</div><b>${v.name}</b><small>${v.desc}</small></button>`).join('')}</div>`,{cls:'fx'})}
+function nameModal(sp,rename){const v=PET_SP[sp];if(!v)return;
+ showModal(`<div class="pkbig">${petSVG(sp,rename?petStage():1,'joy',0)}</div><h2>${rename?'이름 바꾸기':`${v.name}${jo(v.name,'이','가')} 태어났어요!`}</h2><p class="sub">이름을 지어 주세요 (10자까지)</p><input id="petNm" maxlength="10" value="${esc(rename?S.pet.name:v.def)}" autocomplete="off">
+ <div class="row mt">${rename?'<button class="btn ghost" data-act="close">취소</button>':'<button class="btn ghost" data-act="pet-hatch-back">다시 고르기</button>'}<button class="btn primary" data-act="pet-name-ok" data-arg="${sp}">${rename?'바꾸기':'이 이름으로!'}</button></div>`,{cls:'fx'})}
+function petInfoModal(){const P=S.pet,x=petXP();
+ if(!P.sp){const r=x>=PET_ST[1];showModal(`<div class="pkbig">${petSVG('',0,'normal',x)}</div><h2>신비한 알</h2><p>퀘스트를 하고 유혹을 이기면 애정이 쌓여 알이 깨어나요.</p><p class="sub">${r?'지금 깨울 수 있어요!':`부화까지 애정 ${PET_ST[1]-x} 남았어요`}</p>${petHow()}<button class="btn primary wide" data-act="${r?'pet-hatch-go':'close'}">${r?'🥚 알 깨우기!':'확인'}</button>`,{cls:'fx'});return}
+ const st=petStage(),days=P.born?Math.round((parseKey(S.today.date)-parseKey(P.born))/864e5)+1:1;
+ showModal(`<div class="pkbig">${petSVG(P.sp,st,petMood(),x)}</div><h2>${esc(P.name)}</h2><p class="sub">${PET_SP[P.sp].name} · ${PET_NM[st]} · 함께한 지 ${days}일째</p>
+ <div class="stg">${[1,2,3,4].map(i=>`<div class="${st>=i?'on':''}"><div class="stc">${petSVG(P.sp,i,'happy',0)}</div><small>${PET_NM[i]}${i>1?`<br>${PET_ST[i]}`:''}</small></div>`).join('')}</div>
+ <p>애정도 <b>${fmt(x)}</b>${st<4?` · 다음 단계까지 ${fmt(PET_ST[st+1]-x)}`:' · 최고 단계!'}</p>${petHow()}<p class="sub">오늘 쌓은 애정 +${petDayPts(S.today,petToday())} · 쓰다듬은 횟수 ${fmt(P.pats)}번</p>
+ <div class="row"><button class="btn ghost" data-act="pet-rename">이름 바꾸기</button><button class="btn primary" data-act="close">닫기</button></div>`,{cls:'fx'})}
+const petHow=()=>`<div class="howpet"><div>✅ 퀘스트 완료 +1</div><div>🏆 올클리어 +5</div><div>⚔️ 유혹 격퇴 +3</div><div>🛡️ 방어 성공 +5</div><div>🤚 쓰다듬기 +1 <small>(하루 3번)</small></div><div>🍎 건강 간식 +5 <small>(하루 2번)</small></div></div>`;
+const PET_UP={2:'꼬마가 됐어요. 이제 같이 뛰어놀 수 있어요!',3:'어른이 됐어요. 멋진 액세서리도 생겼어요!',4:'전설의 펫이 됐어요! 빛나는 날개와 왕관 ✨'};
+function petFlush(){if(!S.pet.sp)return;const st=petStageRaw();if(st<=(S.pet.seen||1))return;const from=S.pet.seen||1;S.pet.seen=st;
+ addLog('🐾',`${S.pet.name} ${PET_NM[st]} 단계로 성장!`);vib([40,40,80]);
+ showModal(`<div class="pkbig">${petSVG(S.pet.sp,st,'joy',0)}</div><div class="burst">GROW UP!</div><h2>${esc(S.pet.name)} 성장!</h2><p>${PET_NM[from]} → <b>${PET_NM[st]}</b></p><p class="sub">${PET_UP[st]||''}</p><button class="btn primary wide" data-act="close">대견해!</button>`,{cls:'fx'})}
+function petWelcome(){const P=S.pet;if(!P.sp||P.welc===S.today.date||S.today.quests.some(q=>q.done))return;const m=petMissed();if(m<2)return;
+ P.welc=S.today.date;addGold(20);addLog('🐾',`${P.name}${jo(P.name,'이','가')} 반겨 줬어요 (+20G)`);save();
+ showModal(`<div class="pkbig">${petSVG(P.sp,petStage(),'joy',0)}</div><h2>돌아왔군요! 🥹</h2><p><b>${esc(P.name)}</b>${jo(P.name,'이','가')} ${m}일 동안 기다렸어요.</p><p>괜찮아요, 오늘 하나만 같이 해 봐요.</p><p class="sub">다시 온 기념 선물 +20G</p><button class="btn primary wide" data-act="close">다시 시작!</button>`,{cls:'fx'})}
+function migrate16(){if((S.v||1)>=4)return;S.v=4;let sum=0;for(const k in S.history){const r=S.history[k];if(r)sum+=(r.q||0)+(r.c?5:0)+(r.u||0)*3}S.pet.xp=Math.min(99,sum)}
+
 /* ---------- 유혹 패턴 분석 · 방어전 ---------- */
 const USLOT=[[0,3,'새벽 0~3시','0시'],[3,6,'새벽 3~6시','3시'],[6,9,'아침 6~9시','6시'],[9,12,'오전 9~12시','9시'],[12,15,'낮 12~3시','12시'],[15,18,'오후 3~6시','15시'],[18,21,'저녁 6~9시','18시'],[21,24,'밤 9~12시','21시']];
 const DOW='일월화수목금토';
@@ -1039,7 +1189,7 @@ function nextDanger(now){now=now||Date.now();let best=null;
 function defSync(){let ch=false;const now=Date.now(),D=S.def;
  if(D&&!D.res&&now>=D.to){const lost=S.urges.some(u=>u.m===D.m&&!u.w&&u.t>=D.from-1800e3&&u.t<D.to);D.res=lost?'fail':'ok';ch=true;const m=MONS[D.m]||MONS.etc;
   if(!lost){const xp=Math.round(25*(1+.1*S.today.tier)*urgeMult()*(D.prep?1.5:1)),g=Math.round(15*goldMult()*(D.prep?1.5:1));
-   gainXP(xp);addGold(g);S.totals.defOk=(S.totals.defOk||0)+1;addLog('🛡️',`방어 성공: ${m.name} (${USLOT[D.s][2]}) +${xp} XP`);vib([40,40,80]);
+   gainXP(xp);addGold(g);petAdd(5);S.totals.defOk=(S.totals.defOk||0)+1;addLog('🛡️',`방어 성공: ${m.name} (${USLOT[D.s][2]}) +${xp} XP`);vib([40,40,80]);
    showModal(`<div class="wm">🛡️</div><div class="burst">DEFENSE!</div><h2>방어 성공</h2><p>${USLOT[D.s][2]}, ${m.icon} ${m.name}에게 한 번도 지지 않았어요.</p><p>+${xp} XP · +${g}G${D.prep?' (준비 보너스 ×1.5)':''}</p><p class="sub">누적 방어 성공 ${S.totals.defOk}회</p><button class="btn primary wide" data-act="close">지켜냈다!</button>`,{cls:'fx'})}
   else addLog('🌧️',`방어 실패: ${m.name} (${USLOT[D.s][2]})`)}
  const nd=nextDanger(now);
@@ -1090,7 +1240,7 @@ function snapTake(pre){if(!S||!S.onboarded||!S.today)return;const L=snapLoad(),d
  L.unshift({d,at:Date.now(),lv:S.level,g:S.gold,s:JSON.stringify(S),pre:pre?1:0});
  for(let n=Math.min(L.length,7);n>=1;n--){try{L.length=n;localStorage.setItem(SNAP,JSON.stringify(L));return}catch(e){}}}
 function restoreObj(o,msg){if(!o||typeof o.level!=='number'||!o.totals){toast('올바른 백업이 아니에요');return false}
- snapTake(true);S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();migrate14();migrate15();clearInterval(btimer);$('#battle').classList.add('hidden');
+ snapTake(true);S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();migrate14();migrate15();migrate16();clearInterval(btimer);$('#battle').classList.add('hidden');
  rollover();defSync();commit();toast(msg||'복원 완료!');if(S.battle)showBattle();return true}
 
 const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -1464,7 +1614,7 @@ async function copyText(t){if(inApp){try{HB.copyText(t);toast('복사했어요')
 
 /* ---------- 이벤트 ---------- */
 function dayCheck(){const before=S.today.date,msgs=rollover(),dch=defSync();
- if(S.today.date!==before){snapTake();commit();toast('새로운 하루가 시작됐어요!');msgs.forEach(m=>toast(m));return true}
+ if(S.today.date!==before){snapTake();commit();petWelcome();toast('새로운 하루가 시작됐어요!');msgs.forEach(m=>toast(m));return true}
  if(dch)commit();return false}
 const H={
  tab:a=>{tab=a;if(a==='set'&&cloudReady!==true&&!S.cloud.on)cloudPing();if(a==='raid'&&S.raid){S.raidSeen=S.raid.week;save()}if(a==='shop'&&cosUnseen())shopSeg='cos';if(a==='rec'&&achNew())recSeg='ach';render();window.scrollTo(0,0)},
@@ -1510,6 +1660,20 @@ const H={
  'battle-lose':()=>confirmBox('이번 전투는 졌다고 기록할까요?<br><span class="sub">경험치는 잃지 않아요.</span>',loseBattle),
  subst:i=>{if(!S.battle)return;S.battle.subst=true;S.battle.si=+i;save();document.querySelectorAll('.subst button').forEach((b,j)=>b.classList.toggle('on',j===+i));toast('좋아요! 승리하면 XP +15')},
  close:()=>nextModal(),
+ 'pet-pat':()=>{if(!S.pet.sp)return;petDay();S.pet.pats=(S.pet.pats||0)+1;let t;if(S.pet.pat<3){S.pet.pat++;petAdd(1);t='헤헤, 좋아요! 💕 (+1 애정)'}else t=['간지러워요 ㅎㅎ','또 해 주세요!','기분 최고예요 ✨','같이 있어서 좋아요 🥰'][S.pet.pats%4];
+  petSay={t,at:Date.now()};vib(12);commit();petJump()},
+ 'pet-treat':()=>{if(!S.pet.sp)return;petDay();if(S.pet.treat>=2){toast('오늘은 배불러요! 내일 또 주세요');return}if(S.gold<TREAT_G){toast(`골드가 ${TREAT_G-S.gold}G 부족해요`);return}
+  const tr=treatToday();S.gold-=TREAT_G;S.pet.treat++;petAdd(5);petSay={t:`${tr} 냠냠! 고마워요 (+5 애정)`,at:Date.now()};addLog('🐾',`${S.pet.name}에게 ${tr} 간식 (-${TREAT_G}G)`);vib([20,30,20]);commit();petJump()},
+ 'pet-hatch':()=>hatchModal(),
+ 'pet-hatch-go':()=>{nextModal();hatchModal()},
+ 'pet-hatch-back':()=>{nextModal();hatchModal()},
+ 'pet-pick':sp=>{if(!PET_SP[sp]||S.pet.sp)return;nextModal();nameModal(sp,false)},
+ 'pet-name-ok':sp=>{const nm=((($('#petNm')||{}).value)||'').trim().slice(0,10);
+  if(S.pet.sp){if(nm)S.pet.name=nm;nextModal();toast('이름을 바꿨어요');commit();return}
+  if(!PET_SP[sp]||petXP()<PET_ST[1])return;const n=nm||PET_SP[sp].def;S.pet.sp=sp;S.pet.name=n;S.pet.born=S.today.date;S.pet.seen=1;addLog('🐣',`${n} 부화!`);nextModal();vib([40,40,80]);
+  showModal(`<div class="pkbig">${petSVG(sp,1,'joy',0)}</div><div class="burst">WELCOME!</div><h2>${esc(n)}${jo(n,'이','가')} 태어났어요</h2><p>퀘스트를 하고, 유혹을 이기고, 쓰다듬어 주면 애정도가 쌓여 쑥쑥 자라요.</p><p class="sub">아기 → 꼬마(애정 100) → 어른(300) → 전설(800)</p><button class="btn primary wide" data-act="close">잘 부탁해!</button>`,{cls:'fx'});commit()},
+ 'pet-info':()=>petInfoModal(),
+ 'pet-rename':()=>{nextModal();nameModal(S.pet.sp,true)},
  'def-prep':()=>{const D=S.def,now=Date.now();if(!D||D.prep||D.res||now>=D.to||now<D.from-3*3600e3)return;D.prep=true;const xp=Math.round(10*(1+.1*S.today.tier)),g=5;gainXP(xp);addGold(g);addLog('🛡️',`방어 준비: ${PREP[D.m]||PREP.etc}`);vib(20);toast(`🛡️ 준비 완료! +${xp} XP · +${g}G`);commit()},
  'cl-on':async()=>{if(modalOpen)nextModal();if(!cloudCan()){toast('이 화면에서는 암호화 기능을 쓸 수 없어요');return}
   if(cloudReady!==true){await cloudPing();if(cloudReady!==true){toast(cloudReady===false?'서버 저장소가 아직 연결되지 않았어요':'인터넷 연결을 확인해 주세요');return}}
@@ -1561,12 +1725,12 @@ setInterval(()=>{dayCheck();cloudAuto();if(S.battle&&$('#battle').classList.cont
 /* ---------- 시작 ---------- */
 (function init(){
  S=merge(defaults(),load());if(!S.created)S.created=todayKey();
- migrateToday();migrate14();migrate15();
+ migrateToday();migrate14();migrate15();migrate16();
  const msgs=rollover();defSync();checkAch(true);save();snapTake();render();cosNotify();
  setTimeout(()=>{if(S.cloud.on)cloudAuto();else cloudPing().then(r=>{if(r&&cloudAskOn()&&tab==='quest'&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))render()})},2000);
  if(S.battle)showBattle();
  if(!S.onboarded)howto(true);
- flushRaid();
+ flushRaid();petWelcome();
  msgs.forEach(m=>toast(m));
  if(inApp)setTimeout(()=>syncHealth(false),700);
  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
