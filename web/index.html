@@ -423,6 +423,16 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 .hpet{position:absolute;left:-14px;bottom:-10px;width:40px;height:40px;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
 .hpet svg{width:100%;height:100%;display:block}
 
+/* v1.7 · 외모 고르기 */
+.lkpv{display:flex;justify-content:center;margin:4px 0 6px}.lkpv .ava{width:120px;height:120px}
+.lkh{font-weight:800;font-size:13px;color:#7a4b22;text-align:left;margin:10px 2px 6px}
+.lkrow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.lkrow.sw6{grid-template-columns:repeat(6,1fr)}
+.lkb,.lsw{background:#fff;border:2px solid var(--line);border-radius:14px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:inherit;box-shadow:0 2px 0 #e2c391}
+.lkb.on,.lsw.on{border-color:var(--orange);background:#fff1dc;box-shadow:0 2px 0 #e08a00,0 0 0 2px #ffe0b0}
+.lkmini{width:100%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 30%,#fff,#d4eeff 72%);overflow:hidden;display:block}.lkmini svg{width:100%;height:100%;display:block}
+.lkb small,.lsw small{font-size:10px;color:#6b4a2a;white-space:nowrap}
+.lsw i{display:block;width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 0 0 1px rgba(0,0,0,.12)}
+
 </style>
 </head>
 <body>
@@ -435,7 +445,7 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.6.1', KEY='healthRPG.v1';
+const VERSION='1.7.0', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -639,37 +649,92 @@ const COS_MAP=Object.fromEntries(COS.map(c=>[c.id,c]));
 
 
 /* ---------- 꼬마 캐릭터 (직업별) ---------- */
-function avatarSVG(path,tier,cosId){
- const C={none:['#9a6a3a','#7ccf6a','#4f9e3f'],monk:['#3b2a20','#ffa24a','#d9534f'],warrior:['#6b4226','#ff6b6b','#b83232'],sage:['#7a56e0','#9b7bf5','#5a3dc4'],paladin:['#f3c34f','#fff4dc','#e0a419']}[path||'none']||['#9a6a3a','#7ccf6a','#4f9e3f'];
- let [hair,body,belt]=C;const skin='#ffe2c6',sk2='#f0bd92';
+/* ---------- 캐릭터 (애니메이션 미소녀풍 SD) ---------- */
+const LOOK_HS={long:'긴 생머리',twin:'트윈테일',pony:'포니테일',bob:'단발'};
+const LOOK_HC={choco:['초코','#6b4535','#a5745a','#3f281e'],black:['흑발','#2f2b3d','#5e5878','#19171f'],blonde:['금발','#efc66a','#fde7a8','#c4943a'],pink:['분홍','#f29ac1','#fcc9e0','#c9668f'],sky:['하늘','#7bbbea','#bfe0f8','#4985bd'],silver:['은발','#cdd1e1','#f3f4fa','#959ab3']};
+const LOOK_EC={blue:['파랑','#2a5fc2','#8cc2ff'],amber:['호박','#b5651d','#f6be66'],green:['초록','#22845a','#8ee0b6'],pink:['분홍','#c23b7b','#ffa3cd'],red:['빨강','#b0302a','#ff9182']};
+function shade(hex,t){const n=parseInt(String(hex).slice(1),16);if(isNaN(n))return hex;const f=c=>Math.round(t>=0?c+(255-c)*t:c*(1+t));
+ const r=f(n>>16&255),g=f(n>>8&255),b=f(n&255);return '#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1)}
+let _au=0;
+function avatarSVG(path,tier,cosId,look){const u=++_au;
+ const C={none:['#7ccf6a','#4f9e3f'],monk:['#ffa24a','#d9534f'],warrior:['#ff6b6b','#b83232'],sage:['#9b7bf5','#5a3dc4'],paladin:['#fff4dc','#e0a419']}[path||'none']||['#7ccf6a','#4f9e3f'];
+ let [body,belt]=C;const skin='#ffe8d6',sk2='#f1c2a4',ink='#2a1f2b';
  let back='',side='',hat='';
- if(!path)hat=`<path d="M50 14 Q50 9 50 5" stroke="#4f9e3f" stroke-width="2.6" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="6" rx="6.5" ry="3.6" fill="#7ccf6a" transform="rotate(-28 44 6)"/><ellipse cx="56.5" cy="6" rx="6.5" ry="3.6" fill="#94dd7f" transform="rotate(28 56.5 6)"/>`;
- if(path==='monk'){hat=`<rect x="24" y="29" width="52" height="6.5" rx="3.2" fill="#d9534f"/><path d="M75 32 l9 -4 l-2 8z" fill="#d9534f"/>`;side=`<g fill="#a0522d">${[36,42,48,54,60].map(x=>`<circle cx="${x+2}" cy="${x<48?61+(48-x)/6:61+(x-48)/6}" r="2.3"/>`).join('')}</g>`}
- if(path==='warrior'){hat=`<path d="M22 38 C22 17 36 10 50 10 C64 10 78 17 78 38 Z" fill="#dfe7f0" stroke="#8a99ab" stroke-width="1.6"/><rect x="22" y="33" width="56" height="6" rx="3" fill="#b8c6d6"/><path d="M50 10 C47 2 52 -4 57 -6 C55 0 57 5 52 10Z" fill="#ff6b6b"/>`;side=`<rect x="80.5" y="50" width="4.5" height="27" rx="2" fill="#eef3f8" stroke="#9aa9ba" stroke-width="1"/><rect x="76.5" y="73" width="12.5" height="4.5" rx="2" fill="#a0522d"/>`}
- if(path==='sage'){hat=`<path d="M50 -7 C56 4 66 18 76 31 L24 31 C34 18 44 4 50 -7Z" fill="#8b6cf0"/><ellipse cx="50" cy="31" rx="31" ry="6.5" fill="#6d4fe0"/><path d="M51 6 l2.3 4.7 5.1.7-3.7 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.7-3.6 5.1-.7z" fill="#ffd34d"/>`;side=`<rect x="81" y="50" width="3.4" height="36" rx="1.7" fill="#a0522d"/><circle cx="82.7" cy="47" r="6" fill="#9be7ff" stroke="#4fb3d9" stroke-width="1.5"/><circle cx="80.8" cy="45" r="1.8" fill="#fff"/>`}
- if(path==='paladin'){hat=`<path d="M27 31 L30 13 L40 23 L50 9 L60 23 L70 13 L73 31 Z" fill="#ffcf3f" stroke="#d4a017" stroke-width="1.6" stroke-linejoin="round"/><circle cx="50" cy="20" r="3" fill="#ff6b9a"/>`;side=`<path d="M73 60 h15 v9 c0 8 -7.5 12 -7.5 12 c0 0 -7.5 -4 -7.5 -12z" fill="#5aaeff" stroke="#2f6fb0" stroke-width="1.6"/><path d="M80.5 63 v14 M75.5 69 h10" stroke="#fff" stroke-width="2"/>`}
+ if(!path)hat=`<path d="M50 12 Q50 7 50 3" stroke="#4f9e3f" stroke-width="2.6" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="4" rx="6.5" ry="3.6" fill="#7ccf6a" transform="rotate(-28 44 4)"/><ellipse cx="56.5" cy="4" rx="6.5" ry="3.6" fill="#94dd7f" transform="rotate(28 56.5 4)"/>`;
+ if(path==='monk'){hat=`<rect x="23.5" y="27" width="53" height="6" rx="3" fill="#d9534f"/><path d="M75 30 l9 -4 l-2 8z" fill="#d9534f"/>`;side=`<g fill="#a0522d">${[37,43,49,55,61].map(x=>`<circle cx="${x}" cy="${67+Math.abs(x-49)/7}" r="2.1"/>`).join('')}</g>`}
+ if(path==='warrior'){hat=`<path d="M21 37 C21 16 35 8 50 8 C65 8 79 16 79 37 Z" fill="#dfe7f0" stroke="#8a99ab" stroke-width="1.6"/><rect x="21" y="32" width="58" height="6" rx="3" fill="#b8c6d6"/><path d="M50 8 C47 0 52 -6 57 -8 C55 -2 57 3 52 8Z" fill="#ff6b6b"/>`;side=`<rect x="80.5" y="50" width="4.5" height="27" rx="2" fill="#eef3f8" stroke="#9aa9ba" stroke-width="1"/><rect x="76.5" y="73" width="12.5" height="4.5" rx="2" fill="#a0522d"/>`}
+ if(path==='sage'){hat=`<path d="M50 -9 C56 2 66 16 76 29 L24 29 C34 16 44 2 50 -9Z" fill="#8b6cf0"/><ellipse cx="50" cy="29" rx="31" ry="6.5" fill="#6d4fe0"/><path d="M51 4 l2.3 4.7 5.1.7-3.7 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.7-3.6 5.1-.7z" fill="#ffd34d"/>`;side=`<rect x="81" y="50" width="3.4" height="36" rx="1.7" fill="#a0522d"/><circle cx="82.7" cy="47" r="6" fill="#9be7ff" stroke="#4fb3d9" stroke-width="1.5"/><circle cx="80.8" cy="45" r="1.8" fill="#fff"/>`}
+ if(path==='paladin'){hat=`<path d="M30 22 L32.5 9 L41 17 L50 5 L59 17 L67.5 9 L70 22 Z" fill="#ffcf3f" stroke="#d4a017" stroke-width="1.6" stroke-linejoin="round"/><circle cx="50" cy="15" r="2.6" fill="#ff6b9a"/>`;side=`<path d="M73 60 h15 v9 c0 8 -7.5 12 -7.5 12 c0 0 -7.5 -4 -7.5 -12z" fill="#5aaeff" stroke="#2f6fb0" stroke-width="1.6"/><path d="M80.5 63 v14 M75.5 69 h10" stroke="#fff" stroke-width="2"/>`}
  const cs=(cosId&&typeof COS_MAP!=='undefined'&&COS_MAP[cosId])||null,X=k=>(cs&&typeof cs[k]==='string')?cs[k]:'';
- if(cs){if(cs.body)body=cs.body;if(cs.belt)belt=cs.belt;if(cs.hair)hair=cs.hair;if(cs.hat)hat=cs.hat;if(cs.side)side=cs.side}
- const legs=(cs&&cs.legs)||'#6b4f3a';
+ if(cs){if(cs.body)body=cs.body;if(cs.belt)belt=cs.belt;if(cs.hat)hat=cs.hat;if(cs.side)side=cs.side}
+ const L=look||(typeof S!=='undefined'&&S&&S.look)||{},HC=LOOK_HC[L.hc]||LOOK_HC.choco,EC=LOOK_EC[L.ec]||LOOK_EC.blue,hs=LOOK_HS[L.hs]?L.hs:'long';
+ let h0=HC[1],h1=HC[2],h2=HC[3];if(cs&&cs.hair){h0=cs.hair;h1=shade(cs.hair,.45);h2=shade(cs.hair,-.35)}
+ const hf=`url(#hg${u})`,noHair=!!(cs&&cs.noHair);
+ const defs=`<defs><linearGradient id="hg${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${h0}"/><stop offset=".6" stop-color="${h0}"/><stop offset="1" stop-color="${h2}"/></linearGradient><linearGradient id="ig${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(EC[1],-.45)}"/><stop offset=".5" stop-color="${EC[1]}"/><stop offset="1" stop-color="${EC[2]}"/></linearGradient></defs>`;
  const sp=tier>=3?`<g fill="#ffd34d"><path d="M10 22 l1.6 3.6 3.6 1.6-3.6 1.6-1.6 3.6-1.6-3.6-3.6-1.6 3.6-1.6z"/><path d="M90 14 l1.2 2.7 2.7 1.2-2.7 1.2-1.2 2.7-1.2-2.7-2.7-1.2 2.7-1.2z"/></g>`:'';
- return `<svg viewBox="0 -10 100 110" xmlns="http://www.w3.org/2000/svg">${sp}<ellipse cx="50" cy="95" rx="21" ry="4" fill="rgba(0,0,0,.14)"/>${back}${X('back')}
- <rect x="38" y="82" width="9.5" height="10" rx="4.5" fill="${legs}"/><rect x="52.5" y="82" width="9.5" height="10" rx="4.5" fill="${legs}"/>${X('shoes')}
- <rect x="32.5" y="59" width="35" height="26" rx="12" fill="${body}" stroke="rgba(0,0,0,.08)"/><rect x="32.5" y="72" width="35" height="4.5" fill="${belt}"/>${X('over')}
- <circle cx="31" cy="68" r="5.8" fill="${skin}" stroke="${sk2}" stroke-width="1"/><circle cx="69" cy="68" r="5.8" fill="${skin}" stroke="${sk2}" stroke-width="1"/>${side}
- <circle cx="50" cy="40" r="26" fill="${skin}" stroke="${sk2}" stroke-width="1.3"/>
- ${cs&&cs.noHair?'':`<path d="M24 41 C23 22 36 13 50 13 C64 13 77 22 76 41 C72 31 63 27 56 28 C52 31 46 31 42 28 C35 28 28 32 24 41Z" fill="${hair}"/>`}${X('mask')}
- <ellipse cx="41" cy="44.5" rx="3.5" ry="4.6" fill="#3b2a20"/><ellipse cx="59" cy="44.5" rx="3.5" ry="4.6" fill="#3b2a20"/>
- <circle cx="42.4" cy="42.6" r="1.4" fill="#fff"/><circle cx="60.4" cy="42.6" r="1.4" fill="#fff"/>
- <ellipse cx="34" cy="51.5" rx="4.8" ry="2.7" fill="#ffa8bd" opacity=".85"/><ellipse cx="66" cy="51.5" rx="4.8" ry="2.7" fill="#ffa8bd" opacity=".85"/>
- <path d="M46.5 52 Q50 55.8 53.5 52" stroke="#b5651d" stroke-width="1.9" fill="none" stroke-linecap="round"/>${X('face')}${hat}</svg>`}
+ // 뒷머리
+ const shortBack=`<path d="M24 36 C22 49 24 59 29.5 65 L70.5 65 C76 59 78 49 76 36 C70 19 30 19 24 36Z" fill="${hf}"/>`;
+ const BACK={long:`<path d="M24.5 33 C19.5 54 21 72 25 86 L29.5 82.5 L34 88 L39.5 83.5 L45 89 L50 84 L55 89 L60.5 83.5 L66 88 L70.5 82.5 L75 86 C79 72 80.5 54 75.5 33 C69 17 31 17 24.5 33Z" fill="${hf}"/>`,
+  twin:shortBack+`<path d="M29 22 C16 23 9.5 39 10.5 55 C11.5 69 15.5 79 21.5 87 L22.5 81 L26.5 86 C23.5 75 22.5 63 24.5 51 C25.5 41 28.5 33 33 27Z" fill="${hf}"/><path d="M71 22 C84 23 90.5 39 89.5 55 C88.5 69 84.5 79 78.5 87 L77.5 81 L73.5 86 C76.5 75 77.5 63 75.5 51 C74.5 41 71.5 33 67 27Z" fill="${hf}"/>`,
+  pony:shortBack+`<path d="M60 13 C80 9 91 28 88 49 C86 63 81 73 83 85 L78 80.5 L75 85.5 C71 72 72.5 60 74.5 49 C76.5 37 72 25 61 20Z" fill="${hf}"/>`,
+  bob:`<path d="M22.5 36 C20.5 51 22.5 61 27.5 67.5 L72.5 67.5 C77.5 61 79.5 51 77.5 36 C71 17 29 17 22.5 36Z" fill="${hf}"/>`}[hs];
+ // 앞머리 + 옆머리
+ const sideY={long:70,twin:61,pony:59,bob:66}[hs];
+ const sideL=`<path d="M24 39 C21 51 21.5 ${sideY-8} 25 ${sideY} L27.6 ${sideY-5.5} L29.6 ${sideY-1.5} C29 ${sideY-14} 29.5 48 31.5 40Z" fill="${hf}"/>`;
+ const sideR=`<path d="M76 39 C79 51 78.5 ${sideY-8} 75 ${sideY} L72.4 ${sideY-5.5} L70.4 ${sideY-1.5} C71 ${sideY-14} 70.5 48 68.5 40Z" fill="${hf}"/>`;
+ const front=`<path d="M22.5 47 C20 22 34 9.5 50 9.5 C66 9.5 80 22 77.5 47 C76.5 41 74.5 37 71.5 34.5 C71 38 70.4 40.5 69 42.5 C68.4 37.5 66.4 33.5 63.5 31.5 C63.4 35.5 62.4 38.6 60.4 41 C59.6 36 57.6 32.6 55 31 C54.8 35 53.6 37.6 51.6 39.6 C51 35.5 49.4 32.6 47.2 31.2 C46.6 35 45.2 38.2 43 40.6 C42.6 36.4 41 33.4 38.6 32 C38 36 36.8 39 34.8 41.4 C34.4 38 33.4 35.6 31.6 34.2 C28 37.5 25 42 22.5 47Z" fill="${hf}"/>${sideL}${sideR}
+  <path d="M39 15 Q36 24 37.5 31.5 M50 12 Q48.6 22 49.4 30.6 M61 15 Q64 24 62.6 31.4" stroke="${h2}" stroke-width=".8" fill="none" opacity=".35"/>
+  <path d="M30.5 25.5 Q50 14 69.5 25.5 L67.6 27.4 L65.2 24.8 L61.8 27 L58.6 23.8 L55.2 26 L51.6 23 L48.2 25.6 L44.8 23 L41.2 26 L37.8 23.8 L34.4 26.6 L32.4 24.6Z" fill="${h1}" opacity=".6"/><path d="M42.5 18.2 Q47 17 51 17.2" stroke="#fff" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".7"/>`;
+ const acc=shade(belt,.15),bow=(x,y)=>`<g transform="translate(${x} ${y})"><path d="M0 0 L-5.5 -3.8 L-5.5 3.8Z M0 0 L5.5 -3.8 L5.5 3.8Z" fill="${acc}"/><circle r="1.8" fill="${shade(belt,-.15)}"/></g>`;
+ const ties=hs==='twin'?bow(27,24)+bow(73,24):hs==='pony'?bow(63,16):'';
+ // 눈 (왼쪽 기준, 오른쪽은 좌우 반전)
+ const eye=`<path d="M34.2 44 C34.6 40 37.4 38.6 40.6 38.6 C43.8 38.6 46.8 40 47.2 44.2 C47.4 49.6 44.6 52.6 40.6 52.6 C36.6 52.6 34 49.6 34.2 44Z" fill="#fff"/>
+  <ellipse cx="40.8" cy="46" rx="5.4" ry="6.6" fill="url(#ig${u})"/><ellipse cx="40.8" cy="46.6" rx="2.5" ry="3.4" fill="${shade(EC[1],-.65)}" opacity=".85"/>
+  <path d="M35.4 42 Q40.8 38.8 46.2 42 L46.2 44.6 Q40.8 41.6 35.4 44.6Z" fill="#000" opacity=".25"/>
+  <ellipse cx="38.4" cy="43.2" rx="2.2" ry="2.7" fill="#fff"/><circle cx="43.6" cy="49.2" r="1.1" fill="#fff" opacity=".95"/><path d="M37 50.6 Q40.8 52.4 44.6 50.6" stroke="${EC[2]}" stroke-width="1.2" fill="none" opacity=".9"/>
+  <path d="M33.8 44.4 C34.5 40.4 37.4 38.7 40.8 38.7 C44.3 38.7 46.6 40 47.4 42.8 L48 42 C47.3 38.6 44.6 37 40.8 37 C37 37 33.7 39 32.5 43.4Z" fill="${ink}"/><path d="M33.6 43.6 L30.5 42.2 L32.6 45.2Z" fill="${ink}"/>
+  <path d="M38 52.9 Q41 53.7 44 52.7" stroke="${ink}" stroke-width=".8" fill="none" opacity=".5"/>`;
+ const eyes=eye+`<g transform="translate(100 0) scale(-1 1)">${eye}</g>`;
+ const brows=`<path d="M35.2 35.6 Q40 34.2 45 35.6 M55 35.6 Q60 34.2 64.8 35.6" stroke="${h2}" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".55"/>`;
+ const face=`<path d="M24 39 C24 23 36 14 50 14 C64 14 76 23 76 39 C76 55 63.5 66 50 66 C36.5 66 24 55 24 39Z" fill="${skin}" stroke="${sk2}" stroke-width="1.1"/>`;
+ const cheeks=`<ellipse cx="33" cy="52" rx="4.6" ry="2.5" fill="#ff9fb4" opacity=".55"/><ellipse cx="67" cy="52" rx="4.6" ry="2.5" fill="#ff9fb4" opacity=".55"/><path d="M30.8 53 l1.5 -2 M33 53.2 l1.5 -2 M35.2 53.4 l1.5 -2 M64.8 53.4 l1.5 -2 M67 53.2 l1.5 -2 M69.2 53 l1.5 -2" stroke="#f07f99" stroke-width=".75" stroke-linecap="round" opacity=".8"/>`;
+ const mouth=`<path d="M49.7 50.2 l-.6 1.3" stroke="${sk2}" stroke-width="1" stroke-linecap="round"/><path d="M47.4 54.3 Q50 58.4 52.6 54.3Z" fill="#e66f7d" stroke="#b9505e" stroke-width=".6" stroke-linejoin="round"/>`;
+ const FX=k=>{const v=X(k);return v?`<g transform="translate(50 45) scale(1.08 1.3) translate(-50 -45)">${v}</g>`:''};
+ // 옷: 코스튬이면 기존 틀, 아니면 직업색 원피스
+ let outfit;
+ if(cs){const legs=cs.legs||'#6b4f3a';
+  outfit=`<rect x="38" y="82" width="9.5" height="10" rx="4.5" fill="${legs}"/><rect x="52.5" y="82" width="9.5" height="10" rx="4.5" fill="${legs}"/>${X('shoes')}
+  <rect x="32.5" y="59" width="35" height="26" rx="12" fill="${body}" stroke="rgba(0,0,0,.08)"/><rect x="32.5" y="72" width="35" height="4.5" fill="${belt}"/>${X('over')}
+  <circle cx="31" cy="68" r="5.2" fill="${skin}" stroke="${sk2}" stroke-width=".9"/><circle cx="69" cy="68" r="5.2" fill="${skin}" stroke="${sk2}" stroke-width=".9"/>`}
+ else{const dk=shade(body,-.22);
+  outfit=`<rect x="41" y="79" width="6" height="12" rx="3" fill="${skin}"/><rect x="53" y="79" width="6" height="12" rx="3" fill="${skin}"/>
+  <rect x="40.6" y="84.5" width="6.8" height="6.5" rx="2" fill="#fff"/><rect x="52.6" y="84.5" width="6.8" height="6.5" rx="2" fill="#fff"/>
+  <path d="M39.4 89.6 h8.8 v2.6 q0 2 -2 2 h-5 q-1.8 0 -1.8 -2z" fill="${shade(belt,-.1)}"/><path d="M51.8 89.6 h8.8 v2.6 q0 2 -2 2 h-5 q-1.8 0 -1.8 -2z" fill="${shade(belt,-.1)}"/>
+  <path d="M36 74 L64 74 L70.6 86 Q50 90.2 29.4 86Z" fill="${body}"/><path d="M42.6 75 L39 87.6 M50 75 V89.3 M57.4 75 L61 87.6" stroke="${dk}" stroke-width=".9" opacity=".7"/>
+  <path d="M29.4 86 Q50 90.2 70.6 86 L71.1 88.3 Q50 92.6 28.9 88.3Z" fill="#fff"/>
+  <path d="M36 61.5 Q50 57.5 64 61.5 L65 75.5 L35 75.5Z" fill="${body}"/><path d="M34.4 64.5 C31 67.5 29.8 71 30.4 75 M65.6 64.5 C69 67.5 70.2 71 69.6 75" stroke="${sk2}" stroke-width="5.4" fill="none" stroke-linecap="round"/><path d="M34.4 64.5 C31 67.5 29.8 71 30.4 75 M65.6 64.5 C69 67.5 70.2 71 69.6 75" stroke="${skin}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="30.6" cy="75.6" r="3.3" fill="${skin}" stroke="${sk2}" stroke-width=".7"/><circle cx="69.4" cy="75.6" r="3.3" fill="${skin}" stroke="${sk2}" stroke-width=".7"/><circle cx="34.6" cy="64" r="4.8" fill="${body}"/><circle cx="65.4" cy="64" r="4.8" fill="${body}"/>
+  <path d="M38 61 L50 70.5 L62 61 L59.6 60 L50 66.6 L40.4 60Z" fill="#fff"/>
+  <rect x="35.4" y="72.4" width="29.2" height="3.4" rx="1.6" fill="${belt}"/><path d="M50 69.3 l-4.6 -2.7 v5.4z M50 69.3 l4.6 -2.7 v5.4z" fill="${belt}"/><circle cx="50" cy="69.3" r="1.5" fill="${shade(belt,-.25)}"/>
+`}
+ return `<svg viewBox="0 -10 100 110" xmlns="http://www.w3.org/2000/svg">${defs}${sp}<ellipse cx="50" cy="95" rx="21" ry="4" fill="rgba(0,0,0,.14)"/>${back}${X('back')}${noHair?'':BACK}
+ ${outfit}${side}${face}${noHair?'':front+ties}${FX('mask')}${cheeks}${eyes}${mouth}${FX('face')}${hat}</svg>`}
+
+/* 외모 고르기 */
+const lookAva=lk=>avatarSVG(S.cls.tier?S.cls.path:null,S.cls.tier,null,lk);
+function lookInner(){const L=S.look;
+ return `<div class="lkpv"><div class="ava t${S.cls.tier}" style="--aura:${AURA[S.cls.tier]}">${lookAva(L)}</div></div>
+ <div class="lkh">머리 모양</div><div class="lkrow">${Object.entries(LOOK_HS).map(([k,n])=>`<button class="lkb ${L.hs===k?'on':''}" data-act="look-set" data-arg="hs:${k}"><span class="lkmini">${lookAva({...L,hs:k})}</span><small>${n}</small></button>`).join('')}</div>
+ <div class="lkh">머리 색</div><div class="lkrow sw6">${Object.entries(LOOK_HC).map(([k,v])=>`<button class="lsw ${L.hc===k?'on':''}" data-act="look-set" data-arg="hc:${k}"><i style="background:linear-gradient(${v[2]},${v[1]} 55%,${v[3]})"></i><small>${v[0]}</small></button>`).join('')}</div>
+ <div class="lkh">눈 색</div><div class="lkrow sw6">${Object.entries(LOOK_EC).map(([k,v])=>`<button class="lsw ${L.ec===k?'on':''}" data-act="look-set" data-arg="ec:${k}"><i style="background:linear-gradient(${v[1]},${v[2]})"></i><small>${v[0]}</small></button>`).join('')}</div>`}
+function lookModal(first){showModal(`<h2>${first?'캐릭터가 새로워졌어요!':'💇 외모 바꾸기'}</h2><p class="sub">${first?'마음에 드는 머리 모양과 색을 골라 주세요. 캐릭터 탭에서 언제든 바꿀 수 있어요.':'코스튬과 직업 장비는 그대로 입을 수 있어요.'}</p><div id="lookBox">${lookInner()}</div><button class="btn primary wide mt" data-act="look-done">이걸로 할래요</button>`,{cls:'fx'})}
 
 /* ---------- 상태 ---------- */
 function defaults(){return{
- v:4,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
+ v:5,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
  level:1,xp:0,gold:0,statPts:3,skillPts:1,grantStat:3,grantSkill:1,
  stats:{wil:0,tem:0,vit:0,wis:0,luk:0},skills:{},cls:{path:null,tier:0},
  streak:0,bestStreak:0,shields:0,shieldWeek:'',ultWeek:'',ultDay:'',buffDay:'',
- totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,pet:{sp:'',name:'',xp:0,born:'',seen:0,td:'',tx:0,pat:0,treat:0,pats:0,welc:''},cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
+ totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,look:{hs:'long',hc:'choco',ec:'blue',set:false},pet:{sp:'',name:'',xp:0,born:'',seen:0,td:'',tx:0,pat:0,treat:0,pats:0,welc:''},cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
  enabled:Object.fromEntries(TPL.map(t=>[t.id,t.def&&t.unlock<=1])),autoUnlocked:{},
  custom:[],rewards:[{id:'r1',name:'보고 싶던 영화·드라마 보기',price:300},{id:'r2',name:'카페에서 여유 즐기기',price:200},{id:'r3',name:'좋아하는 음식 한 끼',price:600},{id:'r4',name:'갖고 싶던 물건 사기',price:3000}],
  today:null,history:{},battle:null,log:[],
@@ -883,6 +948,7 @@ function howto(first){
  <div>🚶 <b>걸음·수면 입력</b> — 걷기·운동·수면은 삼성 헬스(갤럭시 핏) 숫자를 넣으면 자동으로 판정돼요.</div>
  <div>🛍️ <b>상점</b> — 골드로 캐릭터 코스튬을 사거나(매주 화요일 신상 2벌), 내가 정한 진짜 보상을 사세요.</div>
  <div>🏆 <b>업적</b> — 60가지가 넘는 업적을 달성하면 골드를 받고, 마음에 드는 업적을 칭호로 달 수 있어요.</div>
+ <div>💇 <b>외모</b> — 캐릭터 탭에서 머리 모양·머리색·눈 색을 언제든 바꿀 수 있어요.</div>
  <div>🐾 <b>펫</b> — 퀘스트·올클리어·유혹 격퇴로 애정이 쌓이면 알이 깨어나 아기 → 꼬마 → 어른 → 전설로 자라요. 쓰다듬고 건강 간식도 줄 수 있어요.</div>
  <div>🔍 <b>유혹 패턴·방어전</b> — 전투 기록이 쌓이면 업적 탭 → 기록에서 위험한 시간을 알려 줘요. 그 시간 전에 퀘스트 탭에 🛡️ 방어전이 열려요.</div>
  <div>☁️ <b>자동 백업</b> — 설정에서 켜면 하루 한 번 암호화해서 저장해요. 복구 코드만 있으면 새 폰에서도 그대로!</div></div></div>
@@ -930,7 +996,7 @@ function qHTML(q){const c=CATS[q.cat],xp=q.done?q.xp:Math.round(questBase(q)*que
   <div class="qmeta">${hv?`잠든 시각 ${q.val} · ${q.done?'달성 ✅':'목표보다 늦었어요'}`:q.done?'달성 ✅':'삼성 헬스 수면 기록의 잠든 시각을 넣어 주세요'}</div></div><div class="qcheck">${q.done?'✓':''}</div></div>`}
  return `<div class="quest ${dc}" style="--c:${c.color}" data-act="q-toggle" data-arg="${q.id}"><div class="qicon">${ic}</div><div class="qbody"><div class="qname">${esc(q.name)}</div><div class="qmeta">${meta}</div></div><div class="qcheck">${q.done?'✓':''}</div></div>`}
 function vChar(){const c=S.cls;
- let h=`<section class="card prof"><div class="ava t${c.tier}" style="--aura:${AURA[c.tier]}">${avatar()}${raidTitle()?`<span class="rbadge">${raidTitle()[0]}</span>`:''}</div>${raidTitle()?`<div class="sub">${raidTitle()[1]}</div>`:''}<div style="font-size:18px;font-weight:800">${esc(S.name)}</div><div class="ctitle" style="color:${c.tier?PATHS[c.path].color:'var(--sub)'}">Lv.${S.level} ${clsTitle()}</div>${titleOf()?`<div class="mt"><span class="ttl">${titleOf().icon} ${esc(titleOf().name)}</span></div>`:''}<div class="cp mt">전투력<b>${fmt(power())}</b></div><div class="row" style="justify-content:center"><button class="btn sm" data-act="goto-cos">👗 코스튬</button><button class="btn sm" data-act="goto-ach">🏅 칭호 바꾸기</button></div></section>`;
+ let h=`<section class="card prof"><div class="ava t${c.tier}" style="--aura:${AURA[c.tier]}">${avatar()}${raidTitle()?`<span class="rbadge">${raidTitle()[0]}</span>`:''}</div>${raidTitle()?`<div class="sub">${raidTitle()[1]}</div>`:''}<div style="font-size:18px;font-weight:800">${esc(S.name)}</div><div class="ctitle" style="color:${c.tier?PATHS[c.path].color:'var(--sub)'}">Lv.${S.level} ${clsTitle()}</div>${titleOf()?`<div class="mt"><span class="ttl">${titleOf().icon} ${esc(titleOf().name)}</span></div>`:''}<div class="cp mt">전투력<b>${fmt(power())}</b></div><div class="row" style="justify-content:center"><button class="btn sm" data-act="look-open">💇 외모</button><button class="btn sm" data-act="goto-cos">👗 코스튬</button><button class="btn sm" data-act="goto-ach">🏅 칭호</button></div></section>`;
  h+=vJob();h+=vGear();
  h+=`<section class="card"><div class="sechead"><h3>스탯</h3><span class="pts ${S.statPts?'on':''}">남은 포인트 ${S.statPts}</span></div>
   ${Object.entries(STATS).map(([k,s])=>`<div class="stat"><span class="sicon">${s.icon}</span><div class="sbody"><b>${s.name}<em>${S.stats[k]}</em></b><small>${s.desc(S.stats[k])}</small><small class="flav">${s.flav}</small></div><button class="plus" data-act="stat-up" data-arg="${k}" ${S.statPts?'':'disabled'}>+</button></div>`).join('')}</section>`;
@@ -1672,6 +1738,9 @@ const H={
  'battle-lose':()=>confirmBox('이번 전투는 졌다고 기록할까요?<br><span class="sub">경험치는 잃지 않아요.</span>',loseBattle),
  subst:i=>{if(!S.battle)return;S.battle.subst=true;S.battle.si=+i;save();document.querySelectorAll('.subst button').forEach((b,j)=>b.classList.toggle('on',j===+i));toast('좋아요! 승리하면 XP +15')},
  close:()=>nextModal(),
+ 'look-open':()=>lookModal(false),
+ 'look-set':a=>{const[k,v]=String(a).split(':');const ok={hs:LOOK_HS,hc:LOOK_HC,ec:LOOK_EC}[k];if(!ok||!ok[v])return;S.look[k]=v;vib(10);save();const b=$('#lookBox');if(b)b.innerHTML=lookInner();render()},
+ 'look-done':()=>{S.look.set=true;save();nextModal();render();toast('💇 새 모습이 마음에 들어요!')},
  'ver-check':()=>verCheck(true),
  'pet-pat':()=>{if(!S.pet.sp)return;petDay();S.pet.pats=(S.pet.pats||0)+1;let t;if(S.pet.pat<3){S.pet.pat++;petAdd(1);t='헤헤, 좋아요! 💕 (+1 애정)'}else t=['간지러워요 ㅎㅎ','또 해 주세요!','기분 최고예요 ✨','같이 있어서 좋아요 🥰'][S.pet.pats%4];
   petSay={t,at:Date.now()};vib(12);commit();petJump()},
@@ -1720,7 +1789,7 @@ const H={
  'reset-all':()=>showModal(`<h3>모든 데이터 초기화</h3><p class="sub">레벨, 기록, 골드가 전부 사라져요. 계속하려면 아래에 <b>초기화</b>라고 입력하세요.</p><input id="rsIn" style="width:100%" placeholder="초기화"><div class="row"><button class="btn ghost" data-act="close">취소</button><button class="btn danger" data-act="reset-yes">초기화</button></div>`),
  'reset-yes':()=>{if($('#rsIn').value.trim()!=='초기화'){toast('“초기화”라고 입력해 주세요');return}
   clearInterval(btimer);$('#battle').classList.add('hidden');S=defaults();S.created=todayKey();S.today=null;rollover();nextModal();tab='quest';howto(true);commit()},
- 'onb-done':()=>{const el=$('#onbName');const n=el?el.value.trim():'';if(n)S.name=n;S.onboarded=true;nextModal();commit()},
+ 'onb-done':()=>{const el=$('#onbName');const n=el?el.value.trim():'';if(n)S.name=n;S.onboarded=true;nextModal();commit();if(!S.look.set)lookModal(true)},
  install:async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;render()}};
 const C={
  tpl:el=>{if(dayCheck())return;toggleTpl(el.dataset.arg,el.checked);commit()},
@@ -1743,7 +1812,7 @@ setInterval(()=>{dayCheck();cloudAuto();if(S.battle&&$('#battle').classList.cont
  setTimeout(()=>verCheck(false),3000);
  setTimeout(()=>{if(S.cloud.on)cloudAuto();else cloudPing().then(r=>{if(r&&cloudAskOn()&&tab==='quest'&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))render()})},2000);
  if(S.battle)showBattle();
- if(!S.onboarded)howto(true);
+ if(!S.onboarded)howto(true);else if(!S.look.set)lookModal(true);
  flushRaid();petWelcome();
  msgs.forEach(m=>toast(m));
  if(inApp)setTimeout(()=>syncHealth(false),700);
