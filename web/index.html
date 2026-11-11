@@ -39,6 +39,12 @@ h2{margin:6px 0;font-size:24px}h3{margin:0 0 10px;font-size:18px;color:#7a4b22}
 .hero{display:flex;gap:14px;align-items:center;background:linear-gradient(180deg,#fff6df,#ffe3a8);border:3px solid var(--wood2);border-radius:22px;padding:12px 14px;margin-bottom:12px;box-shadow:0 5px 0 #a86a2f,inset 0 2px 0 #fff}
 .ava{width:72px;height:72px;border-radius:50%;flex:none;position:relative;background:radial-gradient(circle at 50% 30%,#fff,#d4eeff 72%);box-shadow:0 0 0 4px #fff,0 0 0 7px var(--aura),0 4px 10px rgba(0,0,0,.15);display:grid;place-items:center}
 .ava svg{width:94%;height:94%;margin-top:2px}
+@keyframes expj{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.expc .exprow{display:flex;gap:12px;align-items:center}.expic{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:30px;background:#eef7ff;flex:none}.expic.ready{animation:expj 1s infinite}.expside{flex:1;min-width:0}.expside b{display:block}
+.expbar{position:relative;margin:8px 0 2px;overflow:visible}.expdot{position:absolute;top:-10px;transform:translateX(-50%);font-size:15px;transition:left .6s}
+.explist{display:flex;flex-direction:column;gap:8px;margin-top:10px}.expz{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid #e8dcc4;background:#fff;text-align:left;font:inherit;color:inherit}.expz .zi{font-size:28px}.expz small{display:block;color:#8a7b66}.expz.lk{opacity:.5}
+.expbz{margin:10px 0}.expgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}.expit{border-radius:12px;padding:8px 4px;text-align:center;background:#fff8ec;border:2px solid #f0e2c8}.expit span{font-size:26px;display:block}.expit small{font-size:11px;display:block;line-height:1.2}.expit.no{opacity:.45}.expit.r2{border-color:#8fc8ee}.expit.r3{border-color:#ffc94d;background:#fffbe6}
+.expgot{text-align:center}.expgot .big{font-size:64px;animation:expj 1s 2}.expgot.r3 .big{filter:drop-shadow(0 0 10px #ffd34d)}.expfull{font-weight:700;color:#c07a00}
 svg.ci{width:100%!important;height:100%!important;margin:0!important;display:block;overflow:visible}
 .ava.t4{animation:glow 1.6s ease-in-out infinite alternate}
 @keyframes glow{from{box-shadow:0 0 0 4px #fff,0 0 0 7px #ffd34d,0 0 16px 6px rgba(255,190,80,.7)}to{box-shadow:0 0 0 4px #fff,0 0 0 7px #ff9bd2,0 0 26px 10px rgba(255,150,210,.7)}}
@@ -446,7 +452,7 @@ details summary{cursor:pointer;font-weight:700;color:#7a4b22;padding:6px 0}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='1.11.1', KEY='healthRPG.v1';
+const VERSION='1.12.0', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -791,7 +797,7 @@ function defaults(){return{
  level:1,xp:0,gold:0,statPts:3,skillPts:1,grantStat:3,grantSkill:1,
  stats:{wil:0,tem:0,vit:0,wis:0,luk:0},skills:{},cls:{path:null,tier:0},
  streak:0,bestStreak:0,shields:0,shieldWeek:'',ultWeek:'',ultDay:'',buffDay:'',
- totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,look:{hs:'long',hc:'sky',ec:'blue',set:true},pet:{sp:'',name:'',xp:0,born:'',seen:0,td:'',tx:0,pat:0,treat:0,pats:0,welc:''},cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
+ totals:{clears:0,urgeWins:0,urgeLosses:0,quests:0,buys:0,goldEarned:0,defOk:0},urges:[],def:null,look:{hs:'long',hc:'sky',ec:'blue',set:true},exp:{on:'',prog:0,ld:'',lv:0,done:0,col:{},zd:{}},pet:{sp:'',name:'',xp:0,born:'',seen:0,td:'',tx:0,pat:0,treat:0,pats:0,welc:''},cloud:{on:false,code:'',last:0,lastTry:0,err:'',ask:0},book:{},ach:{},qCount:{},best:{steps:0,urgeDay:0},title:'',achSeenN:0,costumes:[],costume:'',cosSeen:[],cosNotified:[],
  enabled:Object.fromEntries(TPL.map(t=>[t.id,t.def&&t.unlock<=1])),autoUnlocked:{},
  custom:[],rewards:[{id:'r1',name:'보고 싶던 영화·드라마 보기',price:300},{id:'r2',name:'카페에서 여유 즐기기',price:200},{id:'r3',name:'좋아하는 음식 한 끼',price:600},{id:'r4',name:'갖고 싶던 물건 사기',price:3000}],
  today:null,history:{},battle:null,log:[],
@@ -903,7 +909,7 @@ function complete(q,el){
 function uncomplete(q,skip){q.done=false;loseXP(q.xp);subGold(q.gold);if(!q.custom&&S.qCount[q.id])S.qCount[q.id]--;S.totals.quests=Math.max(0,S.totals.quests-1);q.xp=0;q.gold=0;
  raidUnhit(q.map);q.map=null;q.dmg=0;if(q.smap){raidUnhit(q.smap);q.smap=null;q.sdmg=0}if(!skip)recheckClear()}
 function setInputDone(q,ok,el){if(ok&&!q.done)complete(q,el);else if(!ok&&q.done)uncomplete(q)}
-function applySteps(q){const td=S.today.date;if(S.best.sd!==td){S.best.sp=S.best.steps||0;S.best.sd=td}S.best.steps=Math.max(S.best.sp||0,q.val||0);const extra=Math.max(0,Math.min(q.val||0,q.target+5000)-q.target);const want=q.done?Math.floor(extra/1000)*Math.round(5*(1+.1*S.today.tier)):0;
+function applySteps(q){expTrack(q.val);const td=S.today.date;if(S.best.sd!==td){S.best.sp=S.best.steps||0;S.best.sd=td}S.best.steps=Math.max(S.best.sp||0,q.val||0);const extra=Math.max(0,Math.min(q.val||0,q.target+5000)-q.target);const want=q.done?Math.floor(extra/1000)*Math.round(5*(1+.1*S.today.tier)):0;
  if(q.smap){raidUnhit(q.smap);q.smap=null;q.sdmg=0}
  if(want>0){const r=raidHit(want,{kind:'steps'});if(r&&r.dmg){q.smap=r.map;q.sdmg=r.dmg;toast(`🚶 초과 걸음 보너스! 보스에게 ⚔️${r.dmg}`)}}}
 function recheckClear(){const d=S.today,all=todayCleared();
@@ -1035,7 +1041,7 @@ function vQuest(){const d=S.today,qs=d.quests,done=qs.filter(q=>q.done).length,t
   <div class="pbar"><i style="width:${tot?done/tot*100:0}%"></i></div>
   ${d.bonus?`<div class="clear">🏆 올클리어! 보너스 +${d.bonus} XP · +${d.bonusGold}G</div>`:`<div class="sub mt">전부 완료하면 올클리어 보너스 <b class="gold">+${bonusCalc().xp} XP</b></div>`}
   ${chips.length?`<div class="buffs">${chips.map(x=>`<span>${x}</span>`).join('')}</div>`:''}</section>`;
- h+=petCard()+defCard()+cloudAskCard();h+=raidMini();h+=hcCard();h+=`<div class="qlist">${qs.map(qHTML).join('')}</div>`;
+ h+=petCard()+expCard()+defCard()+cloudAskCard();h+=raidMini();h+=hcCard();h+=`<div class="qlist">${qs.map(qHTML).join('')}</div>`;
  if(!tot)h+=`<div class="card sub">진행할 퀘스트가 없어요. 설정에서 퀘스트를 켜 주세요.</div>`;
  if(S.cls.tier){const p=PATHS[S.cls.path],u=p.ult,av=ultAvail();
   h+=`<section class="card ult" style="--pc:${p.color}"><div><b>💥 궁극기 「${u.name}」</b><div class="sub">${u.desc}</div><div class="sub">${ultOn()?'🔥 오늘 발동 중!':av?'이번 주 1회 사용 가능':'다음 주 월요일에 다시 사용 가능'}</div></div>${av?`<button class="btn primary sm" data-act="ult">발동</button>`:''}</section>`}
@@ -1262,6 +1268,41 @@ function petCard(){const P=S.pet,st=petStage(),x=petXP(),ready=!P.sp&&x>=PET_ST[
  return `<section class="card petc"><div class="petrow"><div class="petfig ${ready?'ready':''}" data-act="${ready?'pet-hatch':P.sp?'pet-pat':'pet-info'}">${petSVG(P.sp,st,P.sp?petMood():'normal',x)}</div>
  <div class="petside"><div class="bub">${esc(petMsg())}</div><div class="petnm" data-act="pet-info"><b>${P.sp?esc(P.name):'신비한 알'}</b> <small>${P.sp?`${PET_NM[st]} ${PET_SP[P.sp].name}`:'정보'} ›</small></div><div class="abar"><i style="width:${bar}%"></i></div><small class="sub">${lab}</small></div></div>
  ${ready?'<button class="btn primary wide" data-act="pet-hatch">🥚 알 깨우기!</button>':P.sp?`<div class="row petbtn"><button class="btn sm" data-act="pet-pat">🤚 쓰다듬기${P.pat<3?' <small>+1</small>':''}</button><button class="btn sm ${P.treat>=2?'':'primary'}" data-act="pet-treat">${P.treat>=2?'😋 배불러요':`${tr.split(' ')[0]} 간식 ${TREAT_G}G`}</button></div>`:''}</section>`}
+/* ---------- 탐험 ---------- */
+const EXP_Z=[
+ {id:'park',n:'동네 공원',ic:'🌳',need:2000,un:0,c:'#7bc67e',it:[['🍀','네잎클로버',1,'누가 떨어뜨린 행운일까요?'],['🐿️','도토리 배지',1,'다람쥐가 몰래 건네줬어요'],['🎈','빨간 풍선',1,'벤치에 묶여 있었어요'],['🪁','연 꼬리',2,'바람을 잔뜩 머금고 있어요'],['🌸','벚꽃잎 책갈피',2,'한 장도 구겨지지 않았어요'],['🏅','공원 지킴이 메달',3,'매일 걷는 사람만 받을 수 있대요']]},
+ {id:'beach',n:'노을 해변',ic:'🏖️',need:4000,un:2,c:'#ffb36b',it:[['🐚','소라 껍데기',1,'귀에 대면 파도 소리가 나요'],['⭐','불가사리',1,'살짝 웃고 있는 것 같아요'],['🪸','분홍 산호 조각',1,'햇빛에 반짝여요'],['🍹','코코넛 컵',2,'아직 달콤한 향이 나요'],['🗺️','유리병 속 지도',2,'어딘가를 가리키고 있어요'],['🧜','인어의 비늘',3,'노을빛으로 일렁여요']]},
+ {id:'forest',n:'안개 숲',ic:'🌲',need:6000,un:5,c:'#5fa88a',it:[['🍄','반딧불 버섯',1,'밤이 되면 빛나요'],['🪶','파랑새 깃털',1,'가볍고 따뜻해요'],['🌰','큰 솔방울',1,'꽉 찬 씨앗이 들어 있어요'],['🦉','부엉이 편지',2,'잠은 일찍 자라고 쓰여 있어요'],['🧚','요정의 이슬병',2,'흔들면 종소리가 나요'],['🦌','은빛 사슴뿔',3,'숲의 주인이 인정한 증표예요']]},
+ {id:'snow',n:'설산 오두막',ic:'🏔️',need:9000,un:9,c:'#8fc8ee',it:[['❄️','녹지 않는 눈송이',1,'손바닥 위에서도 그대로예요'],['🧤','털장갑 한 짝',1,'다른 한 짝은 어디 있을까요?'],['☕','따뜻한 코코아',1,'오두막 주인이 건네줬어요'],['🛷','작은 썰매',2,'펫이 타기 딱 좋아요'],['🐧','아기 펭귄 사진',2,'뒤뚱뒤뚱 따라왔어요'],['💎','빙하의 심장',3,'정상까지 오른 사람만 찾을 수 있어요']]},
+ {id:'sky',n:'하늘 유적',ic:'🏛️',need:12000,un:14,c:'#b39ddb',it:[['☁️','구름 솜사탕',1,'먹으면 몸이 가벼워져요'],['🪙','고대 금화',1,'이름 모를 왕의 얼굴이 있어요'],['🏺','별무늬 항아리',1,'안에서 바람이 불어요'],['📜','하늘의 두루마리',2,'꾸준함이 가장 강한 마법이래요'],['🪽','천사의 날개깃',2,'한 걸음마다 빛이 나요'],['👑','하늘 왕관',3,'만 보를 걷는 모험가에게 어울려요']]}];
+const EXP_RN=['','흔함','희귀','전설'];
+function expS(){if(!S.exp||typeof S.exp!=='object')S.exp={};const E=S.exp;E.col=E.col||{};E.done=E.done||0;E.zd=E.zd||{};return E}
+function expPet(){return !!(S.pet&&S.pet.sp)}
+function expWho(){return expPet()?S.pet.name:S.name}
+function expWalkVal(){const q=S.today&&S.today.quests.find(q=>q.id==='walk');return q&&q.val||0}
+function expTrack(val){const E=expS();if(!E.on||!S.today)return;const td=S.today.date;
+ if(E.ld!==td){E.ld=td;E.lv=0}const v=val||0;if(v>E.lv){E.prog=(E.prog||0)+(v-E.lv);E.lv=v}}
+function expZone(id){return EXP_Z.find(z=>z.id===id)}
+function expCard(){const E=expS(),who=esc(expWho());
+ if(!E.on)return `<section class="card expc"><div class="exprow"><div class="expic">🧭</div><div class="expside"><b>탐험</b><small class="sub">${who}와(과) 걸음만큼 길을 떠나요 · 기념품 ${Object.keys(E.col).length}/${EXP_Z.length*6}</small></div></div><div class="row petbtn"><button class="btn sm primary" data-act="exp-pick">🗺️ 탐험 보내기</button><button class="btn sm" data-act="exp-book">📔 기념품 도감</button></div></section>`;
+ const z=expZone(E.on);if(!z){E.on='';return ''}
+ const p=Math.min(E.prog||0,z.need),pc=p/z.need*100,fin=p>=z.need;
+ const step=['출발했어요','길을 걷는 중','절반 넘게 왔어요','거의 다 왔어요!'][Math.min(3,Math.floor(pc/33.4))];
+ return `<section class="card expc"><div class="exprow"><div class="expic ${fin?'ready':''}">${z.ic}</div><div class="expside"><b>${z.n} 탐험</b><small class="sub">${fin?`${who}의 탐험 완료! 기념품을 찾았어요`:`${step} · 걸으면 앞으로 나아가요`}</small><div class="abar expbar"><i style="width:${pc}%;background:${z.c}"></i><span class="expdot" style="left:${pc}%">${expPet()?'🐾':'👣'}</span></div><small class="sub">${fmt(p)} / ${fmt(z.need)}보</small></div></div>${fin?'<button class="btn primary wide" data-act="exp-claim">🎁 귀환! 보상 받기</button>':''}</section>`}
+function expPick(){const E=expS();
+ showModal(`<h3>🗺️ 어디로 떠날까요?</h3><p class="sub">지금부터 걷는 걸음이 탐험 거리로 쌓여요. 하루에 다 못 걸어도 이어져요.</p><div class="explist">${EXP_Z.map(z=>{const lk=E.done<z.un,got=z.it.filter((_,i)=>E.col[z.id+i]).length;
+  return `<button class="expz ${lk?'lk':''}" ${lk?'disabled':`data-act="exp-go" data-arg="${z.id}"`}><span class="zi">${lk?'🔒':z.ic}</span><span class="zt"><b>${z.n}</b><small>${lk?`탐험 ${z.un}번 완료하면 열려요`:`${fmt(z.need)}보 · 기념품 ${got}/6`}</small></span></button>`}).join('')}</div><button class="btn ghost wide mt" data-act="close">닫기</button>`)}
+function expBook(){const E=expS();
+ showModal(`<h3>📔 기념품 도감</h3><p class="sub">${Object.keys(E.col).length}/${EXP_Z.length*6}개 · 탐험 ${E.done}번</p>${EXP_Z.map(z=>`<div class="expbz"><b>${z.ic} ${z.n}</b>${E.zd[z.id]?' <small>✨ 완성</small>':''}<div class="expgrid">${z.it.map((t,i)=>{const n=E.col[z.id+i];return n?`<div class="expit r${t[2]}"><span>${t[0]}</span><small>${t[1]}</small></div>`:`<div class="expit no"><span>❔</span><small>${'★'.repeat(t[2])}</small></div>`}).join('')}</div></div>`).join('')}<button class="btn ghost wide mt" data-act="close">닫기</button>`)}
+function expRoll(z){const E=expS(),w=[0,60,30,10],pool=z.it.map((t,i)=>({t,i,w:w[t[2]]*(E.col[z.id+i]?.45:1)}));
+ let r=Math.random()*pool.reduce((a,b)=>a+b.w,0);for(const p of pool){r-=p.w;if(r<=0)return p}return pool[0]}
+function expClaim(){const E=expS(),z=expZone(E.on);if(!z||(E.prog||0)<z.need)return;
+ const zi=EXP_Z.indexOf(z),got=expRoll(z),key=z.id+got.i,isNew=!E.col[key];E.col[key]=(E.col[key]||0)+1;E.done++;E.on='';E.prog=0;
+ const g=(isNew?20:35)+zi*15,px=4+zi*2;addGold(g);if(expPet())petAdd(px);
+ let bonus='';if(!E.zd[z.id]&&z.it.every((_,i)=>E.col[z.id+i])){E.zd[z.id]=1;const b=150+zi*50;addGold(b);bonus=`<p class="expfull">✨ ${z.n} 도감 완성! +${b}G</p>`}
+ const nx=EXP_Z.find(q=>q.un===E.done);
+ showModal(`<div class="expgot r${got.t[2]}"><div class="big">${got.t[0]}</div><h3>${esc(got.t[1])}</h3><p class="sub">${EXP_RN[got.t[2]]} · ${esc(got.t[3])}</p><p>${isNew?'🆕 새 기념품!':'이미 있는 기념품이에요'} · +${g}G${expPet()?` · 애정 +${px}`:''}</p>${bonus}${nx?`<p class="expfull">🔓 새 탐험지: ${nx.ic} ${nx.n}</p>`:''}</div><div class="row"><button class="btn ghost" data-act="close">닫기</button><button class="btn primary" data-act="exp-again">다시 떠나기</button></div>`,{cls:'fx'});
+ commit()}
 function petJump(){const el=document.querySelector('.petfig');if(!el)return;el.classList.remove('jump');void el.offsetWidth;el.classList.add('jump');
  const h=document.createElement('span');h.className='pheart';h.textContent='💕';el.appendChild(h);setTimeout(()=>h.remove(),1100)}
 function hatchModal(){if(S.pet.sp||petXP()<PET_ST[1])return;
@@ -1763,6 +1804,9 @@ function dayCheck(){const before=S.today.date,msgs=rollover(),dch=defSync();
  if(S.today.date!==before){snapTake();commit();petWelcome();toast('새로운 하루가 시작됐어요!');msgs.forEach(m=>toast(m));return true}
  if(dch)commit();return false}
 const H={
+ 'exp-pick':()=>expPick(),'exp-book':()=>expBook(),'exp-claim':()=>expClaim(),
+ 'exp-again':()=>{nextModal();expPick()},
+ 'exp-go':id=>{const z=expZone(id),E=expS();if(!z||E.on||E.done<z.un)return;E.on=id;E.prog=0;E.ld=S.today.date;E.lv=expWalkVal();nextModal();toast(`${z.ic} ${z.n}(으)로 출발! 걸을수록 가까워져요`);commit()},
  tab:a=>{tab=a;if(a==='set'&&cloudReady!==true&&!S.cloud.on)cloudPing();if(a==='raid'&&S.raid){S.raidSeen=S.raid.week;save()}if(a==='shop'&&cosUnseen())shopSeg='cos';if(a==='rec'&&achNew())recSeg='ach';render();window.scrollTo(0,0)},
  'rec-seg':k=>{recSeg=k;render();window.scrollTo(0,0)},
  'shop-seg':k=>{shopSeg=k;render();window.scrollTo(0,0)},
