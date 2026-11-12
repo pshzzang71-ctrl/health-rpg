@@ -556,6 +556,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--mint)}
 .petc{background:linear-gradient(160deg,#fffaf3,#ffeedd)}
 .hpbar{border-radius:99px;overflow:hidden}
 .ava{background:radial-gradient(circle at 50% 38%,#fffaf3 0%,#ffe6cf 72%);box-shadow:0 0 0 4px #fff6ec,0 8px 16px -8px rgba(158,98,60,.55)}
+/* ===== 3D 클레이 질감 (v2.1) ===== */
+:root{--clay-hi:inset 3px 4px 6px rgba(255,255,255,.85),inset -4px -6px 10px rgba(176,112,72,.16);--clay-out:0 14px 26px -14px rgba(150,90,55,.55)}
+.card,.quest,.heropan,.mbox,.stat,.skill,.path,.rw,.ach,.sbox,.cos,.raidmini,.expz{box-shadow:var(--clay-hi),var(--clay-out)!important}
+.quest::before{border-radius:0 8px 8px 0}
+.qicon,.expic,.hchip .ic,.lvtile,.spill span,.aic,.sicon,.picon{box-shadow:inset 2px 3px 5px rgba(255,255,255,.9),inset -3px -4px 6px rgba(160,100,60,.18),0 6px 10px -6px rgba(150,90,55,.5)!important}
+.btn,.hbtn,.counter button,.plus,#fab{position:relative;overflow:hidden}
+.btn::after,.hbtn::after,.counter button::after,#fab::after{content:"";position:absolute;left:12%;right:12%;top:3px;height:38%;border-radius:99px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0));pointer-events:none}
+#tabs .ti{display:grid;place-items:center;width:40px;height:40px;margin:0 auto 2px;border-radius:15px;background:linear-gradient(180deg,#fff7ef,#fde6d3);box-shadow:inset 2px 3px 4px rgba(255,255,255,.95),inset -3px -3px 5px rgba(170,110,70,.18),0 4px 8px -5px rgba(150,90,55,.5);font-size:22px}
+#tabs button.on .ti{background:linear-gradient(180deg,#ffd2bd,#ffb79b)}
+.ava,.hpc .ava{background:#fde9c6!important;overflow:hidden;box-shadow:inset 3px 4px 8px rgba(255,255,255,.7),inset -4px -6px 10px rgba(170,110,70,.22),0 0 0 5px #fff6ec,0 14px 24px -12px rgba(150,90,55,.6)!important}
+.xpbar,.pbar,.abar,.lvmid .xpbar{box-shadow:inset 2px 3px 5px rgba(150,90,50,.22),inset -1px -1px 2px rgba(255,255,255,.8)!important}
+.xpbar i,.pbar i,.abar i{box-shadow:inset 0 3px 3px rgba(255,255,255,.55),inset 0 -2px 2px rgba(0,0,0,.08)}
+.petc svg,.hpet2 svg{filter:drop-shadow(0 6px 6px rgba(150,90,55,.35))}
+.path{position:relative}
 </style>
 </head>
 <body>
@@ -568,7 +582,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--mint)}
 <script src="costumes.js"></script>
 <script>
 'use strict';
-const VERSION='2.0.0', KEY='healthRPG.v1';
+const VERSION='2.1.0', KEY='healthRPG.v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
@@ -667,14 +681,13 @@ const SKILLS=[
 const SK=Object.fromEntries(SKILLS.map(s=>[s.id,s]));
 
 const PATHS={
- monk:{name:'수도승',icon:'🧘',color:'#8b5cf6',tag:'유혹 저항 특화',tiers:['수도승','절제의 수행자','무념의 대사','해탈한 성자'],
-  passive:t=>({urge:[.3,.6,1,1.5][t-1],endure:[.15,.3,.5,.75][t-1]}),ult:{name:'금강불괴',desc:'오늘 하루 유혹 격퇴 보상 3배'},story:'욕망을 다스리는 자. 참을수록 강해진다.'},
- warrior:{name:'전사',icon:'🦸',color:'#ef4444',tag:'운동 특화',tiers:['전사','검투사','광전사','불멸의 투신'],
-  passive:t=>({body:[.3,.6,1,1.5][t-1],urge:[.1,.2,.3,.5][t-1]}),ult:{name:'투혼 폭발',desc:'오늘 하루 운동 퀘스트 XP 3배'},story:'몸을 단련하는 자. 땀은 배신하지 않는다.'},
- sage:{name:'현자',icon:'🧙',color:'#0ea5e9',tag:'수면·마음·생활 특화',tiers:['현자','마도사','대현자','시간의 현자'],
-  passive:t=>({mindlife:[.3,.6,1,1.5][t-1],urge:[.1,.2,.3,.5][t-1]}),ult:{name:'깨달음',desc:'오늘 하루 마음·수면·생활 퀘스트 XP 3배'},story:'습관을 설계하는 자. 작은 루틴이 운명을 바꾼다.'},
- paladin:{name:'성기사',icon:'🛡️',color:'#e08a00',tag:'꾸준함·연속 특화',tiers:['성기사','수호기사','성전사','빛의 수호신'],
-  passive:t=>({allclear:[.5,1,1.5,2][t-1],streakCap:[5,10,15,20][t-1]}),ult:{name:'신성한 가호',desc:'이번 주 연속 보호막 +1'},story:'매일을 지키는 자. 꾸준함이 최강의 무기다.'}};
+ warrior:{name:'근력 전사',icon:'🏋️',color:'#f2654b',tag:'근력·운동 특화',tiers:['근력 전사','강철 전사','중량의 투사','불멸의 헤라클레스'],
+  passive:t=>({body:[.3,.6,1,1.5][t-1],urge:[.1,.2,.3,.5][t-1]}),ult:{name:'펌핑 폭발',desc:'오늘 하루 운동 퀘스트 XP 3배'},story:'바벨을 드는 자. 오늘 든 무게가 내일의 힘이 된다.'},
+ paladin:{name:'유산소 도적',icon:'🏃',color:'#2fae8c',tag:'걷기·꾸준함 특화',tiers:['유산소 도적','바람의 질주자','그림자 마라토너','전설의 질주왕'],
+  passive:t=>({allclear:[.5,1,1.5,2][t-1],streakCap:[5,10,15,20][t-1]}),ult:{name:'그림자 회피',desc:'이번 주 연속 보호막 +1'},story:'멈추지 않고 달리는 자. 하루도 빠짐없는 발걸음이 최고의 무기다.'},
+ sage:{name:'요가 마법사',icon:'🧘',color:'#9b7bf5',tag:'마음·수면·유혹 저항 특화',tiers:['요가 마법사','호흡의 마법사','명상의 대마법사','고요의 현자'],
+  passive:t=>({mindlife:[.3,.6,1,1.5][t-1],endure:[.15,.3,.5,.75][t-1],urge:[.1,.2,.3,.5][t-1]}),ult:{name:'깊은 호흡',desc:'오늘 하루 마음·수면·생활 퀘스트 XP 3배'},story:'호흡으로 마음을 다스리는 자. 고요함 속에서 유혹은 힘을 잃는다.'}};
+const AVIMG={'':'av/novice.webp',warrior:'av/warrior.webp',paladin:'av/rogue.webp',sage:'av/yoga.webp'};
 const JOBREQ=[null,{lv:5,clears:3,urges:1},{lv:15,best:7,urges:10},{lv:30,best:21,urges:30},{lv:50,best:30,urges:100}];
 const AURA=['#d9c4a4','#d08a4a','#9fb3c8','#ffc21a','#ffb3d9'];
 
@@ -806,6 +819,8 @@ function charImg(path,tier,bust,u,cs){const P=path&&tier&&typeof PATHS!=='undefi
  const badge=P?`<circle cx="${x+w-b}" cy="${y+w-b}" r="${bs/2}" fill="#fff" stroke="${P.color}" stroke-width="${w*.025}"/><text x="${x+w-b}" y="${y+w-b+bs*.04}" font-size="${bs*.52}" text-anchor="middle" dominant-baseline="central">${P.icon}</text>`:'';
  const IM=(h,a)=>`<image href="${h}" x="0" y="0" width="100" height="100"${a||''}/>`;
  let defs=`<clipPath id="cc${u}"><circle cx="${x+r}" cy="${y+r}" r="${r}"/></clipPath>`,back='',paint='',front='',head='';
+ if(!cs){const im=AVIMG[(path&&tier&&PATHS[path])?path:'']||AVIMG[''];
+  return `<svg class="ci" viewBox="${x} ${y} ${w} ${w}" overflow="visible" xmlns="http://www.w3.org/2000/svg"><defs>${defs}</defs><image href="${im}" x="0" y="0" width="100" height="100" clip-path="url(#cc${u})"/>${badge}</svg>`}
  if(cs&&typeof cs.img==='string'&&/^cos\/[a-z0-9_]+\.(webp|png)$/.test(cs.img)){
   // 코스튬 그림이 있으면 그 그림을 그대로 (모자·귀는 동그란 틀 위로 나와도 보이게)
   defs=`<clipPath id="cc${u}"><circle cx="${x+r}" cy="${y+r}" r="${r}"/><rect x="${x+r-r*.56}" y="${y+r-r*1.7}" width="${r*1.12}" height="${r*1.7}"/></clipPath>`;
@@ -909,7 +924,7 @@ function lookModal(){showModal(`<h2>💇 코스튬 외모</h2><p class="sub">기
 
 /* ---------- 상태 ---------- */
 function defaults(){return{
- v:6,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
+ v:7,name:'모험가',created:null,onboarded:false,dayStart:4,battleMin:10,
  level:1,xp:0,gold:0,statPts:3,skillPts:1,grantStat:3,grantSkill:1,
  stats:{wil:0,tem:0,vit:0,wis:0,luk:0},skills:{},cls:{path:null,tier:0},
  streak:0,bestStreak:0,shields:0,shieldWeek:'',ultWeek:'',ultDay:'',buffDay:'',
@@ -1122,7 +1137,7 @@ function howto(first){
  <div class="howl"><div>📜 <b>일일 퀘스트</b> — 건강 목표를 달성하면 경험치와 골드. 전부 해내면 올클리어 보너스!</div>
  <div>⬆️ <b>레벨 업</b> — 레벨마다 스탯 3·스킬 1 포인트. 레벨이 오를수록 퀘스트도 어려워지고 보상도 커져요.</div>
  <div>⚔️ <b>유혹 전투</b> — 야식·군것질 같은 욕구가 올라오면 '유혹이 왔다!'를 누르고 정해진 시간만 버티세요. 욕구는 파도처럼 지나가요.</div>
- <div>🧙 <b>전직</b> — Lv.5부터 수도승·전사·현자·성기사 중 하나로 전직. 4차까지 강해지고 궁극기도 생겨요.</div>
+ <div>🧙 <b>전직</b> — Lv.5부터 근력 전사·유산소 도적·요가 마법사 중 하나로 전직. 4차까지 강해지고 궁극기도 생겨요.</div>
  <div>👹 <b>주간 레이드</b> — 매주 월요일 새 보스 등장. 퀘스트·올클리어·유혹 격퇴로 피해를 주고 일요일까지 쓰러뜨리면 장비 획득!</div>
  <div>🚶 <b>걸음·수면 입력</b> — 걷기·운동·수면은 삼성 헬스(갤럭시 핏) 숫자를 넣으면 자동으로 판정돼요.</div>
  <div>🛍️ <b>상점</b> — 골드로 캐릭터 코스튬을 사거나(매주 화요일 신상 2벌), 내가 정한 진짜 보상을 사세요.</div>
@@ -1303,10 +1318,9 @@ function vSet(){const tier=tierOf(S.level);
 
 /* ---------- 펫 ---------- */
 const PET_SP={
- dog:{name:'구름 강아지',def:'몽실이',desc:'느긋하고 다정해요. 산책을 제일 좋아해요.'},
- bunny:{name:'새싹 토끼',def:'새싹이',desc:'부지런해요. 물 마시는 걸 좋아해요.'},
- fox:{name:'불꽃 여우',def:'불꽃이',desc:'열정적이에요. 유혹과 싸울 때 힘이 나요.'},
- peng:{name:'별빛 펭귄',def:'별이',desc:'차분해요. 일찍 자는 걸 좋아해요.'}};
+ chick:{name:'헤어밴드 병아리',def:'삐약이',desc:'씩씩하고 부지런해요. 같이 걷는 걸 제일 좋아해요.',img:'pet/chick.webp'},
+ jelly:{name:'말랑 젤리',def:'말랑이',desc:'느긋하지만 근성 있어요. 덤벨 운동을 좋아해요.',img:'pet/jelly.webp'}};
+const PET_OLD={dog:'chick',fox:'chick',bunny:'jelly',peng:'jelly'};
 const PET_ST=[0,15,100,300,800],PET_NM=['알','아기','꼬마','어른','전설'],TREAT_G=30;
 const TREATS=['🍎 사과','🥕 당근','🫐 블루베리','🍌 바나나','🥦 브로콜리','🍓 딸기','🥒 오이'];
 const jo=(w,a,b)=>{const c=String(w).charCodeAt(String(w).length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28?a:b};
@@ -1339,7 +1353,10 @@ const PART={
   acc:`<path d="M52 92 l8 4 l8 -4 v8 l-8 -4 l-8 4z" fill="#ff5d73"/><circle cx="60" cy="96" r="2.2" fill="#d63a52"/>`}};
 const heart=(x,y,s,c)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M0 4 C-6 -1 -5 -6 -2 -6 C-1 -6 0 -5 0 -4 C0 -5 1 -6 2 -6 C5 -6 6 -1 0 4Z" fill="${c||'#ff7aa8'}"/>`;
 const spark=(x,y,s)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5Z" fill="#ffe066"/>`;
-function petSVG(sp,st,mood,x){const W=b=>`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
+function petSVG(sp,st,mood,x){if(PET_OLD[sp])sp=PET_OLD[sp];const P=PET_SP[sp];
+ if(P&&P.img&&st){const k=[0,.72,.82,.92,1][Math.min(4,st)],u=++_au,o=60-56*k;
+  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="pc${u}"><circle cx="60" cy="60" r="${56*k}"/></clipPath></defs>${st>=4?`<circle cx="60" cy="60" r="59" fill="none" stroke="#ffc857" stroke-width="3"/>`:''}<image href="${P.img}" x="${o}" y="${o}" width="${112*k}" height="${112*k}" clip-path="url(#pc${u})"/>${mood==='sleep'?'<text x="94" y="28" font-size="18">💤</text>':''}</svg>`}
+const W=b=>`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
  if(!sp||!st){const p=Math.min(1,(x||0)/PET_ST[1]);
   return W(`<ellipse cx="60" cy="108" rx="24" ry="4.5" fill="rgba(0,0,0,.12)"/>${p>=1?'<circle cx="60" cy="74" r="44" fill="#fff3b0" opacity=".6"/>'+spark(24,40,1)+spark(96,52,.8):''}<path d="M60 38 C78 38 88 66 88 80 C88 98 76 106 60 106 C44 106 32 98 32 80 C32 66 42 38 60 38Z" fill="#fff8e7" stroke="#e8d3a8" stroke-width="2.5"/><circle cx="48" cy="66" r="5" fill="#ffd6e7"/><circle cx="70" cy="57" r="4" fill="#cdeccf"/><circle cx="72" cy="88" r="6" fill="#d6e8ff"/><circle cx="46" cy="92" r="3.5" fill="#fff0b3"/><ellipse cx="51" cy="52" rx="4.5" ry="8" fill="#fff" opacity=".75" transform="rotate(25 51 52)"/>${p>=.4?'<path d="M36 76 l7 -5 l5 6 l7 -7 l6 6 l7 -6 l7 5 l7 -4" stroke="#c9a46a" stroke-width="2.2" fill="none" stroke-linejoin="round"/>':''}${p>=.8?'<path d="M60 39 l-3 8 l5 4 l-4 7" stroke="#c9a46a" stroke-width="2" fill="none" stroke-linejoin="round"/>':''}`)}
  const s=PART[sp]||PART.dog,sc=[1,.72,.85,.95,1][st]||1,L=st>=4,ey=70,my=79+(s.my||0),k='#3a2a2a';let eyes,mouth,fx='';
@@ -1444,6 +1461,7 @@ function petFlush(){if(!S.pet.sp)return;const st=petStageRaw();if(st<=(S.pet.see
 function petWelcome(){const P=S.pet;if(!P.sp||P.welc===S.today.date||S.today.quests.some(q=>q.done))return;const m=petMissed();if(m<2)return;
  P.welc=S.today.date;addGold(20);addLog('🐾',`${P.name}${jo(P.name,'이','가')} 반겨 줬어요 (+20G)`);save();
  showModal(`<div class="pkbig">${petSVG(P.sp,petStage(),'joy',0)}</div><h2>돌아왔군요! 🥹</h2><p><b>${esc(P.name)}</b>${jo(P.name,'이','가')} ${m}일 동안 기다렸어요.</p><p>괜찮아요, 오늘 하나만 같이 해 봐요.</p><p class="sub">다시 온 기념 선물 +20G</p><button class="btn primary wide" data-act="close">다시 시작!</button>`,{cls:'fx'})}
+function migrate18(){if((S.v||1)>=7)return;S.v=7;if(S.cls&&S.cls.path==='monk')S.cls.path='sage';if(S.pet&&PET_OLD[S.pet.sp])S.pet.sp=PET_OLD[S.pet.sp]}
 function migrate17(){if((S.v||1)>=6)return;S.v=6;S.look={hs:'long',hc:'sky',ec:'blue',set:true}}
 function migrate16(){if((S.v||1)>=4)return;S.v=4;let sum=0;for(const k in S.history){const r=S.history[k];if(r)sum+=(r.q||0)+(r.c?5:0)+(r.u||0)*3}S.pet.xp=Math.min(99,sum)}
 
@@ -1536,7 +1554,7 @@ function snapTake(pre){if(!S||!S.onboarded||!S.today)return;const L=snapLoad(),d
  L.unshift({d,at:Date.now(),lv:S.level,g:S.gold,s:JSON.stringify(S),pre:pre?1:0});
  for(let n=Math.min(L.length,7);n>=1;n--){try{L.length=n;localStorage.setItem(SNAP,JSON.stringify(L));return}catch(e){}}}
 function restoreObj(o,msg){if(!o||typeof o.level!=='number'||!o.totals){toast('올바른 백업이 아니에요');return false}
- snapTake(true);S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();migrate14();migrate15();migrate16();migrate17();clearInterval(btimer);$('#battle').classList.add('hidden');
+ snapTake(true);S=merge(defaults(),o);if(!S.created)S.created=todayKey();migrateToday();migrate14();migrate15();migrate16();migrate17();migrate18();clearInterval(btimer);$('#battle').classList.add('hidden');
  rollover();defSync();commit();toast(msg||'복원 완료!');if(S.battle)showBattle();return true}
 
 const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -2038,7 +2056,7 @@ setInterval(()=>{dayCheck();cloudAuto();if(S.battle&&$('#battle').classList.cont
 /* ---------- 시작 ---------- */
 (function init(){
  S=merge(defaults(),load());if(!S.created)S.created=todayKey();
- migrateToday();migrate14();migrate15();migrate16();migrate17();
+ migrateToday();migrate14();migrate15();migrate16();migrate17();migrate18();
  const msgs=rollover();defSync();checkAch(true);save();snapTake();render();cosNotify();
  setTimeout(()=>verCheck(false),3000);
  setTimeout(()=>{if(S.cloud.on)cloudAuto();else cloudPing().then(r=>{if(r&&cloudAskOn()&&tab==='quest'&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))render()})},2000);
