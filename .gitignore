@@ -6,3 +6,7 @@ android/.idea/
 *.iml
 .DS_Store
 web/node_modules/
+mage-forge/android/.gradle/
+mage-forge/android/build/
+mage-forge/android/app/build/
+mage-forge/android/local.properties

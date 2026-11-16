@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>마탑 강화기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbit&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 유즈맵 한 판: 어두운 맵 타일 위에 구역(강화대, 사냥터, 상점)이 나뉘어 있고, 미네랄만 청록으로 빛난다. */
+:root{
+  color-scheme:dark;
+  --map:#0c1110; --zone:#121a18; --zone-2:#19241f; --line:#27382f;
+  --text:#d6e6dc; --mute:#7d948a;
+  --mineral:#48d6e8; --ok:#6fe07a; --bad:#ff5d5d; --gold:#ffd257;
+  --display:"Orbit","Nanum Gothic Coding",monospace;
+  --body:"Nanum Gothic Coding","D2Coding","Malgun Gothic",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--map);color:var(--text);font-family:var(--body);font-size:14px;line-height:1.5;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:32px 32px}
+.wrap{max-width:1120px;margin:0 auto;padding:18px 16px 48px;display:grid;gap:16px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 20px}
+h1{font-family:var(--display);font-weight:400;font-size:28px;margin:0}
+h1 small{font-family:var(--body);font-size:12px;color:var(--mute);margin-left:10px}
+.res{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:baseline;font-variant-numeric:tabular-nums}
+.res .m{font-family:var(--display);font-size:26px;color:var(--mineral)}
+.res span{color:var(--mute);font-size:12px}
+.res b{color:var(--text)}
+.cols{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:16px;align-items:start}
+@media (max-width:880px){.cols{grid-template-columns:1fr}}
+.col{display:grid;gap:16px;min-width:0}
+.zone,.slot,.unit>div{min-width:0}
+h2{flex-wrap:wrap}
+@media (max-width:520px){h1 small{display:block;margin:2px 0 0}.slot .top{align-items:flex-start}}
+.zone{background:var(--zone);border:1px solid var(--line);border-radius:6px;padding:14px}
+h2{font-family:var(--display);font-weight:400;font-size:15px;margin:0 0 10px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+h2 small{font-family:var(--body);font-size:12px;color:var(--mute)}
+.note{margin:0;padding:10px 14px;border-radius:6px;background:#1d2a1f;border:1px solid #3d5a40;font-size:13px}
+.note[hidden],#end[hidden]{display:none}
+#end{border-color:var(--gold)}
+#end h3{font-family:var(--display);font-weight:400;font-size:22px;margin:0 0 6px;color:var(--gold)}
+#end p{margin:0}
+
+.slots{display:grid;gap:8px}
+.slot{background:var(--zone-2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:grid;gap:6px}
+.slot.locked{opacity:.4}
+.slot[hidden]{display:none}
+.slot .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.unit{display:flex;align-items:center;gap:10px;min-width:0}
+.gem{flex:none;width:22px;height:22px;transform:rotate(45deg);border-radius:4px;background:var(--g,#3a4a44);box-shadow:0 0 10px var(--g,transparent)}
+.unit b{font-weight:700;color:var(--g,var(--mute))}
+.slot .sub{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.slot .sub .s{color:var(--ok)} .slot .sub .d{color:var(--bad)}
+.track{height:8px;border-radius:2px;background:#0a0f0d;overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--mineral)}
+.btns{display:flex;gap:6px}
+button,select{font:inherit;color:inherit;background:#0f1614;border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--mineral)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--mineral);outline-offset:2px}
+.crystal{border-color:#3b5a60;margin-bottom:8px}
+.crystal .gem{border-radius:2px;width:26px;height:26px;background:var(--mineral);box-shadow:0 0 14px var(--mineral)}
+.crystal b{color:var(--mineral)}
+.crystal .track i{background:var(--gold)}
+.ring{display:grid;gap:8px}
+.ring .big{font-family:var(--display);font-size:18px;color:var(--gold)}
+.ring .btns{flex-wrap:wrap}
+.hunt{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:520px){.hunt{grid-template-columns:1fr}}
+
+.ctrl{display:grid;gap:10px}
+.ctrl label{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ctrl input{accent-color:var(--mineral)}
+.ctrl small{color:var(--mute);display:block}
+.shop{display:grid;gap:6px}
+.shop button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;text-align:left;padding:8px 10px;background:var(--zone-2)}
+.shop small{display:block;color:var(--mute);font-size:12px}
+.shop .c{color:var(--mineral);font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.shop .lv{color:var(--mute);font-size:12px;text-align:right}
+#log{list-style:none;margin:0;padding:0;display:grid;gap:2px;font-size:13px;max-height:230px;overflow-y:auto}
+#log li{display:grid;grid-template-columns:auto 36px minmax(0,1fr);gap:8px}
+#log time{min-width:48px}
+#log time{color:var(--mute);font-variant-numeric:tabular-nums}
+#log em{font-style:normal;font-weight:700}
+.ctrl input,#autoShop,#autoRing{accent-color:var(--mineral)}
+#log .ok em{color:var(--ok)} #log .bad em{color:var(--bad)} #log .gold em{color:var(--gold)} #log .min em{color:var(--mineral)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+th,td{padding:4px 8px;text-align:right;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:400}
+th:first-child,td:first-child{text-align:left}
+td.s{color:var(--ok)} td.d{color:var(--bad)}
+.rules{margin:0;padding-left:18px;color:var(--mute);font-size:13px;display:grid;gap:4px}
+.rules b{color:var(--text)}
+.foot{display:flex;justify-content:flex-end;align-items:center;gap:12px;font-size:12px;color:var(--mute);flex-wrap:wrap}
+.boss{border-color:#6a2f3a}
+.boss.on{border-color:var(--bad);box-shadow:0 0 18px rgba(255,93,93,.25)}
+.boss .gem{border-radius:50%;width:26px;height:26px;transform:none;background:var(--bad);box-shadow:0 0 14px var(--bad)}
+.boss b{color:var(--bad)}
+.boss .track i{background:var(--bad)}
+.boss .tt{font-family:var(--display);font-size:20px;color:var(--bad);font-variant-numeric:tabular-nums}
+.boss .tt.idle{color:var(--mute);font-size:16px}
+.gamble{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.gamble button{border-color:#6b5a2a}
+.gamble button:hover:not(:disabled){border-color:var(--gold)}
+#banner{border-color:var(--gold);font-family:var(--display);font-size:16px;color:var(--gold)}
+#banner.bad{border-color:var(--bad);color:var(--bad);background:#2a1a1c}
+#end .btns{margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>마탑 강화기<small>30분 한 판 · 5분마다 보스</small></h1>
+    <div class="res"><span class="m"><b id="min" style="color:inherit">30</b></span><span>미네랄 · 초당 <b id="inc">0.5</b></span><span>기도 <b id="pity">+0.0%p</b></span><span>라운드 <b id="rnd">1</b></span><span>남은 시간 <b id="clock">30:00</b></span></div>
+  </header>
+
+  <p class="note" id="banner" hidden></p>
+  <section class="zone" id="end" hidden><h3 id="endH">30분 종료</h3><p id="endTxt"></p><div class="btns"><button type="button" id="again">새 판 시작</button></div></section>
+
+  <div class="cols">
+    <div class="col">
+      <section class="zone">
+        <h2>보스<small>4분 사냥 뒤 1분 보스전, 5분마다 반복</small></h2>
+        <div class="slot boss" id="bossBox">
+          <div class="top"><div class="unit"><span class="gem"></span><div><b id="bsName">라운드 1 보스</b><div class="sub" id="bsSub"></div></div></div><div class="tt idle" id="bsTime">4:00</div></div>
+          <div class="track"><i id="bsBar"></i></div>
+          <div class="sub" id="bsOdds"></div>
+        </div>
+      </section>
+      <section class="zone">
+        <h2>강화대<small>의식 시간이 차면 강화 판정이 납니다</small></h2>
+        <div class="slots" id="forge"></div>
+      </section>
+      <section class="zone">
+        <h2>사냥터<small>보스전 동안에는 수정 대신 보스를 공격합니다</small></h2>
+        <div class="slot crystal">
+          <div class="top"><div class="unit"><span class="gem"></span><div><b id="cgName">수정 Lv.1</b><div class="sub" id="cgSub"></div></div></div><div class="sub" id="cgDps"></div></div>
+          <div class="track"><i id="cgBar"></i></div>
+          <div class="sub" id="cgOdds"></div>
+          <div class="gamble"><button type="button" data-a="gamble" data-i="0" id="gbtn">수정 공명</button><span class="sub" id="gtxt"></span></div>
+        </div>
+        <div class="slots hunt" id="hunt"></div>
+      </section>
+      <section class="zone">
+        <h2>전투 기록</h2>
+        <ol id="log"></ol>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="zone ctrl">
+        <h2>지휘</h2>
+        <label for="target">목표 등급 <select id="target"></select></label>
+        <small>강화대의 유닛은 목표 등급이 될 때까지 계속 강화합니다. 자동은 사냥터에서 가장 낮은 유닛보다 세 단계 높게 잡고, 사냥터에 빈 자리가 있으면 바로 채웁니다.</small>
+        <label><input type="checkbox" id="autoBuy"> 빈 강화대에 자동 소환</label>
+        <label><input type="checkbox" id="autoPlace"> 목표 달성 시 사냥터로 자동 배치</label>
+        <small>사냥터가 가득 차면 가장 낮은 유닛을 팔고 교체합니다. 새 유닛이 더 낮으면 새 유닛을 팝니다.</small>
+      </section>
+      <section class="zone ring">
+        <h2>반지<small>수정과 보스에 주는 피해를 올립니다</small></h2>
+        <div><span class="big" id="ringName">반지 없음</span> <span class="sub" id="ringSub"></span></div>
+        <div class="btns"><button type="button" data-a="ring1" data-i="0" id="ring1">강화</button><button type="button" data-a="ring3" data-i="0" id="ring3">확정 강화</button></div>
+        <label><input type="checkbox" id="autoRing"> 필요한 재료가 모이면 자동으로 확정 강화</label>
+      </section>
+      <section class="zone">
+        <h2>상점</h2>
+        <div class="shop" id="shop"></div>
+      </section>
+      <section class="zone">
+        <h2>심화 상점<small>상한 없음</small></h2>
+        <div class="shop" id="xshop"></div>
+        <p class="sub" id="xsum" style="margin:8px 0 0;font-size:12px;color:var(--mute)"></p>
+        <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="autoShop"> 상점 자동 구매 (미네랄이 가격의 3배 이상일 때, 기본 상점은 1.5배)</label>
+      </section>
+      <section class="zone">
+        <h2>등급표</h2>
+        <div class="scroll"><table><thead><tr><th>등급</th><th>성공</th><th>파괴</th><th>시도비</th><th>초당 피해</th><th>판매가</th></tr></thead><tbody id="tiers"></tbody></table></div>
+      </section>
+      <section class="zone">
+        <h2>규칙</h2>
+        <ul class="rules">
+          <li>한 판은 <b>30분</b>입니다. 끝나면 도달한 라운드와 최고 등급으로 기록이 남습니다. 창을 닫거나 다른 앱으로 가면 시간이 멈춥니다.</li>
+          <li><b>보스전</b>: 5분마다 마지막 1분(4:00~5:00, 9:00~10:00 …)이 보스전입니다. 사냥터 유닛이 수정 대신 보스를 때리고, 보스를 쓰러뜨릴 때마다 <b>3%</b> 확률로 라운드 클리어입니다. 꽝이면 보스가 다시 일어나고, 제한시간이 끝날 때까지 계속 잡을 수 있습니다.</li>
+          <li><b>라운드 클리어</b>: 잭팟 미네랄(×1~×10 랜덤), 반지 재료, 이후 모든 피해 ×1.25를 얻고 다음 라운드로 넘어갑니다. 다음 보스는 체력이 1.6배입니다. 클리어 못 한 라운드는 다음 보스전에 다시 도전합니다.</li>
+          <li><b>수정 레벨 = 최소 소환 등급</b>: 수정 Lv.1이면 일반 1 견습생, Lv.2면 일반 2 견습생 … 수정 레벨이 한 단계 오를 때마다 새로 소환하는 마법사도 한 단계씩 올라갑니다. 수정이 내려가면 소환 등급도 내려갑니다.</li>
+          <li><b>수정 성장</b>: 수정이 빨리 깨질수록 등급이 잘 오르고, 오를 때 가끔 <b>+2, +3 폭등</b>합니다. 3초 넘게 걸리면 가끔 내려갑니다. 등급마다 체력 1.5배, 보상 1.7배입니다.</li>
+          <li><b>수정 공명</b>(도박): 미네랄을 걸고 수정을 흔듭니다. 38% +1, 10% +2, 2% +4 잭팟, 50% 균열(−1).</li>
+          <li>판정은 <b>성공</b>(한 단계 상승), <b>실패</b>(그대로), <b>파괴</b>(유닛 소멸) 셋 중 하나입니다. 하락은 없습니다.</li>
+          <li><b>기도</b>: 유닛이 파괴될 때마다 모든 성공 확률이 0.3%p씩 오릅니다 (최대 +15%p).</li>
+          <li><b>장인의 기운</b>: 히든 1 이상에서 강화에 실패하면 그 강화대에 기운이 쌓이고, 100%가 되면 다음 강화는 확정 성공입니다.</li>
+          <li><b>반지</b>: 수정 30개째에 첫 반지를 얻고, 이후 깨질 때마다 1% 확률로 재료가 나옵니다. 반지 1레벨마다 피해 +25%. 확정 강화 재료는 현재 레벨 + 2개입니다.</li>
+          <li><b>마탑의 주인</b>(61단계)을 만들면 그 판은 전설 클리어로 기록됩니다.</li>
+        </ul>
+      </section>
+      <section class="zone">
+        <h2>기록 옮기기<small>다른 기기나 앱으로 이어서 하기</small></h2>
+        <div class="btns" style="flex-wrap:wrap"><button type="button" id="xout">내보내기 코드 만들기</button><button type="button" id="xin">아래 코드로 가져오기</button></div>
+        <textarea id="xfer" rows="3" spellcheck="false" aria-label="기록 코드" placeholder="내보내기를 누르면 코드가 여기에 나옵니다. 다른 기기에서는 그 코드를 여기에 붙여 넣고 가져오기를 누르세요." style="width:100%;margin-top:8px;font:inherit;font-size:12px;color:inherit;background:#0a0f0d;border:1px solid var(--line);border-radius:4px;padding:8px;resize:vertical"></textarea>
+        <p class="sub" id="xmsg" style="margin:6px 0 0;font-size:12px;color:var(--mute)"></p>
+      </section>
+      <div class="foot"><span id="bestRec"></span><span id="cloud">이 기기에 저장 중</span><button type="button" id="reset">처음부터 다시</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/*SIM*/
+// ── 밸런스(30분판 v1) ──
+const S=[90,85,80,75,70,65,60,55,50,45,40,35,30,25,20];   // 성공 %
+const D=[0,0,0,5,8,10,12,15,18,20,22,25,25,28,30];        // 파괴 %
+const MAXT=61, BASE=1, T0=4, STEP=.1, S2=8, D2=33, AUTOK=3;
+const RUN=1800, CYCLE=300, BOSS_AT=240, BHP=1.5, BR=1.6, DOWNT=3, CLR=3, CLRB=1.25;
+const H0=5, HG=1.5, RG=1.7, RW=.15, RINGP=.01, FIRSTRING=30, RB=.25, GA=1;
+const sumT=()=>Math.min(MAXT-1,s.cg), sumC=()=>Math.round(16*Math.pow(1.4,sumT()-1));
+const need=l=>l+2, ringDrop=()=>1+Math.floor(s.cg/8);
+const RNAME=["구리","은","금","백금","다이아","별빛","달빛","태양","은하","우주"];
+const ringName=l=>RNAME[Math.min(9,Math.floor((l-1)/10))]+" 반지 Lv."+l;
+const chp=g=>H0*Math.pow(HG,g-1), crw=g=>H0*RW*Math.pow(RG,g-1);
+const ringP=l=>Math.min(70,Math.round(1000/(1.5*need(l)))/10);
+const GRADE=["일반","레어","유니크","에픽","레전드","히든","신화","고대","태초","초월","영원","심연","천상","창세","종말","무한","운명","진리","근원","절대"];
+const JOB=["견습생","마법사","마도사","대마도사","현자","별의 마법사","달의 마법사","태양의 마법사","은하의 마법사","차원술사","시간술사","공허술사","빛의 사도","창조술사","파멸술사","무한의 현자","운명술사","진리의 탐구자","근원의 마법사","절대자"];
+const BOSS=["돌 골렘","해골 리치","붉은 와이번","서리 거인","타락한 현자","심연의 눈","고대 용","공허의 군주","시간의 파수꾼","종말의 마왕"];
+const bossName=r=>BOSS[Math.min(BOSS.length-1,r-1)]+(r>BOSS.length?" "+(r-BOSS.length+1)+"형":"");
+const COLOR=["#9aa8a2","#5aa9ff","#b58cff","#ff9f4a","#ffd257","#ff7ad9"];
+const col=t=>t>=MAXT?"#ffffff":gi(t)<6?COLOR[gi(t)]:"hsl("+(gi(t)*47%360)+" 75% 68%)";
+const bs=t=>t<=15?S[t-1]:S2, bd=t=>t<=15?D[t-1]:D2;
+const UP={
+  speed:{name:"신속 의식",desc:k=>k<12?"강화 시간 6% 단축":"강화 시간 1% 단축",max:30,c:k=>40*Math.pow(1.6,k)},
+  succ:{name:"집중의 룬",desc:k=>k<10?"성공 확률 +1%p":"성공 확률 +0.1%p",max:30,c:k=>60*Math.pow(1.8,k)},
+  prot:{name:"보호 결계",desc:k=>k<10?"파괴 확률 4% 감소":"파괴 확률 0.5% 감소",max:30,c:k=>80*Math.pow(1.8,k)},
+  forge:{name:"강화대 증설",desc:k=>"강화대 +1칸",max:3,c:k=>300*Math.pow(10,k)},
+  hunt:{name:"사냥터 확장",desc:k=>"사냥터 +1칸",max:5,c:k=>150*Math.pow(3,k)}};
+const FS=4, HS=8;
+const XUP={
+  amp:{name:"마력 증폭",desc:"수정·보스 피해 +10%",c:k=>200*Math.pow(1.6,k)},
+  loot:{name:"채굴 숙련",desc:"수정 보상 +10%",c:k=>300*Math.pow(1.6,k)},
+  rite:{name:"숙련 의식",desc:"강화 시간 1.5% 단축",c:k=>2000*Math.pow(2.2,k)},
+  pray:{name:"깊은 기도",desc:"기도 최대치 +0.1%p",c:k=>5000*Math.pow(2.2,k)},
+  luck:{name:"행운의 부적",desc:"보스 클리어 확률 +0.25%p",c:k=>3000*Math.pow(3,k)}};
+const inc=t=>.3*Math.pow(1.4,t-1), sellv=t=>inc(t)*45;
+const acost=t=>Math.round(2*Math.pow(1.7,t-1));
+const gi=t=>Math.min(19,Math.floor((t-1)/3));
+const label=t=>t>=MAXT?"마탑의 주인":GRADE[gi(t)]+" "+((t-1)%3+1)+" "+JOB[gi(t)];
+
+function fresh(){return{v:3,m:30,up:{speed:0,succ:0,prot:0,forge:0,hunt:0},forge:[null,null,null,null],hunt:[],target:"auto",autoBuy:true,autoPlace:true,autoRing:true,autoShop:true,x:{amp:0,loot:0,rite:0,pray:0,luck:0},fg:[0,0,0,0],cgMax:1,cg:1,chp:H0,ring:0,mat:0,breaks:0,
+  round:1,cleared:0,boss:null,bossCycle:-1,bkills:0,gam:0,over:false,fin:false,endT:0,
+  t:0,made:0,boom:0,best:1,wall:Date.now(),log:[]}}
+let s=fresh(),live=true,banner=null;
+
+const UNITS=["만","억","조","경","해","자","양","구","간","정","재","극"];
+function fmt(v){v=Math.floor(v);if(v<1e5)return v.toLocaleString("ko-KR");
+  const e=Math.min(UNITS.length,Math.floor(Math.log10(v)/4)),x=v/Math.pow(10,e*4);
+  return (x>=1000?Math.round(x).toLocaleString("ko-KR"):x>=100?x.toFixed(1):x.toFixed(2))+UNITS[e-1]}
+function fmtR(v){return v<100?(Math.round(v*10)/10).toFixed(1):fmt(v)}
+function fmtT(t){t=Math.max(0,Math.floor(t));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),c=t%60;return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(c).padStart(2,"0")}
+function log(kind,tag,text){if(!live)return;s.log.unshift([Math.floor(s.t),kind,tag,text]);if(s.log.length>40)s.log.length=40}
+function shout(text,bad){banner={text:text,bad:!!bad,until:Date.now()+6000}}
+
+const slots=()=>1+s.up.forge, hslots=()=>3+s.up.hunt;
+const mult=()=>(1+RB*s.ring)*(1+.1*s.x.amp)*Math.pow(CLRB,s.cleared);
+const huntDps=()=>s.hunt.reduce((a,t)=>a+inc(t),0)*mult();
+const reward=()=>crw(s.cg)*(1+.1*s.x.loot);
+const huntInc=()=>s.boss?0:huntDps()/chp(s.cg)*reward();
+const clr=()=>CLR+.25*s.x.luck;
+const bossMax=()=>chp(s.cg)*BHP*Math.pow(BR,s.round-1);
+const bossRw=()=>reward()*BHP*Math.pow(BR,s.round-1)*1.2;
+const gcost=()=>Math.max(50,Math.round(reward()*20));
+function ringUp(n,sure){
+  if(s.ring<1||s.mat<n)return;s.mat-=n;
+  if(sure||Math.random()*100<ringP(s.ring)){s.ring++;log("gold","반지",ringName(s.ring)+" 강화 성공"+(sure?" (확정)":"")+" · 피해 +"+Math.round(RB*s.ring*100)+"%")}
+  else log("bad","반지","반지 강화 실패, 재료 1개 소멸")}
+const pityCap=()=>15+.1*s.x.pray;
+const pity=()=>Math.min(pityCap(),s.boom*.3);
+const succB=()=>Math.min(10,s.up.succ)+.1*Math.max(0,s.up.succ-10);
+const protF=()=>1-.04*Math.min(10,s.up.prot)-.005*Math.max(0,s.up.prot-10);
+const pS=t=>Math.min(100,bs(t)+succB()+pity()), pD=t=>Math.min(100-pS(t),bd(t)*protF());
+const dur=()=>T0*Math.pow(.94,Math.min(12,s.up.speed))*Math.pow(.99,Math.max(0,s.up.speed-12))*Math.pow(.985,s.x.rite);
+function minHunt(){let j=-1;for(let i=0;i<s.hunt.length;i++)if(j<0||s.hunt[i]<s.hunt[j])j=i;return j}
+function target(){
+  if(s.target!=="auto")return Math.min(MAXT,Math.max(2,+s.target||2));
+  const j=minHunt(),mn=j<0?0:s.hunt[j];
+  if(s.hunt.length<hslots())return Math.max(sumT(),mn-2);
+  return Math.min(MAXT,mn+AUTOK)}
+function cgSet(n,why){const o=s.cg;s.cg=Math.max(1,n);if(s.cg>s.cgMax)s.cgMax=s.cg;s.chp=Math.min(s.chp,chp(s.cg));if(s.chp<=0)s.chp=chp(s.cg);
+  if(s.cg!==o&&why)log(s.cg>o?"gold":"bad","수정",why+" 수정 Lv."+o+" → Lv."+s.cg+" · 소환 "+label(sumT()))}
+
+function place(i,force){
+  const f=s.forge[i];if(!f)return;
+  if(s.hunt.length<hslots()){s.hunt.push(f.t);log("min","배치",label(f.t)+" 사냥터 투입")}
+  else{const j=minHunt();
+    if(s.hunt[j]<f.t||force){const old=s.hunt[j];s.m+=sellv(old);s.hunt[j]=f.t;log("min","교체",label(old)+" 판매(+"+fmt(sellv(old))+") → "+label(f.t)+" 투입")}
+    else{s.m+=sellv(f.t);log("min","판매",label(f.t)+" 판매 +"+fmt(sellv(f.t)))}}
+  s.forge[i]=null}
+
+function bossTick(dt){
+  const idx=Math.floor(s.t/CYCLE),ct=s.t-idx*CYCLE;
+  if(!s.boss&&ct>=BOSS_AT&&s.bossCycle<idx&&idx<RUN/CYCLE){s.bossCycle=idx;const mx=bossMax();s.boss={hp:mx,max:mx,end:(idx+1)*CYCLE,kills:0,round:s.round};
+    log("bad","보스","라운드 "+s.round+" "+bossName(s.round)+" 등장! 60초 안에 쓰러뜨리세요");shout("라운드 "+s.round+" 보스전 시작 · "+bossName(s.round),true)}
+  const b=s.boss;if(!b)return false;
+  const dd=huntDps()*dt;
+  if(dd>0){b.hp-=dd;let g=0;
+    while(b.hp<=0&&g++<200){b.kills++;s.bkills++;const rw=bossRw();s.m+=rw;
+      if(Math.random()*100<clr()){const pick=[1,1,1,2,2,3,5,10][Math.floor(Math.random()*8)],jack=reward()*60*Math.pow(BR,s.round-1)*pick,mt=ringDrop()*2;
+        s.m+=jack;if(s.ring<1)s.ring=1;s.mat+=mt;s.cleared++;
+        log("gold","클리어","라운드 "+s.round+" 클리어! ("+b.kills+"번째 처치) 잭팟 ×"+pick+" +"+fmt(jack)+" · 반지 재료 "+mt+"개 · 피해 ×"+Math.pow(CLRB,s.cleared).toFixed(2));
+        shout("라운드 "+s.round+" 클리어! 잭팟 ×"+pick+" +"+fmt(jack)+" 미네랄");
+        s.round++;s.boss=null;return false}
+      log("bad","꽝",bossName(b.round)+" "+b.kills+"번째 처치 +"+fmt(rw)+" · 클리어 실패, 보스가 다시 일어납니다");
+      b.hp+=b.max}
+    if(b.hp<=0)b.hp=b.max}
+  if(s.t>=b.end){log("bad","시간 종료","라운드 "+b.round+" 클리어 실패 ("+b.kills+"회 처치) · 다음 보스전에 재도전");shout("시간 종료 · 라운드 "+b.round+" 재도전 대기",true);s.boss=null}
+  return true}
+
+function crystalTick(dt){
+  const dd=huntDps()*dt;
+  if(dd<=0)return;s.chp-=dd;let g=0;const rate=dd/dt;
+  while(s.chp<=0&&g++<500){s.m+=reward();s.breaks++;
+    const bt=chp(s.cg)/rate,r=Math.random();
+    if(r<Math.min(.25,.3/bt)){const q=Math.random(),n=q<.03?3:q<.15?2:1;cgSet(s.cg+n,n>1?"폭등 +"+n+"!":"");if(n===1&&s.cg%5===0)log("gold","수정","수정 Lv."+s.cg+" · 소환 "+label(sumT()))}
+    else if(bt>DOWNT&&s.cg>1&&Math.random()<.06)cgSet(s.cg-1,"수정이 버티지 못해 하락:");
+    if(s.breaks===FIRSTRING&&s.ring<1){s.ring=1;log("gold","반지","반지 획득! 피해 +25%")}
+    else if(Math.random()<RINGP){let n=ringDrop();
+      if(s.ring<1){s.ring=1;n--;log("gold","반지","반지 획득! 피해 +25%")}
+      if(n>0){s.mat+=n;log("gold","반지","반지 재료 "+n+"개 획득 (보유 "+s.mat+"개)")}}
+    s.chp+=chp(s.cg)}
+  if(s.chp<=0)s.chp=chp(s.cg)}
+
+function gamble(){
+  const c=gcost();if(s.over||s.m<c)return;s.m-=c;s.gam++;const r=Math.random()*100;
+  if(r<2){cgSet(s.cg+4,"공명 잭팟 +4!");shout("수정 공명 잭팟! Lv."+s.cg)}
+  else if(r<12)cgSet(s.cg+2,"공명 대성공 +2:");
+  else if(r<50)cgSet(s.cg+1,"공명 성공 +1:");
+  else{if(s.cg>1)cgSet(s.cg-1,"공명 균열 −1:");else log("bad","공명","공명 실패 (Lv.1이라 내려가지 않음)")}}
+
+function stepSim(dt){
+  if(s.over)return;
+  s.t+=dt;s.m+=BASE*dt;
+  if(s.autoShop){
+    for(const k in UP){const u=UP[k];if(s.up[k]<u.max&&s.m>=u.c(s.up[k])*1.5){s.m-=u.c(s.up[k]);s.up[k]++;log("min","상점",u.name+" Lv."+s.up[k])}}
+    for(const k in XUP){let g=0;while(s.m>=XUP[k].c(s.x[k])*3&&g++<5){s.m-=XUP[k].c(s.x[k]);s.x[k]++;log("min","상점",XUP[k].name+" Lv."+s.x[k])}}}
+  if(!bossTick(dt))crystalTick(dt);
+  if(s.autoRing&&s.ring>=1){let g=0;while(s.mat>=need(s.ring)&&g++<20)ringUp(need(s.ring),true)}
+  const d=dur();
+  for(let i=0;i<slots();i++){let budget=dt,guard=0;
+   while(budget>0&&guard++<400){const f=s.forge[i];
+    if(!f){if(s.autoBuy&&s.m>=sumC()){s.m-=sumC();s.forge[i]={t:sumT(),p:0,paid:false};s.made++;continue}break}
+    if(f.t>=target()){if(s.autoPlace||f.t>=MAXT){place(i,f.t>=MAXT);continue}break}
+    if(!f.paid){if(s.m>=acost(f.t)){s.m-=acost(f.t);f.paid=true}else break}
+    const left=d-f.p;if(left>budget){f.p+=budget;break}budget-=left;
+    f.p=0;f.paid=false;const t=f.t,sure=t>15&&s.fg[i]>=100,r=sure?-1:Math.random()*100;
+    if(r<pS(t)){if(sure){s.fg[i]=0;log("gold","기운","장인의 기운으로 "+label(t)+" 확정 성공")}f.t++;if(f.t>s.best)s.best=f.t;
+      if(f.t>=MAXT){log("gold","완성","마탑의 주인 탄생!");if(!s.fin){s.fin=true;s.endT=s.t}}
+      else if(f.t>=s.best-2)log("ok","성공",label(t)+" → "+label(f.t))}
+    else{if(t>15)s.fg[i]=Math.min(100,s.fg[i]+bs(t)*GA);
+      if(r>=100-pD(t)){s.forge[i]=null;s.boom++;if(t>=Math.max(4,s.best-4))log("bad","파괴",label(t)+" 소멸 · 기도 +"+pity().toFixed(1)+"%p")}}
+   }
+  }
+  for(let i=0;i<s.hunt.length;i++)if(s.hunt[i]>s.best)s.best=s.hunt[i];
+  if(s.t>=RUN){s.t=RUN;s.over=true;s.boss=null;log("gold","종료","30분 종료 · 라운드 "+s.round+" 도달 ("+s.cleared+"회 클리어)")}
+}
+/*ENDSIM*/
+
+// ── 조작 ──
+function act(a,i){
+  if(s.over&&a!=="ring1"&&a!=="ring3")return;
+  if(a==="fh"){place(i,false)}
+  else if(a==="fs"){const f=s.forge[i];if(f){s.m+=sellv(f.t);log("min","판매",label(f.t)+" 판매 +"+fmt(sellv(f.t)));s.forge[i]=null}}
+  else if(a==="hs"){const t=s.hunt[i];if(t){s.m+=sellv(t);s.hunt.splice(i,1);log("min","판매",label(t)+" 판매 +"+fmt(sellv(t)))}}
+  else if(a==="hf"){const t=s.hunt[i];let k=-1;for(let n=0;n<slots();n++)if(!s.forge[n]){k=n;break}
+    if(t&&k>=0){s.forge[k]={t:t,p:0,paid:false};s.hunt.splice(i,1);log("min","이동",label(t)+" 강화대로")}}
+  else if(a==="summon"){if(!s.forge[i]&&s.m>=sumC()){s.m-=sumC();s.forge[i]={t:sumT(),p:0,paid:false};s.made++}}
+  else if(a==="gamble"){gamble()}
+  else if(a==="ring1"){ringUp(1,false)}
+  else if(a==="ring3"){ringUp(need(s.ring),true)}
+  else if(a==="xup"){const u=XUP[i],k=s.x[i];if(s.m>=u.c(k)){s.m-=u.c(k);s.x[i]++;log("min","상점",u.name+" Lv."+s.x[i])}}
+  else if(a==="up"){const u=UP[i],k=s.up[i];if(k<u.max&&s.m>=u.c(k)){s.m-=u.c(k);s.up[i]++;log("min","상점",u.name+" Lv."+s.up[i]);buildTiers()}}
+  save();render()}
+
+// ── 화면 ──
+const $=id=>document.getElementById(id);
+function build(){
+  let h="";for(let i=0;i<FS;i++)h+='<div class="slot" id="f'+i+'"><div class="top"><div class="unit"><span class="gem"></span><div><b id="fn'+i+'"></b><div class="sub" id="fo'+i+'"></div></div></div>'+
+    '<div class="btns"><button type="button" data-a="summon" data-i="'+i+'" id="fb0'+i+'">소환</button><button type="button" data-a="fh" data-i="'+i+'" id="fb1'+i+'">사냥터로</button><button type="button" data-a="fs" data-i="'+i+'" id="fb2'+i+'">판매</button></div></div>'+
+    '<div class="track"><i id="fp'+i+'"></i></div><div class="sub" id="fs'+i+'"></div></div>';
+  $("forge").innerHTML=h;
+  h="";for(let i=0;i<HS;i++)h+='<div class="slot" id="h'+i+'"><div class="top"><div class="unit"><span class="gem"></span><div><b id="hn'+i+'"></b><div class="sub" id="ho'+i+'"></div></div></div>'+
+    '<div class="btns"><button type="button" data-a="hf" data-i="'+i+'" id="hb1'+i+'">강화대로</button><button type="button" data-a="hs" data-i="'+i+'" id="hb2'+i+'">판매</button></div></div></div>';
+  $("hunt").innerHTML=h;
+  $("shop").innerHTML=Object.keys(UP).map(k=>'<button type="button" data-a="up" data-i="'+k+'" id="u_'+k+'"><span><b>'+UP[k].name+'</b><small id="ud_'+k+'"></small></span><span><span class="c" id="uc_'+k+'"></span><span class="lv" id="ul_'+k+'"></span></span></button>').join("");
+  $("xshop").innerHTML=Object.keys(XUP).map(k=>'<button type="button" data-a="xup" data-i="'+k+'" id="x_'+k+'"><span><b>'+XUP[k].name+'</b><small>'+XUP[k].desc+'</small></span><span><span class="c" id="xc_'+k+'"></span><span class="lv" id="xl_'+k+'"></span></span></button>').join("");
+  let o='<option value="auto">자동</option>';for(let t=2;t<=MAXT;t++)o+='<option value="'+t+'">'+label(t)+"</option>";$("target").innerHTML=o;
+  buildTiers()}
+function buildTiers(){let h="";for(let t=1;t<=MAXT;t++){
+  h+='<tr><td style="color:'+col(t)+'">'+label(t)+"</td>"+(t<MAXT?'<td class="s">'+pS(t).toFixed(1)+'%</td><td class="d">'+(pD(t)?pD(t).toFixed(1)+"%":"–")+"</td><td>"+fmt(acost(t))+"</td>":'<td colspan="3" style="color:var(--mute)">최고 등급</td>')+
+  "<td>"+fmtR(inc(t))+"</td><td>"+fmt(sellv(t))+"</td></tr>"}$("tiers").innerHTML=h}
+let tierKey="",logKey="";
+function render(){
+  $("min").textContent=fmt(s.m);$("inc").textContent=fmtR(BASE+huntInc());$("pity").textContent="+"+pity().toFixed(1)+"%p";$("clock").textContent=fmtT(RUN-s.t);$("rnd").textContent=s.round;
+  // 보스
+  const b=s.boss,idx=Math.floor(s.t/CYCLE),nextAt=s.t-idx*CYCLE<BOSS_AT?idx*CYCLE+BOSS_AT:(idx+1)*CYCLE+BOSS_AT;
+  $("bossBox").classList.toggle("on",!!b);
+  if(b){$("bsName").textContent="라운드 "+b.round+" · "+bossName(b.round);
+    $("bsSub").textContent="체력 "+fmtR(Math.max(0,b.hp))+" / "+fmtR(b.max)+" · 처치 "+b.kills+"회 · 처치당 +"+fmt(bossRw());
+    $("bsTime").className="tt";$("bsTime").textContent=fmtT(b.end-s.t);
+    $("bsBar").style.width=Math.max(0,Math.min(100,b.hp/b.max*100))+"%";
+    const dp=huntDps();$("bsOdds").textContent="처치할 때마다 클리어 확률 "+clr().toFixed(2)+"%"+(dp>0?" · 약 "+fmtR(b.max/dp)+"초에 1번 처치":" · 사냥 중인 유닛이 없습니다")+" · 남은 시간 안에 약 "+(dp>0?Math.floor((b.end-s.t)*dp/b.max+(1-b.hp/b.max)):0)+"번 더 기회"}
+  else{$("bsName").textContent="라운드 "+s.round+" · "+bossName(s.round);
+    $("bsTime").className="tt idle";
+    if(s.over||nextAt>=RUN){$("bsTime").textContent="—";$("bsSub").textContent=s.over?"한 판이 끝났습니다":"이번 판의 보스전은 모두 끝났습니다"}
+    else{$("bsTime").textContent=fmtT(nextAt-s.t);$("bsSub").textContent="다음 보스전까지 (제한시간 60초) · 예상 체력 "+fmtR(bossMax())}
+    $("bsBar").style.width="0";
+    $("bsOdds").textContent="처치할 때마다 클리어 확률 "+clr().toFixed(2)+"% · 클리어 "+s.cleared+"회 · 피해 보너스 ×"+Math.pow(CLRB,s.cleared).toFixed(2)}
+  const tg=target(),d=dur(),full=s.hunt.length>=hslots(),mj=minHunt(),anyEmpty=s.forge.slice(0,slots()).some(f=>!f);
+  for(let i=0;i<FS;i++){const el=$("f"+i),f=s.forge[i],open=i<slots();
+    el.hidden=i>slots();el.classList.toggle("locked",!open);el.style.setProperty("--g",f?col(f.t):"#3a4a44");
+    $("fb0"+i).hidden=!!f||!open;$("fb1"+i).hidden=$("fb2"+i).hidden=!f;
+    if(!open){$("fn"+i).textContent="잠김";$("fo"+i).textContent="상점에서 강화대 증설";$("fp"+i).style.width="0";$("fs"+i).textContent="";continue}
+    if(!f){$("fn"+i).textContent="비어 있음";$("fo"+i).textContent=(s.autoBuy?"미네랄 "+fmt(sumC())+"이 모이면 자동 소환":"소환 비용 "+fmt(sumC()))+" · 소환 등급 "+label(sumT());$("fp"+i).style.width="0";$("fs"+i).textContent="";$("fb0"+i).disabled=s.m<sumC()||s.over;continue}
+    $("fn"+i).textContent=label(f.t);
+    $("fo"+i).innerHTML=f.t<MAXT?'<span class="s">성공 '+pS(f.t).toFixed(1)+'%</span> · <span class="d">파괴 '+pD(f.t).toFixed(1)+"%</span> · 시도비 "+fmt(acost(f.t)):"최고 등급";
+    const wait=f.t>=tg,broke=!wait&&!f.paid&&s.m<acost(f.t);
+    $("fp"+i).style.width=(wait?100:f.p/d*100)+"%";
+    const fgv=f.t>15?Math.floor(s.fg[i]||0):0;
+    $("fs"+i).textContent=(wait?"목표 달성, 대기 중":broke?"미네랄 부족 ("+fmt(acost(f.t))+" 필요)":"강화 중 · 목표 "+label(tg))+(fgv>=100?" · 장인의 기운 가득: 다음 강화 확정 성공":fgv>0?" · 장인의 기운 "+fgv+"%":"");
+    $("fb1"+i).disabled=full&&mj>=0&&s.hunt[mj]>=f.t;$("fb2"+i).textContent="판매 +"+fmt(sellv(f.t))}
+  for(let i=0;i<HS;i++){const el=$("h"+i),t=s.hunt[i],open=i<hslots();
+    el.hidden=!open&&i>=hslots()+1;el.classList.toggle("locked",!open);el.style.setProperty("--g",t?col(t):"#3a4a44");
+    $("hb1"+i).hidden=$("hb2"+i).hidden=!t;
+    $("hn"+i).textContent=!open?"잠김":t?label(t):"빈 자리";$("ho"+i).textContent=!open?"상점에서 사냥터 확장":t?"초당 피해 "+fmtR(inc(t)*mult()):"목표를 달성한 유닛이 들어옵니다";
+    if(t){$("hb1"+i).disabled=!anyEmpty;$("hb2"+i).textContent="판매 +"+fmt(sellv(t))}}
+  const mh=chp(s.cg),dp=huntDps();
+  $("cgName").textContent="수정 Lv."+s.cg+(s.cgMax>s.cg?" (최고 "+s.cgMax+")":"");$("cgSub").textContent="체력 "+fmtR(Math.max(0,s.chp))+" / "+fmtR(mh)+" · 보상 "+fmtR(reward())+" · 파괴 "+s.breaks.toLocaleString("ko-KR")+"회";
+  $("cgDps").textContent=b?"보스전 중 · 수정은 쉬는 중":dp>0?"초당 피해 "+fmtR(dp)+" · 약 "+fmtR(mh/dp)+"초에 1개":"사냥 중인 유닛이 없습니다";
+  $("cgBar").style.width=Math.max(0,Math.min(100,s.chp/mh*100))+"%";
+  const bt=dp>0?mh/dp:1e9;
+  $("cgOdds").textContent="소환 등급 "+label(sumT())+" · 깨질 때 등급 상승 "+(Math.min(.25,.3/bt)*100).toFixed(1)+"% (그중 15%는 +2, +3 폭등)"+(bt>DOWNT?" · 3초 넘게 걸려 하락 위험":"")+" · 반지 1%"+(s.ring<1?" · "+Math.max(0,FIRSTRING-s.breaks)+"번 더 깨면 첫 반지":"");
+  $("gbtn").textContent="수정 공명 ("+fmt(gcost())+")";$("gbtn").disabled=s.over||s.m<gcost();
+  $("gtxt").textContent="38% +1 · 10% +2 · 2% +4 · 50% −1"+(s.gam?" · "+s.gam+"회 도전":"");
+  const rn=need(Math.max(1,s.ring));
+  $("ringName").textContent=s.ring?ringName(s.ring):"반지 없음";
+  $("ringSub").textContent=s.ring?"피해 +"+fmt(RB*s.ring*100)+"% · 재료 "+s.mat+" / "+rn+"개":"수정이 깨질 때 낮은 확률로 나옵니다";
+  $("ring1").disabled=s.ring<1||s.mat<1;$("ring1").textContent="강화 (재료 1개, "+ringP(Math.max(1,s.ring))+"%)";
+  $("ring3").disabled=s.ring<1||s.mat<rn;$("ring3").textContent="확정 강화 (재료 "+rn+"개, 100%)";
+  $("autoRing").checked=s.autoRing;
+  for(const k in UP){const u=UP[k],lv=s.up[k],mx=lv>=u.max;$("u_"+k).disabled=mx||s.m<u.c(lv)||s.over;$("uc_"+k).textContent=mx?"최대":fmt(u.c(lv));$("ul_"+k).textContent=" Lv."+lv+"/"+u.max;$("ud_"+k).textContent=u.desc(lv)}
+  for(const k in XUP){const lv=s.x[k];$("x_"+k).disabled=s.m<XUP[k].c(lv)||s.over;$("xc_"+k).textContent=fmt(XUP[k].c(lv));$("xl_"+k).textContent=" Lv."+lv}
+  $("xsum").textContent="피해 +"+fmt(s.x.amp*10)+"% · 보상 +"+fmt(s.x.loot*10)+"% · 강화 시간 "+fmtR(dur())+"초 · 기도 최대 +"+pityCap().toFixed(1)+"%p · 보스 클리어 "+clr().toFixed(2)+"%";
+  $("autoShop").checked=s.autoShop;
+  const key=s.up.succ+"|"+s.up.prot+"|"+Math.floor(pity()*10);if(key!==tierKey){tierKey=key;buildTiers()}
+  const lk=s.log.length+"|"+(s.log[0]?s.log[0][0]+s.log[0][3]:"");
+  if(lk!==logKey){logKey=lk;$("log").innerHTML=s.log.length?s.log.map(e=>'<li class="'+e[1]+'"><time>'+fmtT(e[0])+"</time><em>"+e[2]+"</em><span>"+e[3]+"</span></li>").join(""):'<li><time>0:00</time><em>시작</em><span>30분 한 판이 시작됐습니다. 첫 보스는 4:00에 나옵니다</span></li>'}
+  if(document.activeElement!==$("target"))$("target").value=String(s.target);
+  $("autoBuy").checked=s.autoBuy;$("autoPlace").checked=s.autoPlace;
+  const bn=$("banner");if(banner&&Date.now()<banner.until){bn.hidden=false;bn.textContent=banner.text;bn.classList.toggle("bad",banner.bad)}else bn.hidden=true;
+  $("end").hidden=!s.over;
+  if(s.over){$("endH").textContent=s.fin?"전설 클리어 · 마탑의 주인 탄생":"30분 종료 · 라운드 "+s.round+" 도달";
+    $("endTxt").textContent="보스 클리어 "+s.cleared+"회 · 최고 등급 "+label(s.best)+" · 수정 최고 Lv."+s.cgMax+" · 소환 "+s.made.toLocaleString("ko-KR")+"명, 파괴 "+s.boom.toLocaleString("ko-KR")+"명"+(s.fin?" · 마탑의 주인 "+fmtT(s.endT)+"에 완성":"")+"."}
+  const bb=bestGet();$("bestRec").textContent=bb?"최고 기록: 라운드 "+bb.round+" · "+label(bb.best)+(bb.fin?" · 전설":""):"";
+}
+
+function bestGet(){try{return JSON.parse(localStorage.getItem("mage-forge-best")||"null")}catch(e){return null}}
+function bestPut(){const b=bestGet();if(!b||s.round>b.round||(s.round===b.round&&s.best>b.best)||(s.fin&&!b.fin)){try{localStorage.setItem("mage-forge-best",JSON.stringify({round:s.round,best:s.best,fin:s.fin||(b&&b.fin)}))}catch(e){}}}
+let recorded=false;
+function save(){s.wall=Date.now();if(s.over&&!recorded){recorded=true;bestPut()}try{localStorage.setItem("mage-forge-v3",JSON.stringify(s))}catch(e){}cMark()}
+function adopt(d){if(d&&d.v===3&&d.up&&Array.isArray(d.forge)&&Array.isArray(d.hunt)&&typeof d.t==="number"){s=Object.assign(fresh(),d);s.up=Object.assign(fresh().up,d.up);s.x=Object.assign(fresh().x,d.x||{});while(s.forge.length<FS)s.forge.push(null);if(!Array.isArray(s.fg))s.fg=[0,0,0,0];while(s.fg.length<FS)s.fg.push(0);if(!(s.chp>0))s.chp=chp(s.cg);if(!Array.isArray(s.log))s.log=[];recorded=s.over;return true}return false}
+function runFor(sec){const n=Math.floor(sec/STEP);for(let k=0;k<n;k++)stepSim(STEP);return sec-n*STEP}
+let lastTick=0,lastSave=0,acc=0;
+function tick(){const now=Date.now();
+  if(document.hidden){lastTick=now;return}
+  acc+=Math.min((now-lastTick)/1000,2);lastTick=now;
+  if(acc>=STEP){acc=runFor(acc)}
+  if(now-lastSave>5000||s.over&&!recorded){lastSave=now;save()}render()}
+
+let cRef=null,cDirty=false,cBusy=false,cLast=0,cTimer=0;
+function cStatus(t){$("cloud").textContent=t}
+function cMark(){cDirty=true;if(!cRef||cTimer)return;cTimer=setTimeout(cFlush,Math.max(20000-(Date.now()-cLast),1500))}
+async function cFlush(){cTimer=0;if(!cRef||cBusy||!cDirty)return;cBusy=true;cDirty=false;cLast=Date.now();
+  try{await cRef.set({json:JSON.stringify(s),at:Date.now(),best:localStorage.getItem("mage-forge-best")||""});cStatus("계정에 저장됨")}
+  catch(e){cStatus("이 기기에 저장 중");if(e&&e.code==="unavailable")cDirty=true;else cRef=null}
+  cBusy=false;if(cDirty&&cRef)cMark()}
+async function cInit(){try{if(!window.claude||!window.claude.use)return;
+  const r=await Promise.all([window.claude.use("db"),window.claude.use("user")]);if(!r[0]||!r[1])return;
+  const id=await r[1].id();if(!id)return;const ref=r[0].doc("data/users/"+id+"/save30"),snap=await ref.get();
+  if(snap.exists){const d=snap.data();if(d&&typeof d.json==="string"){const c=JSON.parse(d.json);if(c&&(c.wall||0)>s.wall&&adopt(c)){render()}}
+    if(d&&d.best&&!bestGet()){try{localStorage.setItem("mage-forge-best",d.best)}catch(e){}}}
+  cRef=ref;cStatus("계정에 저장됨");cMark()}catch(e){}}
+
+function newRun(){s=fresh();acc=0;recorded=false;banner=null;tierKey="";logKey="";lastTick=Date.now();save();render()}
+function start(data){
+  build();let ok=adopt(data);
+  if(!ok){try{ok=adopt(JSON.parse(localStorage.getItem("mage-forge-v3")))}catch(e){}}
+  lastTick=Date.now();render();setInterval(tick,100);
+  document.addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b||b.disabled)return;const a=b.dataset.a;act(a,a==="up"||a==="xup"?b.dataset.i:+b.dataset.i)});
+  $("target").addEventListener("change",e=>{s.target=e.target.value==="auto"?"auto":+e.target.value;save();render()});
+  $("autoBuy").addEventListener("change",e=>{s.autoBuy=e.target.checked;save();render()});
+  $("autoPlace").addEventListener("change",e=>{s.autoPlace=e.target.checked;save();render()});
+  $("autoRing").addEventListener("change",e=>{s.autoRing=e.target.checked;save();render()});
+  $("autoShop").addEventListener("change",e=>{s.autoShop=e.target.checked;save();render()});
+  $("again").addEventListener("click",newRun);
+  $("xout").addEventListener("click",function(){
+    s.wall=Date.now();const code="MT3:"+btoa(unescape(encodeURIComponent(JSON.stringify(Object.assign({},s,{log:[]})))));
+    $("xfer").value=code;$("xfer").select();$("xmsg").textContent="코드를 만들었습니다. 길게 눌러 복사하세요.";
+    try{navigator.clipboard.writeText(code).then(()=>{$("xmsg").textContent="코드를 복사했습니다. 옮길 기기에서 붙여 넣으세요."},()=>{})}catch(e){}});
+  let xarm=0;$("xin").addEventListener("click",function(){
+    const raw=$("xfer").value.trim();let d=null;
+    try{d=JSON.parse(decodeURIComponent(escape(atob(raw.replace(/^MT\d:/,"").replace(/\s+/g,"")))))}catch(e){}
+    if(!d||d.v!==3||!d.up||!Array.isArray(d.forge)||typeof d.t!=="number"){$("xmsg").textContent="코드를 읽을 수 없습니다. 30분판에서 만든 내보내기 코드를 전부 붙여 넣었는지 확인하세요.";return}
+    if(Date.now()>xarm){xarm=Date.now()+4000;$("xmsg").textContent="지금 판을 덮어씁니다 (남은 시간 "+fmtT(RUN-d.t)+", 라운드 "+(d.round||1)+"). 맞으면 가져오기를 한 번 더 누르세요.";return}
+    xarm=0;if(adopt(d)){acc=0;lastTick=Date.now();tierKey="";logKey="";save();render();$("xfer").value="";$("xmsg").textContent="기록을 가져왔습니다."}});
+  let arm=0;$("reset").addEventListener("click",function(){
+    if(Date.now()>arm){arm=Date.now()+3000;this.textContent="정말 초기화? 한 번 더";setTimeout(()=>{this.textContent="처음부터 다시"},3000);return}
+    arm=0;this.textContent="처음부터 다시";newRun()});
+  document.addEventListener("visibilitychange",()=>{if(document.hidden){save();if(cRef&&cDirty&&!cBusy){clearTimeout(cTimer);cFlush()}}else lastTick=Date.now()});
+  cInit();
+  if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(()=>s);
+}
+const hot=window.claude&&window.claude.hot;
+if(hot&&hot.ready)hot.ready(start);else start((hot&&hot.data)||{});
+})();
+</script>
+</body>
+</html>
