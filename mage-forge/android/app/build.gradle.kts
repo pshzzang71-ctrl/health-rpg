@@ -12,7 +12,7 @@ android {
         targetSdk = 36
         // GitHub에서 빌드할 때마다 번호가 올라가서, 새 APK를 기존 앱 위에 덮어 설치할 수 있습니다(기록 유지).
         versionCode = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
-        versionName = "2.0"
+        versionName = "3.0"
     }
 
     // 프로젝트에 들어 있는 서명 키를 씁니다. 이 키 파일(mageforge-key.p12)은 지우거나 바꾸지 마세요.
