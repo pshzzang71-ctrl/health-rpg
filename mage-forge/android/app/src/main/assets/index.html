@@ -113,12 +113,18 @@ td.s{color:var(--ok)} td.d{color:var(--bad)}
 #end.lost h3{color:var(--bad)}
 #again{font-size:16px;padding:10px 18px;border-color:var(--gold)}
 </style>
+<style>
+.bag{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:4px;background:var(--zone-2);border:1px solid var(--line);font-size:12px}
+.chip i{width:10px;height:10px;transform:rotate(45deg);border-radius:2px;background:var(--g)}
+.chip b{color:var(--g)}
+</style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>마탑 강화기<small>보스 6마리를 30분 안에 · 하나라도 놓치면 패배</small></h1>
-    <div class="res"><span class="m"><b id="min" style="color:inherit">30</b></span><span>미네랄 · 초당 <b id="inc">0.5</b></span><span>라운드 <b id="rnd">1</b></span><span>남은 시간 <b id="clock">30:00</b></span></div>
+    <div class="res"><span class="m"><b id="bagN" style="color:inherit">0</b></span><span>보관 중인 마법사 · 수정 <b id="hdrCg">Lv.1</b></span><span>라운드 <b id="rnd">1</b></span><span>남은 시간 <b id="clock">30:00</b></span></div>
   </header>
 
   <p class="note" id="banner" hidden></p>
@@ -135,11 +141,7 @@ td.s{color:var(--ok)} td.d{color:var(--bad)}
         </div>
       </section>
       <section class="zone">
-        <h2>강화대<small>의식 시간이 차면 강화 판정이 납니다</small></h2>
-        <div class="slots" id="forge"></div>
-      </section>
-      <section class="zone">
-        <h2>사냥터<small>보스전 동안에는 수정 대신 보스를 공격합니다</small></h2>
+        <h2>사냥터<small>수정을 깨면 마법사가 떨어집니다</small></h2>
         <div class="slot crystal">
           <div class="top"><div class="unit"><span class="gem"></span><div><b id="cgName">수정 Lv.1</b><div class="sub" id="cgSub"></div></div></div><div class="sub" id="cgDps"></div></div>
           <div class="track"><i id="cgBar"></i></div>
@@ -147,6 +149,15 @@ td.s{color:var(--ok)} td.d{color:var(--bad)}
           <div class="gamble"><button type="button" data-a="gamble" data-i="0" id="gbtn">수정 공명</button><span class="sub" id="gtxt"></span></div>
         </div>
         <div class="slots hunt" id="hunt"></div>
+      </section>
+      <section class="zone">
+        <h2>강화대<small>강화 1번에 보관함의 마법사 1명이 재료로 쓰입니다</small></h2>
+        <div class="slots" id="forge"></div>
+      </section>
+      <section class="zone">
+        <h2>보관함<small id="bagCap"></small></h2>
+        <div class="bag" id="bag"></div>
+        <div class="btns" style="margin-top:8px;flex-wrap:wrap"><button type="button" data-a="bestForge" data-i="0" id="bbF">가장 좋은 마법사를 강화대로</button><button type="button" data-a="bestHunt" data-i="0" id="bbH">가장 좋은 마법사를 사냥터로</button></div>
       </section>
       <section class="zone">
         <h2>전투 기록</h2>
@@ -157,11 +168,9 @@ td.s{color:var(--ok)} td.d{color:var(--bad)}
     <div class="col">
       <section class="zone ctrl">
         <h2>지휘</h2>
-        <label for="target">목표 등급 <select id="target"></select></label>
-        <small>강화대의 유닛은 목표 등급이 될 때까지 계속 강화합니다. 자동은 사냥터에서 가장 낮은 유닛보다 세 단계 높게 잡고, 사냥터에 빈 자리가 있으면 바로 채웁니다.</small>
-        <label><input type="checkbox" id="autoBuy"> 빈 강화대에 자동 소환</label>
-        <label><input type="checkbox" id="autoPlace"> 목표 달성 시 사냥터로 자동 배치</label>
-        <small>사냥터가 가득 차면 가장 낮은 유닛을 팔고 교체합니다. 새 유닛이 더 낮으면 새 유닛을 팝니다.</small>
+        <label><input type="checkbox" id="autoPlace"> 자동 배치: 보관함의 더 좋은 마법사로 사냥터를 채우고 교체</label>
+        <label><input type="checkbox" id="autoForge"> 자동 강화: 강화대에 마법사를 올려 사냥터 최약 유닛보다 2단계 높게 강화</label>
+        <small>직접 강화대로 옮긴 마법사는 자동 강화·자동 배치에서 빠지고, 강화 버튼을 누를 때만 강화됩니다. 자동 강화는 직접 강화와 수정 공명에 쓸 수 있게 재료 마법사 5명을 늘 남겨 둡니다.</small>
       </section>
       <section class="zone ring">
         <h2>반지<small>수정과 보스에 주는 피해를 올립니다</small></h2>
@@ -175,34 +184,12 @@ td.s{color:var(--ok)} td.d{color:var(--bad)}
         <div class="sub" id="neckOdds"></div>
       </section>
       <section class="zone">
-        <h2>상점</h2>
-        <div class="shop" id="shop"></div>
-      </section>
-      <section class="zone">
-        <h2>심화 상점<small>상한 없음</small></h2>
-        <div class="shop" id="xshop"></div>
-        <p class="sub" id="xsum" style="margin:8px 0 0;font-size:12px;color:var(--mute)"></p>
-        <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="autoShop"> 상점 자동 구매 (미네랄이 가격의 3배 이상일 때, 기본 상점은 1.5배)</label>
-      </section>
-      <section class="zone">
         <h2>등급표</h2>
-        <div class="scroll"><table><thead><tr><th>등급</th><th>성공</th><th>시도비</th><th>초당 피해</th><th>판매가</th></tr></thead><tbody id="tiers"></tbody></table></div>
+        <div class="scroll"><table><thead><tr><th>등급</th><th>강화 성공</th><th>초당 피해</th></tr></thead><tbody id="tiers"></tbody></table></div>
       </section>
       <section class="zone">
         <h2>규칙</h2>
-        <ul class="rules">
-          <li><b>목표</b>: 30분 동안 5분마다 나오는 보스 6마리를 모두 클리어하면 승리입니다. 보스전 하나라도 클리어하지 못하면 <b>패배</b>하고 처음부터 다시 시작합니다. 창을 닫거나 다른 앱으로 가면 시간이 멈춥니다.</li>
-          <li><b>보스전</b>: 4:00~5:00, 9:00~10:00 … 29:00~30:00의 1분 동안 사냥터 유닛이 수정 대신 보스를 때립니다. 보스를 쓰러뜨릴 때마다 <b>15%</b> 확률로 라운드 클리어이고, 꽝이면 다시 일어나서 제한시간 안에 계속 잡을 수 있습니다. 많이 잡을수록 클리어 기회가 늘어납니다.</li>
-          <li><b>라운드 클리어</b>: 잭팟 미네랄(×1~×10 랜덤), 반지 재료, 50% 확률로 목걸이, 이후 모든 피해 ×1.1을 얻습니다. 보스는 라운드마다 단단해집니다.</li>
-          <li><b>소환 등급</b>: 수정 레벨이 오를 때마다 최소·최대 소환 등급이 함께 한 단계씩 오릅니다. 수정 Lv.N이면 N단계(60%), N+1단계(30%), N+2단계(10%) 중 하나로 소환됩니다. 수정이 내려가면 소환 등급도 같이 내려갑니다.</li>
-          <li><b>수정 성장</b>: 수정이 빨리 깨질수록 등급이 잘 오르고, 오를 때 가끔 <b>+2, +3 폭등</b>합니다. 3초 넘게 걸리면 가끔 내려갑니다. 등급마다 체력·보상 1.7배입니다.</li>
-          <li><b>수정 공명</b>(도박): 미네랄을 걸고 수정을 흔듭니다. 38% +1, 10% +2, 2% +4 잭팟, 50% 균열(−1).</li>
-          <li><b>강화</b>: 판정은 성공(한 단계 상승) 아니면 실패(그대로)이고, <b>파괴는 없습니다</b>. 사냥터의 마법사를 강화대로 옮기면 지금보다 최소 한 단계 높아질 때까지 다시 강화합니다.</li>
-          <li><b>장인의 기운</b>: 유니크 1 이상에서 강화에 실패하면 그 강화대에 기운이 쌓이고, 100%가 되면 다음 강화는 확정 성공입니다.</li>
-          <li><b>반지</b>: 수정 30개째에 첫 반지를 얻고, 이후 깨질 때마다 1% 확률로 재료가 나옵니다. 반지 1레벨마다 피해 +25%. 확정 강화 재료는 현재 레벨 + 2개입니다.</li>
-          <li><b>목걸이</b>: 수정이 깨질 때 0.3%, 라운드 클리어 때 50% 확률로 얻고, 얻을 때마다 1레벨(가끔 2레벨) 오릅니다. 1레벨마다 마법사 피해 +20%, 반지 효과 +10%. 한 판에 보통 2~4레벨쯤 모입니다.</li>
-          <li>마법사는 일반부터 고대까지 8개 등급(각 1~3)과 최종 <b>마탑의 주인</b>, 모두 25단계입니다. 마탑의 주인은 운이 아주 좋은 판에서만 나옵니다.</li>
-        </ul>
+        <ul class="rules" id="rules"></ul>
       </section>
       <section class="zone">
         <h2>기록 옮기기<small>다른 기기나 앱으로 이어서 하기</small></h2>
@@ -219,72 +206,64 @@ td.s{color:var(--ok)} td.d{color:var(--bad)}
 (function(){
 "use strict";
 /*SIM*/
-// ── 밸런스(30분판 v2): 파괴 없음 · 보스 실패 = 패배 · 6라운드 클리어 = 승리 ──
-const S=[90,80,70,62,55,48,42,36,31,27,23,20,17,15,13];   // 성공 % (16단계부터 S2)
-let MAXT=25;                                              // 마지막 단계 = 마탑의 주인
-const BASE=1, T0=4, STEP=.1, S2=11, AUTOK=3, FG0=7;
+// ── 밸런스(v4): 미네랄 없음 · 수정에서 마법사 드롭 · 강화 즉시(재료 마법사 1명) ──
+const S=[90,80,70,62,55,48,42,36,31,27,23,20,17,15,13];   // 강화 성공 % (16단계부터 S2)
+let MAXT=24;                                              // 마지막 단계 = 마탑의 주인
+const STEP=.1, S2=11, AUTOK=2, FG0=7, BAGCAP=40, KEEP=5;
 const RUN=1800, CYCLE=300, BOSS_AT=240, ROUNDS=6, CLR=15, CLRB=1.1, DOWNT=3;
-let BL=[5,7,10,13,16,19], BK=.5;                         // 라운드별 보스 체력 = 수정 Lv.BL 체력 × BK
-const H0=5, HG=1.7, RG=1.7, RW=.15, RINGP=.01, FIRSTRING=30, RB=.25, GA=1;
+let BL=[4,8,11,14,17,20], BK=.5;                         // 라운드별 보스 체력 = 수정 Lv.BL 체력 × BK
+let DROP=.3, BDROP=.3;                                    // 수정·보스 처치 때 마법사 드롭 확률
+const H0=5, HG=1.7, RINGP=.01, FIRSTRING=30, RB=.25, GA=1;
 const NECKP=.003, NECKB=.5, NU=.2, NR=.1;
 let NOLOSE=false;
 const sumLo=()=>Math.min(MAXT-1,s.cg), sumHi=()=>Math.min(MAXT-1,s.cg+2);
-const sumC=()=>Math.round(16*Math.pow(1.4,sumLo()-1));
 function rollT(){const q=Math.random(),k=q<.1?2:q<.4?1:0;return Math.min(sumHi(),sumLo()+k)}
 const need=l=>l+2, ringDrop=()=>1+Math.floor(s.cg/8);
 const RNAME=["구리","은","금","백금","다이아","별빛","달빛","태양","은하","우주"];
 const ringName=l=>RNAME[Math.min(9,Math.floor((l-1)/5))]+" 반지 Lv."+l;
 const NNAME=["나무","청동","은","금","루비","사파이어","에메랄드","다이아","별의","마탑의"];
 const neckName=l=>NNAME[Math.min(9,Math.floor((l-1)/2))]+" 목걸이 Lv."+l;
-const chp=g=>H0*Math.pow(HG,g-1), crw=g=>H0*RW*Math.pow(RG,g-1);
+const chp=g=>H0*Math.pow(HG,g-1);
 const ringP=l=>Math.min(70,Math.round(1000/(1.5*need(l)))/10);
-const GRADE=["일반","레어","유니크","에픽","레전드","히든","신화","고대","태초","초월","영원","심연","천상","창세","종말","무한","운명","진리","근원","절대"];
-const JOB=["견습생","마법사","마도사","대마도사","현자","별의 마법사","달의 마법사","태양의 마법사","은하의 마법사","차원술사","시간술사","공허술사","빛의 사도","창조술사","파멸술사","무한의 현자","운명술사","진리의 탐구자","근원의 마법사","절대자"];
+const GRADE=["일반","레어","유니크","에픽","레전드","히든","신화","고대"];
+const JOB=["견습생","마법사","마도사","대마도사","현자","별의 마법사","달의 마법사","태양의 마법사"];
 const BOSS=["돌 골렘","해골 리치","붉은 와이번","서리 거인","타락한 현자","마탑의 수호룡"];
 const bossName=r=>BOSS[Math.min(BOSS.length-1,r-1)];
-const COLOR=["#9aa8a2","#5aa9ff","#b58cff","#ff9f4a","#ffd257","#ff7ad9"];
-const col=t=>t>=MAXT?"#ffffff":gi(t)<6?COLOR[gi(t)]:"hsl("+(gi(t)*47%360)+" 75% 68%)";
-const bs=t=>t<=15?S[t-1]:S2;
-const UP={
-  speed:{name:"신속 의식",desc:k=>k<12?"강화 시간 6% 단축":"강화 시간 1% 단축",max:30,c:k=>40*Math.pow(1.6,k)},
-  succ:{name:"집중의 룬",desc:k=>k<10?"성공 확률 +1%p":"성공 확률 +0.1%p",max:30,c:k=>60*Math.pow(1.8,k)},
-  forge:{name:"강화대 증설",desc:k=>"강화대 +1칸",max:3,c:k=>300*Math.pow(10,k)},
-  hunt:{name:"사냥터 확장",desc:k=>"사냥터 +1칸",max:5,c:k=>150*Math.pow(3,k)}};
-const FS=4, HS=8;
-const XUP={
-  amp:{name:"마력 증폭",desc:"수정·보스 피해 +10%",c:k=>200*Math.pow(1.6,k)},
-  loot:{name:"채굴 숙련",desc:"수정 보상 +10%",c:k=>300*Math.pow(1.6,k)},
-  rite:{name:"숙련 의식",desc:"강화 시간 1.5% 단축",c:k=>2000*Math.pow(2.2,k)},
-  luck:{name:"행운의 부적",desc:"보스 클리어 확률 +0.5%p",c:k=>3000*Math.pow(3,k)}};
-const inc=t=>.3*Math.pow(1.4,t-1), sellv=t=>inc(t)*45;
-const acost=t=>Math.round(2*Math.pow(1.7,t-1));
-const gi=t=>Math.min(19,Math.floor((t-1)/3));
+const COLOR=["#9aa8a2","#5aa9ff","#b58cff","#ff9f4a","#ffd257","#ff7ad9","#5fe0b5","#ff6b6b"];
+const gi=t=>Math.min(GRADE.length-1,Math.floor((t-1)/3));
+const col=t=>t>=MAXT?"#ffffff":COLOR[gi(t)];
 const label=t=>t>=MAXT?"마탑의 주인":GRADE[gi(t)]+" "+((t-1)%3+1)+" "+JOB[gi(t)];
+const short=t=>t>=MAXT?"주인":GRADE[gi(t)]+((t-1)%3+1);
+const bs=t=>t<=15?S[t-1]:S2;
+const inc=t=>.3*Math.pow(1.4,t-1);
+const FS=4, HS=8;
 
-function fresh(){return{v:4,m:30,up:{speed:0,succ:0,forge:0,hunt:0},forge:[null,null,null,null],hunt:[],target:"auto",autoBuy:true,autoPlace:true,autoRing:true,autoShop:true,x:{amp:0,loot:0,rite:0,luck:0},fg:[0,0,0,0],cgMax:1,cg:1,chp:H0,ring:0,mat:0,neck:0,breaks:0,
+function fresh(){return{v:5,hunt:[1,1,1],forge:[null,null,null,null],bag:[],autoPlace:true,autoForge:true,autoRing:true,
+  cgMax:1,cg:1,chp:H0,ring:0,mat:0,neck:0,breaks:0,drops:0,
   round:1,cleared:0,boss:null,bossCycle:-1,bkills:0,gam:0,over:false,won:false,lost:false,fin:false,endT:0,
-  t:0,made:0,best:1,wall:Date.now(),log:[]}}
+  t:0,tries:0,best:1,wall:Date.now(),log:[]}}
 let s=fresh(),live=true,banner=null;
 
-const UNITS=["만","억","조","경","해","자","양","구","간","정","재","극"];
-function fmt(v){v=Math.floor(v);if(v<1e5)return v.toLocaleString("ko-KR");
-  const e=Math.min(UNITS.length,Math.floor(Math.log10(v)/4)),x=v/Math.pow(10,e*4);
-  return (x>=1000?Math.round(x).toLocaleString("ko-KR"):x>=100?x.toFixed(1):x.toFixed(2))+UNITS[e-1]}
-function fmtR(v){return v<100?(Math.round(v*10)/10).toFixed(1):fmt(v)}
-function fmtT(t){t=Math.max(0,Math.floor(t));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),c=t%60;return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(c).padStart(2,"0")}
+function fmtR(v){return v<100?(Math.round(v*10)/10).toFixed(1):v<1e5?Math.round(v).toLocaleString("ko-KR"):(v/1e4).toFixed(1)+"만"}
+function fmtT(t){t=Math.max(0,Math.floor(t));const m=Math.floor(t/60),c=t%60;return m+":"+String(c).padStart(2,"0")}
 function log(kind,tag,text){if(!live)return;s.log.unshift([Math.floor(s.t),kind,tag,text]);if(s.log.length>40)s.log.length=40}
 function shout(text,bad){banner={text:text,bad:!!bad,until:Date.now()+6000}}
 
-const slots=()=>1+s.up.forge, hslots=()=>3+s.up.hunt;
+const fslots=()=>Math.min(FS,2+Math.floor(s.cleared/2)), hslots=()=>Math.min(HS,3+Math.floor((s.cg-1)/4));
 const ringF=()=>1+RB*s.ring*(1+NR*s.neck), neckF=()=>1+NU*s.neck;
-const mult=()=>ringF()*neckF()*(1+.1*s.x.amp)*Math.pow(CLRB,s.cleared);
+const mult=()=>ringF()*neckF()*Math.pow(CLRB,s.cleared);
 const huntDps=()=>s.hunt.reduce((a,t)=>a+inc(t),0)*mult();
-const reward=()=>crw(s.cg)*(1+.1*s.x.loot);
-const huntInc=()=>s.boss?0:huntDps()/chp(s.cg)*reward();
-const clr=()=>Math.min(60,CLR+.5*s.x.luck);
+const clr=()=>CLR;
 const bossMax=r=>BK*chp(BL[Math.min(BL.length,r)-1]);
-const bossRw=()=>reward();
-const gcost=()=>Math.max(50,Math.round(reward()*20));
+const best=()=>s.hunt.concat(s.bag,s.forge.filter(Boolean).map(f=>f.t)).reduce((a,b)=>Math.max(a,b),1);
+
+// ── 보관함 ──
+function bagAdd(t){s.bag.push(t);s.bag.sort((a,b)=>b-a);if(s.bag.length>BAGCAP)s.bag.length=BAGCAP;if(t>s.best)s.best=t}
+const bagTop=()=>s.bag.length?s.bag[0]:0;
+const bagPop=()=>s.bag.shift();                // 가장 좋은 마법사
+const bagMat=()=>s.bag.pop();                  // 가장 낮은 마법사 (재료)
+function dropMage(src){const t=rollT();s.drops++;bagAdd(t);if(t>=sumHi()&&live)log("min","드롭",src+"에서 "+label(t)+" 획득")}
+
 function ringUp(n,sure){
   if(s.ring<1||s.mat<n)return;s.mat-=n;
   if(sure||Math.random()*100<ringP(s.ring)){s.ring++;log("gold","반지",ringName(s.ring)+" 강화 성공"+(sure?" (확정)":"")+" · 피해 ×"+ringF().toFixed(2))}
@@ -292,26 +271,43 @@ function ringUp(n,sure){
 function neckDrop(src){const n=Math.random()<.1?2:1;s.neck+=n;
   log("gold","목걸이",(s.neck===n?"목걸이 획득! ":"")+src+" → "+neckName(s.neck)+(n>1?" (빛나는 조각 +2)":"")+" · 마법사 ×"+neckF().toFixed(2)+" · 반지 효과 +"+Math.round(NR*s.neck*100)+"%");
   if(s.neck===n)shout("목걸이 획득! 마법사와 반지가 강해집니다")}
-const succB=()=>Math.min(10,s.up.succ)+.1*Math.max(0,s.up.succ-10);
-const pS=t=>Math.min(100,bs(t)+succB());
-const dur=()=>T0*Math.pow(.94,Math.min(12,s.up.speed))*Math.pow(.99,Math.max(0,s.up.speed-12))*Math.pow(.985,s.x.rite);
+const pS=t=>Math.min(100,bs(t));
 function minHunt(){let j=-1;for(let i=0;i<s.hunt.length;i++)if(j<0||s.hunt[i]<s.hunt[j])j=i;return j}
-function target(){
-  if(s.target!=="auto")return Math.min(MAXT,Math.max(2,+s.target||2));
-  const j=minHunt(),mn=j<0?0:s.hunt[j];
-  if(s.hunt.length<hslots())return Math.max(sumLo(),mn-2);
-  return Math.min(MAXT,mn+AUTOK)}
-const tgOf=f=>Math.min(MAXT,Math.max(target(),f.min||0));
+function autoTarget(){const j=minHunt();if(s.hunt.length<hslots()||j<0)return 0;return Math.min(MAXT,s.hunt[j]+AUTOK)}
 function cgSet(n,why){const o=s.cg;s.cg=Math.max(1,n);if(s.cg>s.cgMax)s.cgMax=s.cg;s.chp=Math.min(s.chp,chp(s.cg));if(s.chp<=0)s.chp=chp(s.cg);
-  if(s.cg!==o&&why)log(s.cg>o?"gold":"bad","수정",why+" 수정 Lv."+o+" → Lv."+s.cg+" · 소환 "+label(sumLo())+" ~ "+label(sumHi()))}
+  while(s.hunt.length>hslots()){const j=minHunt();bagAdd(s.hunt[j]);s.hunt.splice(j,1)}
+  if(s.cg!==o&&why)log(s.cg>o?"gold":"bad","수정",why+" 수정 Lv."+o+" → Lv."+s.cg+" · 드롭 "+label(sumLo())+" ~ "+label(sumHi()))}
 
-function place(i,force){
-  const f=s.forge[i];if(!f)return;
-  if(s.hunt.length<hslots()){s.hunt.push(f.t);log("min","배치",label(f.t)+" 사냥터 투입")}
-  else{const j=minHunt();
-    if(s.hunt[j]<f.t){const old=s.hunt[j];s.m+=sellv(old);s.hunt[j]=f.t;log("min","교체",label(old)+" 판매(+"+fmt(sellv(old))+") → "+label(f.t)+" 투입")}
-    else{s.m+=sellv(f.t);log("min","판매",label(f.t)+" 판매 +"+fmt(sellv(f.t)))}}
-  s.forge[i]=null}
+// 강화대 i의 마법사를 사냥터로. 자리가 없으면 가장 약한 유닛과 교체(약한 쪽은 보관함으로). 더 약하면 보관함으로.
+function toHunt(t){
+  if(s.hunt.length<hslots()){s.hunt.push(t);return "투입"}
+  const j=minHunt();if(s.hunt[j]<t){bagAdd(s.hunt[j]);s.hunt[j]=t;return "교체"}
+  bagAdd(t);return "보관"}
+function enhance(i){ // 즉시 강화: 재료 1명 소모
+  const f=s.forge[i];if(!f||f.t>=MAXT||!s.bag.length)return false;
+  bagMat();s.tries++;const t=f.t,sure=t>=FG0&&f.fg>=100;
+  if(sure||Math.random()*100<pS(t)){if(sure)f.fg=0;f.t++;if(f.t>s.best)s.best=f.t;
+    if(f.t>=MAXT){log("gold","완성","마탑의 주인 탄생!"+(sure?" (장인의 기운)":""));s.fin=true;shout("마탑의 주인 탄생!")}
+    else if(sure)log("gold","기운","장인의 기운으로 "+label(t)+" → "+label(f.t)+" 확정 성공");
+    else if(f.man||f.t>=s.best-1)log("ok","성공",label(t)+" → "+label(f.t));
+    return true}
+  if(t>=FG0)f.fg=Math.min(100,f.fg+bs(t)*GA);
+  if(f.man)log("bad","실패",label(t)+" 강화 실패"+(t>=FG0?" · 장인의 기운 "+Math.floor(f.fg)+"%":""));
+  return true}
+
+function autoRun(){
+  if(s.autoPlace){let g=0;
+    while(s.bag.length&&g++<20){if(s.hunt.length<hslots()){s.hunt.push(bagPop());continue}
+      const j=minHunt();if(bagTop()>s.hunt[j]){const o=s.hunt[j];s.hunt[j]=bagPop();bagAdd(o)}else break}}
+  if(s.autoForge){
+    const keep=KEEP;   // 직접 강화·수정 공명에 쓸 재료를 늘 조금 남겨 둠
+    for(let i=0;i<fslots();i++){let f=s.forge[i];
+      if(f&&f.man)continue;
+      const tg=autoTarget();
+      if(!tg){if(f){const r=toHunt(f.t);s.forge[i]=null;if(r!=="보관")log("min","배치",label(f.t)+" 사냥터 "+r)}continue}
+      if(!f){if(s.bag.length<2+keep)continue;s.forge[i]=f={t:bagPop(),fg:0,man:false}}
+      let g=0;while(f.t<tg&&s.bag.length>keep&&g++<200)enhance(i);
+      if(f.t>=autoTarget()||f.t>=MAXT){const r=toHunt(f.t);s.forge[i]=null;if(r!=="보관")log("min","배치","강화 완료 "+label(f.t)+" 사냥터 "+r)}}}}
 
 function endRun(won){s.over=true;s.won=won;s.lost=!won;s.boss=null;s.endT=s.t;
   if(won){log("gold","승리","6라운드 모두 클리어! "+fmtT(s.t)+" 만에 마탑을 정복했습니다");shout("마탑 정복! "+fmtT(s.t)+" 클리어")}
@@ -319,35 +315,35 @@ function endRun(won){s.over=true;s.won=won;s.lost=!won;s.boss=null;s.endT=s.t;
 
 function bossTick(dt){
   const idx=Math.floor(s.t/CYCLE),ct=s.t-idx*CYCLE;
-  if(!s.boss&&ct>=BOSS_AT&&s.bossCycle<idx){s.bossCycle=idx;
-    if(s.round>idx+1){/* 이미 이 라운드를 넘김 */}
-    else{const mx=bossMax(s.round);s.boss={hp:mx,max:mx,end:(idx+1)*CYCLE,kills:0,round:s.round};
-      log("bad","보스","라운드 "+s.round+" "+bossName(s.round)+" 등장! 60초 안에 클리어하지 못하면 패배");shout("라운드 "+s.round+" 보스전 · "+bossName(s.round),true)}}
+  if(!s.boss&&ct>=BOSS_AT&&s.bossCycle<idx){s.bossCycle=idx;const mx=bossMax(s.round);s.boss={hp:mx,max:mx,end:(idx+1)*CYCLE,kills:0,round:s.round};
+    log("bad","보스","라운드 "+s.round+" "+bossName(s.round)+" 등장! 60초 안에 클리어하지 못하면 패배");shout("라운드 "+s.round+" 보스전 · "+bossName(s.round),true)}
   const b=s.boss;if(!b)return false;
   const dd=huntDps()*dt;
   if(dd>0){b.hp-=dd;let g=0;
-    while(b.hp<=0&&g++<200){b.kills++;s.bkills++;const rw=bossRw();s.m+=rw;
-      if(Math.random()*100<clr()){const pick=[1,1,1,2,2,3,5,10][Math.floor(Math.random()*8)],jack=reward()*10*pick,mt=ringDrop();
-        s.m+=jack;if(s.ring<1)s.ring=1;s.mat+=mt;s.cleared++;if(Math.random()<NECKB)neckDrop("라운드 "+s.round+" 클리어 보상");
-        log("gold","클리어","라운드 "+s.round+" 클리어! ("+b.kills+"번째 처치) 잭팟 ×"+pick+" +"+fmt(jack)+" · 반지 재료 "+mt+"개 · 피해 ×"+Math.pow(CLRB,s.cleared).toFixed(2));
+    while(b.hp<=0&&g++<200){b.kills++;s.bkills++;if(Math.random()<BDROP)dropMage(bossName(b.round));
+      if(Math.random()*100<clr()){const pick=[1,1,1,2,2,3,5,10][Math.floor(Math.random()*8)],mt=ringDrop();
+        for(let k=0;k<pick;k++)bagAdd(sumHi());if(s.ring<1)s.ring=1;s.mat+=mt;s.cleared++;
+        log("gold","클리어","라운드 "+s.round+" 클리어! ("+b.kills+"번째 처치) 잭팟 ×"+pick+": "+label(sumHi())+" "+pick+"명 · 반지 재료 "+mt+"개 · 피해 ×"+Math.pow(CLRB,s.cleared).toFixed(2));
+        if(Math.random()<NECKB)neckDrop("라운드 "+s.round+" 클리어 보상");
         s.boss=null;
         if(s.round>=ROUNDS){s.round++;endRun(true);return true}
-        shout("라운드 "+s.round+" 클리어! 잭팟 ×"+pick+" +"+fmt(jack)+" 미네랄");s.round++;return false}
-      log("bad","꽝",bossName(b.round)+" "+b.kills+"번째 처치 +"+fmt(rw)+" · 클리어 실패, 다시 일어납니다");
+        shout("라운드 "+s.round+" 클리어! 잭팟 ×"+pick);s.round++;return false}
+      log("bad","꽝",bossName(b.round)+" "+b.kills+"번째 처치 · 클리어 실패, 다시 일어납니다");
       b.hp+=b.max}
     if(b.hp<=0)b.hp=b.max}
   if(s.t>=b.end){s.boss=null;
-    if(NOLOSE){s.round++;s.miss=(s.miss||0)+1;return false}
+    if(NOLOSE){s.round++;return false}
     log("bad","시간 종료","라운드 "+b.round+" 클리어 실패 ("+b.kills+"회 처치)");endRun(false)}
   return true}
 
 function crystalTick(dt){
   const dd=huntDps()*dt;
   if(dd<=0)return;s.chp-=dd;let g=0;const rate=dd/dt;
-  while(s.chp<=0&&g++<500){s.m+=reward();s.breaks++;
+  while(s.chp<=0&&g++<500){s.breaks++;
     const bt=chp(s.cg)/rate,r=Math.random();
-    if(r<Math.min(.25,.3/bt)){const q=Math.random(),n=q<.03?3:q<.15?2:1;cgSet(s.cg+n,n>1?"폭등 +"+n+"!":"");if(n===1&&s.cg%5===0)log("gold","수정","수정 Lv."+s.cg+" · 소환 "+label(sumLo())+" ~ "+label(sumHi()))}
+    if(r<Math.min(.25,.3/bt)){const q=Math.random(),n=q<.03?3:q<.15?2:1;cgSet(s.cg+n,n>1?"폭등 +"+n+"!":"");if(n===1&&s.cg%5===0)log("gold","수정","수정 Lv."+s.cg+" · 드롭 "+label(sumLo())+" ~ "+label(sumHi()))}
     else if(bt>DOWNT&&s.cg>1&&Math.random()<.06)cgSet(s.cg-1,"수정이 버티지 못해 하락:");
+    if(Math.random()<DROP)dropMage("수정");
     if(s.breaks===FIRSTRING&&s.ring<1){s.ring=1;log("gold","반지","반지 획득! 피해 +25%")}
     else if(Math.random()<RINGP){let n=ringDrop();
       if(s.ring<1){s.ring=1;n--;log("gold","반지","반지 획득! 피해 +25%")}
@@ -356,8 +352,9 @@ function crystalTick(dt){
     s.chp+=chp(s.cg)}
   if(s.chp<=0)s.chp=chp(s.cg)}
 
+const GCOST=3;
 function gamble(){
-  const c=gcost();if(s.over||s.m<c)return;s.m-=c;s.gam++;const r=Math.random()*100;
+  if(s.over||s.bag.length<GCOST)return;for(let k=0;k<GCOST;k++)bagMat();s.gam++;const r=Math.random()*100;
   if(r<2){cgSet(s.cg+4,"공명 잭팟 +4!");shout("수정 공명 잭팟! Lv."+s.cg)}
   else if(r<12)cgSet(s.cg+2,"공명 대성공 +2:");
   else if(r<50)cgSet(s.cg+1,"공명 성공 +1:");
@@ -365,141 +362,133 @@ function gamble(){
 
 function stepSim(dt){
   if(s.over)return;
-  s.t+=dt;s.m+=BASE*dt;
-  if(s.autoShop){
-    for(const k in UP){const u=UP[k];if(s.up[k]<u.max&&s.m>=u.c(s.up[k])*1.5){s.m-=u.c(s.up[k]);s.up[k]++;log("min","상점",u.name+" Lv."+s.up[k])}}
-    for(const k in XUP){let g=0;while(s.m>=XUP[k].c(s.x[k])*3&&g++<5){s.m-=XUP[k].c(s.x[k]);s.x[k]++;log("min","상점",XUP[k].name+" Lv."+s.x[k])}}}
+  s.t+=dt;
   if(!bossTick(dt))crystalTick(dt);
   if(s.over)return;
   if(s.autoRing&&s.ring>=1){let g=0;while(s.mat>=need(s.ring)&&g++<20)ringUp(need(s.ring),true)}
-  const d=dur();
-  for(let i=0;i<slots();i++){let budget=dt,guard=0;
-   while(budget>0&&guard++<400){const f=s.forge[i];
-    if(!f){if(s.autoBuy&&s.m>=sumC()){s.m-=sumC();s.forge[i]={t:rollT(),p:0,paid:false};s.made++;continue}break}
-    if(f.t>=tgOf(f)){if(s.autoPlace||f.t>=MAXT){place(i,f.t>=MAXT);continue}break}
-    if(!f.paid){if(s.m>=acost(f.t)){s.m-=acost(f.t);f.paid=true}else break}
-    const left=d-f.p;if(left>budget){f.p+=budget;break}budget-=left;
-    f.p=0;f.paid=false;const t=f.t,sure=t>=FG0&&s.fg[i]>=100;
-    if(sure||Math.random()*100<pS(t)){if(sure){s.fg[i]=0;log("gold","기운","장인의 기운으로 "+label(t)+" 확정 성공")}f.t++;if(f.t>s.best)s.best=f.t;
-      if(f.t>=MAXT){log("gold","완성","마탑의 주인 탄생!");if(!s.fin){s.fin=true}}
-      else if(f.t>=s.best-2)log("ok","성공",label(t)+" → "+label(f.t))}
-    else if(t>=FG0)s.fg[i]=Math.min(100,s.fg[i]+bs(t)*GA);
-   }
-  }
-  for(let i=0;i<s.hunt.length;i++)if(s.hunt[i]>s.best)s.best=s.hunt[i];
+  autoRun();
   if(s.t>=RUN&&!s.over){s.t=RUN;endRun(false)}
 }
 /*ENDSIM*/
 
 // ── 조작 ──
+const $=id=>document.getElementById(id);
+let note="";
 function act(a,i){
-  if(s.over&&a!=="ring1"&&a!=="ring3")return;
-  if(a==="fh"){place(i,false)}
-  else if(a==="fs"){const f=s.forge[i];if(f){s.m+=sellv(f.t);log("min","판매",label(f.t)+" 판매 +"+fmt(sellv(f.t)));s.forge[i]=null}}
-  else if(a==="hs"){const t=s.hunt[i];if(t){s.m+=sellv(t);s.hunt.splice(i,1);log("min","판매",label(t)+" 판매 +"+fmt(sellv(t)))}}
-  else if(a==="hf"){const t=s.hunt[i];if(!t)return;let k=-1;for(let n=0;n<slots();n++)if(!s.forge[n]){k=n;break}
-    const nf={t:t,p:0,paid:false,min:Math.min(MAXT,t+1)},msg=label(Math.min(MAXT,t+1))+" 이상이 될 때까지 다시 강화";
-    if(k>=0){s.forge[k]=nf;s.hunt.splice(i,1);log("min","이동",label(t)+" 강화대로 · "+msg)}
-    else{for(let n=0;n<slots();n++)if(s.forge[n]&&(k<0||s.forge[n].t<s.forge[k].t))k=n;   // 강화대가 꽉 차면 가장 낮은 유닛과 자리 교환
-      const o=s.forge[k];if(o.paid)s.m+=acost(o.t);s.hunt[i]=o.t;s.forge[k]=nf;log("min","교환",label(t)+" 강화대로 · "+label(o.t)+" 사냥터로 · "+msg)}}
-  else if(a==="summon"){if(!s.forge[i]&&s.m>=sumC()){s.m-=sumC();s.forge[i]={t:rollT(),p:0,paid:false};s.made++}}
+  if(s.over)return;note="";
+  if(a==="enh"){const f=s.forge[i];if(f){if(!s.bag.length)note="보관함에 재료 마법사가 없습니다";else enhance(i)}}
+  else if(a==="fh"){const f=s.forge[i];if(f){const r=toHunt(f.t);s.forge[i]=null;log("min","이동",label(f.t)+(r==="보관"?" 사냥터가 가득 차 있고 더 약해서 보관함으로":" 사냥터 "+r))}}
+  else if(a==="fb"){const f=s.forge[i];if(f){bagAdd(f.t);s.forge[i]=null;log("min","이동",label(f.t)+" 보관함으로")}}
+  else if(a==="hb"){const t=s.hunt[i];if(t){s.hunt.splice(i,1);bagAdd(t);log("min","이동",label(t)+" 보관함으로")}}
+  else if(a==="hf"){const t=s.hunt[i];if(!t)return;let k=-1;
+    for(let n=0;n<fslots();n++)if(!s.forge[n]){k=n;break}
+    if(k<0){for(let n=0;n<fslots();n++)if(!s.forge[n].man&&(k<0||s.forge[n].t<s.forge[k].t))k=n}
+    if(k<0){for(let n=0;n<fslots();n++)if(k<0||s.forge[n].t<s.forge[k].t)k=n}
+    if(s.forge[k]){bagAdd(s.forge[k].t);log("min","이동",label(s.forge[k].t)+" 강화대에서 보관함으로")}
+    s.hunt.splice(i,1);s.forge[k]={t:t,fg:0,man:true};log("min","이동",label(t)+" 강화대로 · 강화 버튼으로 직접 강화하세요")}
+  else if(a==="bestForge"){if(!s.bag.length){note="보관함이 비어 있습니다"}else{let k=-1;for(let n=0;n<fslots();n++)if(!s.forge[n]){k=n;break}
+    if(k<0)note="빈 강화대가 없습니다";else{const t=bagPop();s.forge[k]={t:t,fg:0,man:true};log("min","이동",label(t)+" 보관함에서 강화대로")}}}
+  else if(a==="bestHunt"){if(s.bag.length){const t=bagPop(),r=toHunt(t);if(r==="보관")note="사냥터 유닛이 모두 더 강합니다";else log("min","이동",label(t)+" 사냥터 "+r)}}
   else if(a==="gamble"){gamble()}
   else if(a==="ring1"){ringUp(1,false)}
   else if(a==="ring3"){ringUp(need(s.ring),true)}
-  else if(a==="xup"){const u=XUP[i],k=s.x[i];if(s.m>=u.c(k)){s.m-=u.c(k);s.x[i]++;log("min","상점",u.name+" Lv."+s.x[i])}}
-  else if(a==="up"){const u=UP[i],k=s.up[i];if(k<u.max&&s.m>=u.c(k)){s.m-=u.c(k);s.up[i]++;log("min","상점",u.name+" Lv."+s.up[i]);buildTiers()}}
   save();render()}
 
 // ── 화면 ──
-const $=id=>document.getElementById(id);
 function build(){
   let h="";for(let i=0;i<FS;i++)h+='<div class="slot" id="f'+i+'"><div class="top"><div class="unit"><span class="gem"></span><div><b id="fn'+i+'"></b><div class="sub" id="fo'+i+'"></div></div></div>'+
-    '<div class="btns"><button type="button" data-a="summon" data-i="'+i+'" id="fb0'+i+'">소환</button><button type="button" data-a="fh" data-i="'+i+'" id="fb1'+i+'">사냥터로</button><button type="button" data-a="fs" data-i="'+i+'" id="fb2'+i+'">판매</button></div></div>'+
+    '<div class="btns" style="flex-wrap:wrap"><button type="button" data-a="enh" data-i="'+i+'" id="fe'+i+'">강화</button><button type="button" data-a="fh" data-i="'+i+'" id="fh'+i+'">사냥터로</button><button type="button" data-a="fb" data-i="'+i+'" id="fb'+i+'">보관함</button></div></div>'+
     '<div class="track"><i id="fp'+i+'"></i></div><div class="sub" id="fs'+i+'"></div></div>';
   $("forge").innerHTML=h;
   h="";for(let i=0;i<HS;i++)h+='<div class="slot" id="h'+i+'"><div class="top"><div class="unit"><span class="gem"></span><div><b id="hn'+i+'"></b><div class="sub" id="ho'+i+'"></div></div></div>'+
-    '<div class="btns"><button type="button" data-a="hf" data-i="'+i+'" id="hb1'+i+'">강화대로</button><button type="button" data-a="hs" data-i="'+i+'" id="hb2'+i+'">판매</button></div></div></div>';
+    '<div class="btns"><button type="button" data-a="hf" data-i="'+i+'" id="hf'+i+'">강화대로</button><button type="button" data-a="hb" data-i="'+i+'" id="hb'+i+'">보관함</button></div></div></div>';
   $("hunt").innerHTML=h;
-  $("shop").innerHTML=Object.keys(UP).map(k=>'<button type="button" data-a="up" data-i="'+k+'" id="u_'+k+'"><span><b>'+UP[k].name+'</b><small id="ud_'+k+'"></small></span><span><span class="c" id="uc_'+k+'"></span><span class="lv" id="ul_'+k+'"></span></span></button>').join("");
-  $("xshop").innerHTML=Object.keys(XUP).map(k=>'<button type="button" data-a="xup" data-i="'+k+'" id="x_'+k+'"><span><b>'+XUP[k].name+'</b><small>'+XUP[k].desc+'</small></span><span><span class="c" id="xc_'+k+'"></span><span class="lv" id="xl_'+k+'"></span></span></button>').join("");
-  let o='<option value="auto">자동</option>';for(let t=2;t<=MAXT;t++)o+='<option value="'+t+'">'+label(t)+"</option>";$("target").innerHTML=o;
-  buildTiers()}
-function buildTiers(){let h="";for(let t=1;t<=MAXT;t++){
-  h+='<tr><td style="color:'+col(t)+'">'+label(t)+"</td>"+(t<MAXT?'<td class="s">'+pS(t).toFixed(1)+'%</td><td>'+fmt(acost(t))+"</td>":'<td colspan="2" style="color:var(--mute)">최고 등급</td>')+
-  "<td>"+fmtR(inc(t))+"</td><td>"+fmt(sellv(t))+"</td></tr>"}$("tiers").innerHTML=h}
-let tierKey="",logKey="";
+  h="";for(let t=1;t<=MAXT;t++)h+='<tr><td style="color:'+col(t)+'">'+label(t)+"</td>"+(t<MAXT?'<td class="s">'+pS(t)+"%"+(t>=FG0?" · 기운":"")+"</td>":'<td style="color:var(--mute)">최고 등급</td>')+"<td>"+fmtR(inc(t))+"</td></tr>";
+  $("tiers").innerHTML=h;
+  $("rules").innerHTML=[
+   "<b>목표</b>: 30분 동안 5분마다 나오는 보스 6마리를 모두 클리어하면 승리입니다. 보스전 하나라도 클리어하지 못하면 <b>패배</b>하고 처음부터 다시 시작합니다. 창을 닫거나 다른 앱으로 가면 시간이 멈춥니다.",
+   "<b>마법사 드롭</b>: 수정을 깰 때마다 "+Math.round(DROP*100)+"% 확률로 마법사가 떨어져 보관함에 들어갑니다. 수정 Lv.N이면 N단계(60%), N+1단계(30%), N+2단계(10%)로 나와서, 수정이 오를수록 최소·최대 등급이 함께 오릅니다. 보스를 쓰러뜨릴 때도 "+Math.round(BDROP*100)+"% 확률로 떨어집니다.",
+   "<b>강화</b>: 기다리는 시간 없이 바로 판정되고, 1번에 보관함의 가장 낮은 마법사 1명이 재료로 쓰입니다. 성공하면 한 단계 오르고 실패하면 그대로입니다(파괴 없음). 유니크 1부터는 실패할 때 <b>장인의 기운</b>이 쌓이고, 100%가 되면 다음 강화는 확정 성공입니다.",
+   "<b>보스전</b>: 4:00~5:00, 9:00~10:00 … 29:00~30:00의 1분 동안 사냥터 유닛이 수정 대신 보스를 때립니다. 쓰러뜨릴 때마다 <b>"+CLR+"%</b> 확률로 라운드 클리어이고, 꽝이면 다시 일어나서 제한시간 안에 계속 잡을 수 있습니다.",
+   "<b>라운드 클리어</b>: 잭팟(×1~×10 랜덤)으로 최고 드롭 등급 마법사를 그 수만큼, 반지 재료, 50% 확률로 목걸이, 이후 모든 피해 ×1.1을 얻습니다. 2라운드마다 강화대가 1칸 늘어납니다(최대 4칸).",
+   "<b>사냥터</b>: 3칸에서 시작해 수정 4레벨마다 1칸씩 늘어납니다(최대 8칸). 수정이 내려가 칸이 줄면 가장 약한 유닛이 보관함으로 갑니다.",
+   "<b>수정 성장</b>: 수정이 빨리 깨질수록 등급이 잘 오르고, 오를 때 가끔 <b>+2, +3 폭등</b>합니다. 3초 넘게 걸리면 가끔 내려갑니다. 등급마다 체력 1.7배입니다.",
+   "<b>수정 공명</b>(도박): 보관함의 가장 낮은 마법사 "+GCOST+"명을 바쳐 수정을 흔듭니다. 38% +1, 10% +2, 2% +4 잭팟, 50% 균열(−1).",
+   "<b>반지</b>: 수정 30개째에 첫 반지를 얻고, 이후 깰 때마다 1% 확률로 재료가 나옵니다. 반지 1레벨마다 피해 +25%. 확정 강화 재료는 현재 레벨 + 2개입니다.",
+   "<b>목걸이</b>: 수정을 깰 때 0.3%, 라운드 클리어 때 50% 확률로 얻고, 얻을 때마다 1레벨(가끔 2레벨) 오릅니다. 1레벨마다 마법사 피해 +20%, 반지 효과 +10%.",
+   "<b>보관함</b>: 최대 "+BAGCAP+"명. 넘치면 가장 낮은 마법사부터 사라집니다.",
+   "마법사는 일반 1부터 고대 2까지 23단계와 최종 <b>마탑의 주인</b>, 모두 "+MAXT+"단계입니다. 마탑의 주인은 운이 아주 좋은 판에서만 나옵니다."].map(x=>"<li>"+x+"</li>").join("")}
+let logKey="",bagKey="";
 function render(){
-  $("min").textContent=fmt(s.m);$("inc").textContent=fmtR(BASE+huntInc());$("clock").textContent=fmtT(RUN-s.t);$("rnd").textContent=s.round;
-  // 보스
-  const b=s.boss,idx=Math.floor(s.t/CYCLE),nextAt=s.t-idx*CYCLE<BOSS_AT?idx*CYCLE+BOSS_AT:(idx+1)*CYCLE+BOSS_AT;
+  $("bagN").textContent=s.bag.length;$("hdrCg").textContent="Lv."+s.cg;$("clock").textContent=fmtT(RUN-s.t);$("rnd").textContent=Math.min(ROUNDS,s.round);
+  const b=s.boss,idx=Math.floor(s.t/CYCLE),nextAt=s.t-idx*CYCLE<BOSS_AT?idx*CYCLE+BOSS_AT:(idx+1)*CYCLE+BOSS_AT,dp=huntDps();
   $("bossBox").classList.toggle("on",!!b);
   if(b){$("bsName").textContent="라운드 "+b.round+" · "+bossName(b.round);
-    $("bsSub").textContent="체력 "+fmtR(Math.max(0,b.hp))+" / "+fmtR(b.max)+" · 처치 "+b.kills+"회 · 처치당 +"+fmt(bossRw());
+    $("bsSub").textContent="체력 "+fmtR(Math.max(0,b.hp))+" / "+fmtR(b.max)+" · 처치 "+b.kills+"회";
     $("bsTime").className="tt";$("bsTime").textContent=fmtT(b.end-s.t);
     $("bsBar").style.width=Math.max(0,Math.min(100,b.hp/b.max*100))+"%";
-    const dp=huntDps();$("bsOdds").textContent="처치할 때마다 클리어 확률 "+clr().toFixed(2)+"%"+(dp>0?" · 약 "+fmtR(b.max/dp)+"초에 1번 처치":" · 사냥 중인 유닛이 없습니다")+" · 남은 시간 안에 약 "+(dp>0?Math.floor((b.end-s.t)*dp/b.max+(1-b.hp/b.max)):0)+"번 더 기회"}
-  else{$("bsName").textContent="라운드 "+s.round+" · "+bossName(s.round);
-    $("bsTime").className="tt idle";
-    if(s.over||nextAt>=RUN){$("bsTime").textContent="—";$("bsSub").textContent=s.won?"마탑 정복 완료":"한 판이 끝났습니다"}
-    else{$("bsTime").textContent=fmtT(nextAt-s.t);$("bsSub").textContent="다음 보스전까지 (제한시간 60초, 놓치면 패배) · 체력 "+fmtR(bossMax(s.round))}
-    $("bsBar").style.width="0";
-    $("bsOdds").textContent="처치할 때마다 클리어 확률 "+clr().toFixed(2)+"% · 클리어 "+s.cleared+"회 · 피해 보너스 ×"+Math.pow(CLRB,s.cleared).toFixed(2)}
-  const tg=target(),d=dur(),full=s.hunt.length>=hslots(),mj=minHunt(),anyEmpty=s.forge.slice(0,slots()).some(f=>!f);
-  for(let i=0;i<FS;i++){const el=$("f"+i),f=s.forge[i],open=i<slots();
-    el.hidden=i>slots();el.classList.toggle("locked",!open);el.style.setProperty("--g",f?col(f.t):"#3a4a44");
-    $("fb0"+i).hidden=!!f||!open;$("fb1"+i).hidden=$("fb2"+i).hidden=!f;
-    if(!open){$("fn"+i).textContent="잠김";$("fo"+i).textContent="상점에서 강화대 증설";$("fp"+i).style.width="0";$("fs"+i).textContent="";continue}
-    if(!f){$("fn"+i).textContent="비어 있음";$("fo"+i).textContent=(s.autoBuy?"미네랄 "+fmt(sumC())+"이 모이면 자동 소환":"소환 비용 "+fmt(sumC()))+" · 소환 "+label(sumLo())+" ~ "+label(sumHi());$("fp"+i).style.width="0";$("fs"+i).textContent="";$("fb0"+i).disabled=s.m<sumC()||s.over;continue}
-    $("fn"+i).textContent=label(f.t);
-    $("fo"+i).innerHTML=f.t<MAXT?'<span class="s">성공 '+pS(f.t).toFixed(1)+'%</span> · 시도비 '+fmt(acost(f.t)):"최고 등급";
-    const ftg=tgOf(f),wait=f.t>=ftg,broke=!wait&&!f.paid&&s.m<acost(f.t);
-    $("fp"+i).style.width=(wait?100:f.p/d*100)+"%";
-    const fgv=f.t>15?Math.floor(s.fg[i]||0):0;
-    $("fs"+i).textContent=(wait?"목표 달성, 대기 중":broke?"미네랄 부족 ("+fmt(acost(f.t))+" 필요)":"강화 중 · 목표 "+label(ftg))+(fgv>=100?" · 장인의 기운 가득: 다음 강화 확정 성공":fgv>0?" · 장인의 기운 "+fgv+"%":"");
-    $("fb1"+i).disabled=full&&mj>=0&&s.hunt[mj]>=f.t;$("fb2"+i).textContent="판매 +"+fmt(sellv(f.t))}
+    $("bsOdds").textContent="처치할 때마다 클리어 확률 "+clr()+"%"+(dp>0?" · 약 "+fmtR(b.max/dp)+"초에 1번 처치 · 남은 시간 안에 약 "+Math.floor((b.end-s.t)*dp/b.max+(1-b.hp/b.max))+"번 더 기회":" · 사냥 중인 유닛이 없습니다")}
+  else{$("bsName").textContent="라운드 "+Math.min(ROUNDS,s.round)+" · "+bossName(s.round);$("bsTime").className="tt idle";$("bsBar").style.width="0";
+    if(s.over){$("bsTime").textContent="—";$("bsSub").textContent=s.won?"마탑 정복 완료":"한 판이 끝났습니다"}
+    else{$("bsTime").textContent=fmtT(nextAt-s.t);const k=dp>0?60*dp/bossMax(s.round):0;
+      $("bsSub").textContent="다음 보스전까지 (60초, 놓치면 패배) · 체력 "+fmtR(bossMax(s.round));
+      $("bsOdds").textContent="지금 전력이면 60초에 약 "+Math.floor(k)+"번 처치 → 클리어 확률 약 "+Math.round((1-Math.pow(1-clr()/100,Math.floor(k)))*100)+"% · 클리어 "+s.cleared+"회"}}
+  // 강화대
+  const tg=autoTarget();
+  for(let i=0;i<FS;i++){const el=$("f"+i),f=s.forge[i],open=i<fslots();
+    el.hidden=i>fslots();el.classList.toggle("locked",!open);el.style.setProperty("--g",f?col(f.t):"#3a4a44");
+    $("fe"+i).hidden=$("fh"+i).hidden=$("fb"+i).hidden=!f;
+    if(!open){$("fn"+i).textContent="잠김";$("fo"+i).textContent="라운드 2번 클리어마다 1칸 열림";$("fp"+i).style.width="0";$("fs"+i).textContent="";continue}
+    if(!f){$("fn"+i).textContent="비어 있음";$("fo"+i).textContent=s.autoForge?"자동 강화가 보관함의 가장 좋은 마법사를 올립니다":"보관함이나 사냥터에서 마법사를 올리세요";$("fp"+i).style.width="0";$("fs"+i).textContent="";continue}
+    $("fn"+i).textContent=label(f.t)+(f.man?" · 직접 강화":"");
+    $("fo"+i).textContent=f.t<MAXT?"성공 "+pS(f.t)+"% · 재료 1명 (보관함 "+s.bag.length+"명)":"최고 등급";
+    const fgv=f.t>=FG0?Math.floor(f.fg||0):0;$("fp"+i).style.width=fgv+"%";
+    $("fs"+i).textContent=(f.man?"강화 버튼을 누를 때마다 바로 판정":"자동 강화 중 · 목표 "+(tg?label(tg):"사냥터 빈칸 채우기"))+(f.t>=FG0?" · 장인의 기운 "+fgv+"%"+(fgv>=100?" (다음 강화 확정)":""):"");
+    $("fe"+i).disabled=f.t>=MAXT||!s.bag.length||s.over}
+  // 사냥터
   for(let i=0;i<HS;i++){const el=$("h"+i),t=s.hunt[i],open=i<hslots();
     el.hidden=!open&&i>=hslots()+1;el.classList.toggle("locked",!open);el.style.setProperty("--g",t?col(t):"#3a4a44");
-    $("hb1"+i).hidden=$("hb2"+i).hidden=!t;
-    $("hn"+i).textContent=!open?"잠김":t?label(t):"빈 자리";$("ho"+i).textContent=!open?"상점에서 사냥터 확장":t?"초당 피해 "+fmtR(inc(t)*mult()):"목표를 달성한 유닛이 들어옵니다";
-    if(t){$("hb1"+i).disabled=s.over;$("hb2"+i).textContent="판매 +"+fmt(sellv(t))}}
-  const mh=chp(s.cg),dp=huntDps();
-  $("cgName").textContent="수정 Lv."+s.cg+(s.cgMax>s.cg?" (최고 "+s.cgMax+")":"");$("cgSub").textContent="체력 "+fmtR(Math.max(0,s.chp))+" / "+fmtR(mh)+" · 보상 "+fmtR(reward())+" · 깬 수정 "+s.breaks.toLocaleString("ko-KR")+"개";
-  $("cgDps").textContent=b?"보스전 중 · 수정은 쉬는 중":dp>0?"초당 피해 "+fmtR(dp)+" · 약 "+fmtR(mh/dp)+"초에 1개":"사냥 중인 유닛이 없습니다";
+    $("hf"+i).hidden=$("hb"+i).hidden=!t;
+    $("hn"+i).textContent=!open?"잠김":t?label(t):"빈 자리";$("ho"+i).textContent=!open?"수정 Lv."+(1+4*(i-2))+"에 열림":t?"초당 피해 "+fmtR(inc(t)*mult()):"보관함의 마법사가 들어옵니다";
+    $("hf"+i).disabled=$("hb"+i).disabled=s.over}
+  // 수정
+  const mh=chp(s.cg),bt=dp>0?mh/dp:1e9;
+  $("cgName").textContent="수정 Lv."+s.cg+(s.cgMax>s.cg?" (최고 "+s.cgMax+")":"");$("cgSub").textContent="체력 "+fmtR(Math.max(0,s.chp))+" / "+fmtR(mh)+" · 깬 수정 "+s.breaks.toLocaleString("ko-KR")+"개 · 드롭 "+s.drops+"명";
+  $("cgDps").textContent=b?"보스전 중 · 수정은 쉬는 중":dp>0?"초당 피해 "+fmtR(dp)+" · 약 "+fmtR(bt)+"초에 1개":"사냥 중인 유닛이 없습니다";
   $("cgBar").style.width=Math.max(0,Math.min(100,s.chp/mh*100))+"%";
-  const bt=dp>0?mh/dp:1e9;
-  $("cgOdds").textContent="소환 "+label(sumLo())+" ~ "+label(sumHi())+" · 깨질 때 등급 상승 "+(Math.min(.25,.3/bt)*100).toFixed(1)+"% (그중 15%는 +2, +3 폭등)"+(bt>DOWNT?" · 3초 넘게 걸려 하락 위험":"")+" · 반지 1%"+(s.ring<1?" · "+Math.max(0,FIRSTRING-s.breaks)+"번 더 깨면 첫 반지":"");
-  $("gbtn").textContent="수정 공명 ("+fmt(gcost())+")";$("gbtn").disabled=s.over||s.m<gcost();
+  $("cgOdds").textContent="드롭 "+Math.round(DROP*100)+"% · "+label(sumLo())+" ~ "+label(sumHi())+" · 깰 때 등급 상승 "+(Math.min(.25,.3/bt)*100).toFixed(1)+"% (그중 15%는 +2, +3 폭등)"+(bt>DOWNT?" · 3초 넘게 걸려 하락 위험":"")+(s.ring<1?" · "+Math.max(0,FIRSTRING-s.breaks)+"번 더 깨면 첫 반지":"");
+  $("gbtn").textContent="수정 공명 (마법사 "+GCOST+"명)";$("gbtn").disabled=s.over||s.bag.length<GCOST;
   $("gtxt").textContent="38% +1 · 10% +2 · 2% +4 · 50% −1"+(s.gam?" · "+s.gam+"회 도전":"");
+  // 보관함
+  const bk=s.bag.join(",");if(bk!==bagKey){bagKey=bk;const cnt={};s.bag.forEach(t=>cnt[t]=(cnt[t]||0)+1);
+    $("bag").innerHTML=s.bag.length?Object.keys(cnt).map(Number).sort((a,b)=>b-a).map(t=>'<span class="chip" style="--g:'+col(t)+'"><i></i><b>'+label(t)+"</b> ×"+cnt[t]+"</span>").join(""):'<span class="sub">비어 있음 · 수정을 깨면 마법사가 들어옵니다</span>'}
+  $("bagCap").textContent=s.bag.length+" / "+BAGCAP+"명"+(note?" · "+note:"");
+  $("bbF").disabled=$("bbH").disabled=s.over||!s.bag.length;
+  // 반지·목걸이
   const rn=need(Math.max(1,s.ring));
   $("ringName").textContent=s.ring?ringName(s.ring):"반지 없음";
-  $("ringSub").textContent=s.ring?"피해 +"+fmt(RB*s.ring*100)+"% · 재료 "+s.mat+" / "+rn+"개":"수정이 깨질 때 낮은 확률로 나옵니다";
+  $("ringSub").textContent=s.ring?"피해 ×"+ringF().toFixed(2)+" · 재료 "+s.mat+" / "+rn+"개":"수정을 깨다 보면 나옵니다";
   $("ring1").disabled=s.ring<1||s.mat<1;$("ring1").textContent="강화 (재료 1개, "+ringP(Math.max(1,s.ring))+"%)";
   $("ring3").disabled=s.ring<1||s.mat<rn;$("ring3").textContent="확정 강화 (재료 "+rn+"개, 100%)";
-  $("autoRing").checked=s.autoRing;
   $("neckName").textContent=s.neck?neckName(s.neck):"목걸이 없음";
   $("neckSub").textContent=s.neck?"마법사 피해 ×"+neckF().toFixed(2)+" · 반지 효과 +"+Math.round(NR*s.neck*100)+"%":"수정이나 보스에게서 얻습니다";
-  $("neckOdds").textContent="수정이 깨질 때 0.3% · 라운드 클리어 때 50% · 가끔 한 번에 2레벨";
-  for(const k in UP){const u=UP[k],lv=s.up[k],mx=lv>=u.max;$("u_"+k).disabled=mx||s.m<u.c(lv)||s.over;$("uc_"+k).textContent=mx?"최대":fmt(u.c(lv));$("ul_"+k).textContent=" Lv."+lv+"/"+u.max;$("ud_"+k).textContent=u.desc(lv)}
-  for(const k in XUP){const lv=s.x[k];$("x_"+k).disabled=s.m<XUP[k].c(lv)||s.over;$("xc_"+k).textContent=fmt(XUP[k].c(lv));$("xl_"+k).textContent=" Lv."+lv}
-  $("xsum").textContent="피해 +"+fmt(s.x.amp*10)+"% · 보상 +"+fmt(s.x.loot*10)+"% · 강화 시간 "+fmtR(dur())+"초 · 보스 클리어 "+clr().toFixed(2)+"%";
-  $("autoShop").checked=s.autoShop;
-  const key=String(s.up.succ);if(key!==tierKey){tierKey=key;buildTiers()}
+  $("neckOdds").textContent="수정을 깰 때 0.3% · 라운드 클리어 때 50% · 가끔 한 번에 2레벨";
+  $("autoRing").checked=s.autoRing;$("autoPlace").checked=s.autoPlace;$("autoForge").checked=s.autoForge;
   const lk=s.log.length+"|"+(s.log[0]?s.log[0][0]+s.log[0][3]:"");
-  if(lk!==logKey){logKey=lk;$("log").innerHTML=s.log.length?s.log.map(e=>'<li class="'+e[1]+'"><time>'+fmtT(e[0])+"</time><em>"+e[2]+"</em><span>"+e[3]+"</span></li>").join(""):'<li><time>0:00</time><em>시작</em><span>30분 한 판이 시작됐습니다. 첫 보스는 4:00에 나옵니다</span></li>'}
-  if(document.activeElement!==$("target"))$("target").value=String(s.target);
-  $("autoBuy").checked=s.autoBuy;$("autoPlace").checked=s.autoPlace;
+  if(lk!==logKey){logKey=lk;$("log").innerHTML=s.log.length?s.log.map(e=>'<li class="'+e[1]+'"><time>'+fmtT(e[0])+"</time><em>"+e[2]+"</em><span>"+e[3]+"</span></li>").join(""):'<li><time>0:00</time><em>시작</em><span>견습생 3명이 수정을 깨기 시작했습니다. 첫 보스는 4:00에 나옵니다</span></li>'}
   const bn=$("banner");if(banner&&Date.now()<banner.until){bn.hidden=false;bn.textContent=banner.text;bn.classList.toggle("bad",banner.bad)}else bn.hidden=true;
   $("end").hidden=!s.over;$("end").classList.toggle("lost",!!s.lost);
   if(s.over){$("endH").textContent=s.won?"승리 · "+fmtT(s.endT)+" 만에 마탑 정복"+(s.fin?" (마탑의 주인 탄생)":""):"패배 · 라운드 "+s.round+" "+bossName(s.round)+"에게 쓰러짐";
-    $("endTxt").textContent="보스 클리어 "+s.cleared+"/6 · 최고 등급 "+label(s.best)+" · 수정 최고 Lv."+s.cgMax+" · 목걸이 Lv."+s.neck+" · 소환 "+s.made.toLocaleString("ko-KR")+"명"+(s.won?"":" · 다시 도전해 보세요")+"."}
+    $("endTxt").textContent="보스 클리어 "+s.cleared+"/6 · 최고 등급 "+label(s.best)+" · 수정 최고 Lv."+s.cgMax+" · 목걸이 Lv."+s.neck+" · 드롭 "+s.drops+"명 · 강화 "+s.tries+"번"+(s.won?"":" · 다시 도전해 보세요")+"."}
   const bb=bestGet();$("bestRec").textContent=bb?"최고 기록: "+(bb.winT?"승리 "+fmtT(bb.winT):"라운드 "+bb.round)+" · "+label(bb.best)+" · 승리 "+(bb.wins||0)+"/"+(bb.runs||0)+"판":"";
 }
 
-function bestGet(){try{return JSON.parse(localStorage.getItem("mage-forge-best2")||"null")}catch(e){return null}}
-function bestPut(){const b=bestGet()||{round:0,best:1,runs:0,wins:0,winT:0};b.runs=(b.runs||0)+1;if(s.won){b.wins=(b.wins||0)+1;if(!b.winT||s.endT<b.winT)b.winT=s.endT}b.round=Math.max(b.round||0,s.round);b.best=Math.max(b.best||1,s.best);try{localStorage.setItem("mage-forge-best2",JSON.stringify(b))}catch(e){}}
+const BESTK="mage-forge-best5",SAVEK="mage-forge-v5";
+function bestGet(){try{return JSON.parse(localStorage.getItem(BESTK)||"null")}catch(e){return null}}
+function bestPut(){const b=bestGet()||{round:0,best:1,runs:0,wins:0,winT:0};b.runs=(b.runs||0)+1;if(s.won){b.wins=(b.wins||0)+1;if(!b.winT||s.endT<b.winT)b.winT=s.endT}b.round=Math.max(b.round||0,Math.min(ROUNDS,s.round));b.best=Math.max(b.best||1,s.best);try{localStorage.setItem(BESTK,JSON.stringify(b))}catch(e){}}
 let recorded=false;
-function save(){s.wall=Date.now();if(s.over&&!recorded){recorded=true;bestPut()}try{localStorage.setItem("mage-forge-v4",JSON.stringify(s))}catch(e){}cMark()}
-function adopt(d){if(d&&d.v===4&&d.up&&Array.isArray(d.forge)&&Array.isArray(d.hunt)&&typeof d.t==="number"){s=Object.assign(fresh(),d);s.up=Object.assign(fresh().up,d.up);s.x=Object.assign(fresh().x,d.x||{});while(s.forge.length<FS)s.forge.push(null);if(!Array.isArray(s.fg))s.fg=[0,0,0,0];while(s.fg.length<FS)s.fg.push(0);if(!(s.chp>0))s.chp=chp(s.cg);if(!Array.isArray(s.log))s.log=[];recorded=s.over;return true}return false}
+function save(){s.wall=Date.now();if(s.over&&!recorded){recorded=true;bestPut()}try{localStorage.setItem(SAVEK,JSON.stringify(s))}catch(e){}cMark()}
+function adopt(d){if(d&&d.v===5&&Array.isArray(d.forge)&&Array.isArray(d.hunt)&&Array.isArray(d.bag)&&typeof d.t==="number"){s=Object.assign(fresh(),d);while(s.forge.length<FS)s.forge.push(null);if(!(s.chp>0))s.chp=chp(s.cg);if(!Array.isArray(s.log))s.log=[];recorded=s.over;return true}return false}
 function runFor(sec){const n=Math.floor(sec/STEP);for(let k=0;k<n;k++)stepSim(STEP);return sec-n*STEP}
 let lastTick=0,lastSave=0,acc=0;
 function tick(){const now=Date.now();
@@ -512,38 +501,36 @@ let cRef=null,cDirty=false,cBusy=false,cLast=0,cTimer=0;
 function cStatus(t){$("cloud").textContent=t}
 function cMark(){cDirty=true;if(!cRef||cTimer)return;cTimer=setTimeout(cFlush,Math.max(20000-(Date.now()-cLast),1500))}
 async function cFlush(){cTimer=0;if(!cRef||cBusy||!cDirty)return;cBusy=true;cDirty=false;cLast=Date.now();
-  try{await cRef.set({json:JSON.stringify(s),at:Date.now(),best:localStorage.getItem("mage-forge-best")||""});cStatus("계정에 저장됨")}
+  try{await cRef.set({json:JSON.stringify(s),at:Date.now(),best:localStorage.getItem(BESTK)||""});cStatus("계정에 저장됨")}
   catch(e){cStatus("이 기기에 저장 중");if(e&&e.code==="unavailable")cDirty=true;else cRef=null}
   cBusy=false;if(cDirty&&cRef)cMark()}
 async function cInit(){try{if(!window.claude||!window.claude.use)return;
   const r=await Promise.all([window.claude.use("db"),window.claude.use("user")]);if(!r[0]||!r[1])return;
-  const id=await r[1].id();if(!id)return;const ref=r[0].doc("data/users/"+id+"/save4"),snap=await ref.get();
+  const id=await r[1].id();if(!id)return;const ref=r[0].doc("data/users/"+id+"/save5"),snap=await ref.get();
   if(snap.exists){const d=snap.data();if(d&&typeof d.json==="string"){const c=JSON.parse(d.json);if(c&&(c.wall||0)>s.wall&&adopt(c)){render()}}
-    if(d&&d.best&&!bestGet()){try{localStorage.setItem("mage-forge-best",d.best)}catch(e){}}}
+    if(d&&d.best&&!bestGet()){try{localStorage.setItem(BESTK,d.best)}catch(e){}}}
   cRef=ref;cStatus("계정에 저장됨");cMark()}catch(e){}}
 
-function newRun(){s=fresh();acc=0;recorded=false;banner=null;tierKey="";logKey="";lastTick=Date.now();save();render()}
+function newRun(){s=fresh();acc=0;recorded=false;banner=null;logKey="";bagKey="";note="";lastTick=Date.now();save();render()}
 function start(data){
   build();let ok=adopt(data);
-  if(!ok){try{ok=adopt(JSON.parse(localStorage.getItem("mage-forge-v4")))}catch(e){}}
+  if(!ok){try{ok=adopt(JSON.parse(localStorage.getItem(SAVEK)))}catch(e){}}
   lastTick=Date.now();render();setInterval(tick,100);
-  document.addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b||b.disabled)return;const a=b.dataset.a;act(a,a==="up"||a==="xup"?b.dataset.i:+b.dataset.i)});
-  $("target").addEventListener("change",e=>{s.target=e.target.value==="auto"?"auto":+e.target.value;save();render()});
-  $("autoBuy").addEventListener("change",e=>{s.autoBuy=e.target.checked;save();render()});
+  document.addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b||b.disabled)return;act(b.dataset.a,+b.dataset.i)});
   $("autoPlace").addEventListener("change",e=>{s.autoPlace=e.target.checked;save();render()});
+  $("autoForge").addEventListener("change",e=>{s.autoForge=e.target.checked;save();render()});
   $("autoRing").addEventListener("change",e=>{s.autoRing=e.target.checked;save();render()});
-  $("autoShop").addEventListener("change",e=>{s.autoShop=e.target.checked;save();render()});
   $("again").addEventListener("click",newRun);
   $("xout").addEventListener("click",function(){
-    s.wall=Date.now();const code="MT4:"+btoa(unescape(encodeURIComponent(JSON.stringify(Object.assign({},s,{log:[]})))));
+    s.wall=Date.now();const code="MT5:"+btoa(unescape(encodeURIComponent(JSON.stringify(Object.assign({},s,{log:[]})))));
     $("xfer").value=code;$("xfer").select();$("xmsg").textContent="코드를 만들었습니다. 길게 눌러 복사하세요.";
     try{navigator.clipboard.writeText(code).then(()=>{$("xmsg").textContent="코드를 복사했습니다. 옮길 기기에서 붙여 넣으세요."},()=>{})}catch(e){}});
   let xarm=0;$("xin").addEventListener("click",function(){
     const raw=$("xfer").value.trim();let d=null;
     try{d=JSON.parse(decodeURIComponent(escape(atob(raw.replace(/^MT\d:/,"").replace(/\s+/g,"")))))}catch(e){}
-    if(!d||d.v!==4||!d.up||!Array.isArray(d.forge)||typeof d.t!=="number"){$("xmsg").textContent="코드를 읽을 수 없습니다. 최신 버전에서 만든 내보내기 코드를 전부 붙여 넣었는지 확인하세요.";return}
+    if(!d||d.v!==5||!Array.isArray(d.forge)||typeof d.t!=="number"){$("xmsg").textContent="코드를 읽을 수 없습니다. 최신 버전에서 만든 내보내기 코드를 전부 붙여 넣었는지 확인하세요.";return}
     if(Date.now()>xarm){xarm=Date.now()+4000;$("xmsg").textContent="지금 판을 덮어씁니다 (남은 시간 "+fmtT(RUN-d.t)+", 라운드 "+(d.round||1)+"). 맞으면 가져오기를 한 번 더 누르세요.";return}
-    xarm=0;if(adopt(d)){acc=0;lastTick=Date.now();tierKey="";logKey="";save();render();$("xfer").value="";$("xmsg").textContent="기록을 가져왔습니다."}});
+    xarm=0;if(adopt(d)){acc=0;lastTick=Date.now();logKey="";bagKey="";save();render();$("xfer").value="";$("xmsg").textContent="기록을 가져왔습니다."}});
   let arm=0;$("reset").addEventListener("click",function(){
     if(Date.now()>arm){arm=Date.now()+3000;this.textContent="정말 초기화? 한 번 더";setTimeout(()=>{this.textContent="처음부터 다시"},3000);return}
     arm=0;this.textContent="처음부터 다시";newRun()});
